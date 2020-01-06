@@ -1,215 +1,123 @@
-hexo-theme-yilia
-================
+# Hydejack
+[![Gem Version](https://badge.fury.io/rb/jekyll-theme-hydejack.svg)](https://badge.fury.io/rb/jekyll-theme-hydejack)
 
-Yilia 是为 [hexo](https://github.com/tommy351/hexo) 2.4+制作的主题。
-崇尚简约优雅，以及极致的性能。 你可以点击 [我的博客](http://litten.me/) 查看效果。           
- 
-如果想体验手机浏览效果，可以扫一下二维码：
+**Hydejack** is a Jekyll theme with JavaScript powers, combining the best of static sites and modern web apps.
+It features a suite of JavaScript that makes the page feel like an app, without sacrificing backwards-compatibility,
+page-load speed or SEO.
 
-![litten-qrcode](https://cloud.githubusercontent.com/assets/2024949/6349328/51a067fe-bc64-11e4-881c-f68050c50c28.png)
+> Your presence on the web — A [blog], a [portfolio] and a [resume].
 
-—————————————————————
+**Hydejack** aims to be the complete package for professionals on the web.
+It features a blog suitable for both prose and technical documentation,
+a showcase for your projects, and a resume that fits with the rest of the design.
 
-**关于主题：**
+![Screenshot](https://qwtel.com/assets/img/projects/default.jpg)
 
-1. 崇尚简约       
-2. 追求移动端体验     
-3. 希望把加载速度做到极致（努力中）    
-4. 让大家把注意力放到内容上。这是本主题设计初衷      
-5. 主题不支持IE6，7，8。以后也不会     
+## Demo
+It's best to just [see it in action](https://qwtel.com/hydejack/).
 
-**近期更新（2017.07.09）：**
+## Features
+Both versions include these features:
 
-2017.07.09
-1. 返回顶部
-2. TOC目录
+* Full in-app page loading, powered by [hy-push-state]
+* A customizable sidebar that turns into a drawer menu on mobile, powered by [hy-drawer]
+* Advanced FLIP animations, inspired by Material Design
+* Good [Google PageSpeed Score][gpss][^3]
+* Higher *perceived speed* thanks to content pre-fetching
+* [Syntax highlighting][syntax], powered by [Rouge]
+* [LaTeX math blocks][latex], powered by [KaTeX]
+* Change the wording of built-in strings and possibly translate in other languages
+* Support for categories and tags
+* Built-in icons for many social networks
+* Simple and semantic HTML — can be viewed even with text-based browsers
+* Author section below each article and support for multiple authors
+* Progressive enhancement — sacrifice features, not content
+* Google Analytics and Google Fonts support
+* Disqus comments
+* Print layout — Used to render Hydejack's [PDF documentation][pdf]
+* Blog layout via `jekyll-paginate` (optional)
+* SEO meta tags via `jekyll-seo-tag` (optional)
+* Github avatars via `jekyll-avatar` (optional)
+* Gist support via `jekyll-gist` (optional)
 
-2016.12.04
-1. 打赏
-2. 搜索
-3. “更好的”标签云
-4. “更好的”分享
-5. 一些动画
+## Documentation
+Hydejack is well documented. You can read the docs [on the Jekyll site][docs], or [on GitHub][wiki], or [download the PDF][pdf].
 
-**计划中：**
+## Download
+There are two versions of **Hydejack**: The *free version* includes basic blogging functionality,
+as did previous versions of the theme.
+The *PRO version* includes additional features for professionals:
+A [portfolio], a [resume] layout and a [welcome] page to feature your favorite projects and posts.
 
-1. 移动端优化
-             
-## 一、外观
+This table details what is and isn't included in each respective version.
 
-####**常规**
+|                                     | Free                                   | PRO                                          |
+|:------------------------------------|:--------------------------------------:|:--------------------------------------------:|
+| Blog                                | &#x2714;                               | &#x2714;                                     |
+| [Features][feat]                    | &#x2714;                               | &#x2714;                                     |
+| [Portfolio] Layout                  |                                        | &#x2714;                                     |
+| [Resume] Layout                     |                                        | &#x2714;                                     |
+| [Welcome] Layout                    |                                        | &#x2714;                                     |
+| [Newsletter Box][news]              |                                        | &#x2714;                                     |
+| [Custom Forms][forms]               |                                        | &#x2714;                                     |
+| No Hydejack Branding                |                                        | &#x2714;                                     |
+| License                             | [GPL-3.0][license]                     | [PRO]                                        |
+| Source                              | [GitHub][src]                          | Included                                     |
+| Support[^1]                         | No                                     | No                                           |
+| Price                               | Free                                   | $29                                          |
+|                                     | [**Download**][kit]                    | [**Buy Now - $29**][buy] [^2]                |
+{:.stretch-table}
 
-![常规](https://cloud.githubusercontent.com/assets/2024949/19027861/92879edc-8967-11e6-8e60-7987b6507c8d.gif)
+[^1]: You MAY open an issue on GitHub, but no response and/or fix is guaranteed.
+      You understand that using Jekyll requires technical know-how, and is NOT comparable to Wordpress in terms of usability.
+      Please use the free version to confirm that Hydejack works for you.
+      For more, see the [PRO] license.
 
-####**手机**
+[^2]: Transactions secured by [Stripe](https://stripe.com). Downloads handled by [Simple Goods](https://simplegoods.co/).  
 
-![手机](https://cloud.githubusercontent.com/assets/2024949/19027020/1c5b756a-895f-11e6-99bf-ddff9687aee0.gif)   
+[^3]: Actual page load speed depends on your hosting provider, resolution of embedded images and usage of 3rd party plugins.  
 
-####**ipad横竖屏切换**
+~~~
+ __  __                __                                     __
+/\ \/\ \              /\ \             __                    /\ \
+\ \ \_\ \   __  __    \_\ \      __   /\_\      __       ___ \ \ \/'\
+ \ \  _  \ /\ \/\ \   /'_` \   /'__`\ \/\ \   /'__`\    /'___\\ \ , <
+  \ \ \ \ \\ \ \_\ \ /\ \L\ \ /\  __/  \ \ \ /\ \L\.\_ /\ \__/ \ \ \\`\
+   \ \_\ \_\\/`____ \\ \___,_\\ \____\ _\ \ \\ \__/.\_\\ \____\ \ \_\ \_\
+    \/_/\/_/ `/___/> \\/__,_ / \/____//\ \_\ \\/__/\/_/ \/____/  \/_/\/_/
+                /\___/                \ \____/
+                \/__/                  \/___/
+~~~
 
-![ipad横竖屏切换](https://cloud.githubusercontent.com/assets/2024949/19026392/e74e1816-8957-11e6-8f08-eac9b3c8c036.gif)                    
+[blog]: https://qwtel.com/hydejack/blog/
+[portfolio]: https://qwtel.com/hydejack/variations/
+[resume]: https://qwtel.com/hydejack/resume/
+[download]: https://qwtel.com/download/
+[welcome]: https://qwtel.com/hydejack/
+[forms]: https://qwtel.com/hydejack/forms-by-example/
 
-## 二、开发者
+[feat]: https://qwtel.com/hydejack/#features
+[news]: https://qwtel.com/hydejack/#newsletter-subscription-box
+[syntax]: https://qwtel.com/hydejack/#syntax-highlighting
+[latex]: https://qwtel.com/hydejack/#latex-math-blocks
 
-为了性能和开发工程化考虑，Yilia需要使用webpack进行构建生成。
+[license]: LICENSE.md
+[pro]: licenses/PRO.md
+[docs]: docs/7.5.2/index.md
 
-如果您对主题有一些定制化的需求，请参考wiki[《Yilia源码目录结构及构建须知》](https://github.com/litten/hexo-theme-yilia/wiki/Yilia%E6%BA%90%E7%A0%81%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84%E5%8F%8A%E6%9E%84%E5%BB%BA%E9%A1%BB%E7%9F%A5)
+[kit]: https://github.com/qwtel/hydejack-starter-kit/archive/v7.5.2.zip
+[src]: https://github.com/qwtel/hydejack
+[git]: https://github.com/qwtel/hydejack-starter-kit
+[gem]: https://rubygems.org/gems/jekyll-theme-hydejack
+[buy]: https://app.simplegoods.co/i/AQTTVBOE
 
-## 三、使用
+[gpss]: https://developers.google.com/speed/pagespeed/insights/?url=https%3A%2F%2Fqwtel.com%2Fhydejack%2F
+[wiki]: https://github.com/qwtel/hydejack/blob/master/docs/7.5.2/index.md
+[pdf]: https://github.com/qwtel/hydejack/releases/download/v7.5.2/Documentation._.Hydejack.pdf
+[hy-push-state]: https://qwtel.com/hy-push-state/
+[hy-drawer]: https://qwtel.com/hy-drawer/
+[rouge]: http://rouge.jneen.net
+[katex]: https://khan.github.io/KaTeX/
+[tinyletter]: https://tinyletter.com/
 
-#### 安装
-
-``` bash
-$ git clone https://github.com/litten/hexo-theme-yilia.git themes/yilia
-```
-
-#### 配置
-
-修改hexo根目录下的 `_config.yml` ： `theme: yilia`
-
-#### 更新
-
-``` bash
-cd themes/yilia
-git pull
-```
-
-## 四、配置
-
-主题配置文件在主目录下的`_config.yml`，请根据自己需要修改使用。
-完整配置例子，可以参考[我的博客备份](https://github.com/litten/BlogBackup)
-
-```
-# Header
-
-menu:
-  主页: /
-  随笔: /tags/随笔/
-
-# SubNav
-subnav:
-  github: "#"
-  weibo: "#"
-  rss: "#"
-  zhihu: "#"
-  #qq: "#"
-  #weixin: "#"
-  #jianshu: "#"
-  #douban: "#"
-  #segmentfault: "#"
-  #bilibili: "#"
-  #acfun: "#"
-  #mail: "mailto:litten225@qq.com"
-  #facebook: "#"
-  #google: "#"
-  #twitter: "#"
-  #linkedin: "#"
-
-rss: /atom.xml
-
-# 是否需要修改 root 路径
-# 如果您的网站存放在子目录中，例如 http://yoursite.com/blog，
-# 请将您的 url 设为 http://yoursite.com/blog 并把 root 设为 /blog/。
-root: 
-
-# Content
-
-# 文章太长，截断按钮文字
-excerpt_link: more
-# 文章卡片右下角常驻链接，不需要请设置为false
-show_all_link: '展开全文'
-# 数学公式
-mathjax: false
-# 是否在新窗口打开链接
-open_in_new: false
-
-# 打赏
-# 打赏type设定：0-关闭打赏； 1-文章对应的md文件里有reward:true属性，才有打赏； 2-所有文章均有打赏
-reward_type: 2
-# 打赏wording
-reward_wording: '谢谢你请我吃糖果'
-# 支付宝二维码图片地址，跟你设置头像的方式一样。比如：/assets/img/alipay.jpg
-alipay: 
-# 微信二维码图片地址
-weixin: 
-
-# 目录
-# 目录设定：0-不显示目录； 1-文章对应的md文件里有toc:true属性，才有目录； 2-所有文章均显示目录
-toc: 1
-# 根据自己的习惯来设置，如果你的目录标题习惯有标号，置为true即可隐藏hexo重复的序号；否则置为false
-toc_hide_index: true
-# 目录为空时的提示
-toc_empty_wording: '目录，不存在的…'
-
-# 是否有快速回到顶部的按钮
-top: true
-
-# Miscellaneous
-baidu_analytics: ''
-google_analytics: ''
-favicon: /favicon.png
-
-#你的头像url
-avatar:
-
-#是否开启分享
-share_jia: true
-
-#评论：1、多说；2、网易云跟帖；3、畅言；4、Disqus；5、Gitment
-#不需要使用某项，直接设置值为false，或注释掉
-#具体请参考wiki：https://github.com/litten/hexo-theme-yilia/wiki/
-
-#1、多说
-duoshuo: false
-
-#2、网易云跟帖
-wangyiyun: false
-
-#3、畅言
-changyan_appid: false
-changyan_conf: false
-
-#4、Disqus 在hexo根目录的config里也有disqus_shortname字段，优先使用yilia的
-disqus: false
-
-#5、Gitment
-gitment_owner: false      #你的 GitHub ID
-gitment_repo: ''          #存储评论的 repo
-gitment_oauth:
-  client_id: ''           #client ID
-  client_secret: ''       #client secret
-
-# 样式定制 - 一般不需要修改，除非有很强的定制欲望…
-style:
-  # 头像上面的背景颜色
-  header: '#4d4d4d'
-  # 右滑板块背景
-  slider: 'linear-gradient(200deg,#a0cfe4,#e8c37e)'
-
-# slider的设置
-slider:
-  # 是否默认展开tags板块
-  showTags: false
-
-# 智能菜单
-# 如不需要，将该对应项置为false
-# 比如
-#smart_menu:
-#  friends: false
-smart_menu:
-  innerArchive: '所有文章'
-  friends: '友链'
-  aboutme: '关于我'
-
-friends:
-  友情链接1: http://localhost:4000/
-  友情链接2: http://localhost:4000/
-  友情链接3: http://localhost:4000/
-  友情链接4: http://localhost:4000/
-  友情链接5: http://localhost:4000/
-  友情链接6: http://localhost:4000/
-
-aboutme: 很惭愧<br><br>只做了一点微小的工作<br>谢谢大家
-```
-
-
+*[FLIP]: First-Last-Invert-Play. A coding technique to achieve performant page transition animations.

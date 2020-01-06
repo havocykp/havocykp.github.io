@@ -1,97 +1,76 @@
-var webpack = require("webpack");
-var autoprefixer = require('autoprefixer');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var CleanPlugin = require('clean-webpack-plugin');
+const { readFileSync } = require('fs');
+const { resolve } = require('path');
 
-// 模板压缩
-// 详见：https://github.com/kangax/html-minifier#options-quick-reference
+const rxPaths = require('rxjs/_esm5/path-mapping');
 
-var minifyHTML = {
-  collapseInlineTagWhitespace: true,
-  collapseWhitespace: true,
-  minifyJS:true
+const {
+  BannerPlugin,
+  EnvironmentPlugin,
+  optimize: { UglifyJsPlugin, ModuleConcatenationPlugin },
+} = require('webpack');
+
+const merge = require('webpack-merge');
+const { argv: { env } } = require('yargs');
+
+const { name: filename, version } = require('./package.json');
+
+const banner = readFileSync(resolve('./_includes/header.txt'), 'utf-8');
+
+const flatten = [(a, x) => a.concat(x), []];
+
+function envConfig() {
+  switch (env) {
+    case 'prod':
+      return {
+        plugins: [
+          new BannerPlugin({ banner, raw: true }),
+          new EnvironmentPlugin({ DEBUG: false }),
+          new UglifyJsPlugin(),
+        ],
+      };
+
+    default:
+      return {
+        devtool: 'source-map',
+        plugins: [new EnvironmentPlugin({ DEBUG: true })],
+      };
+  }
 }
 
-module.exports = {
-  entry: {
-    main: "./source-src/js/main.js",
-    slider: "./source-src/js/slider.js",
-    mobile: ["babel-polyfill", "./source-src/js/mobile.js"]
+module.exports = merge(
+  {
+    entry: resolve('./_js/src/index.js'),
+    output: {
+      path: resolve('./assets/js'),
+      filename: `${filename}-${version}.js`,
+    },
+    module: {
+      rules: [
+        {
+          test: /(\.jsx|\.js)$/,
+          loader: 'babel-loader',
+          options: {
+            presets: [['env', { modules: false }]],
+            babelrc: false,
+          },
+        },
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader']
+        },
+      ],
+    },
+    resolve: {
+      modules: [
+        resolve('./_js'),
+        resolve('./node_modules'),
+        process.env.NODE_PATH ? resolve(process.env.NODE_PATH) : [],
+      ].reduce(...flatten),
+      extensions: ['.json', '.js'],
+      symlinks: true,
+      alias: rxPaths(),
+    },
+    plugins: [new ModuleConcatenationPlugin()],
   },
-  output: {
-    path: "./source",
-    publicPath: "./",
-    filename: "[name].[chunkhash:6].js"
-  },
-  module: {
-    loaders: [{
-      test: /\.js$/,
-      loader: 'babel-loader?cacheDirectory',
-      exclude: /node_modules/
-    }, {
-      test: /\.html$/,
-      loader: 'html'
-    }, {
-      test: /\.(scss|sass|css)$/,
-      loader: ExtractTextPlugin.extract('style-loader', ['css-loader?-autoprefixer', 'postcss-loader', 'sass-loader'])
-    }, {
-      test: /\.(gif|jpg|png)\??.*$/,
-      loader: 'url-loader?limit=500&name=img/[name].[ext]'
-    }, {
-      test: /\.(woff|svg|eot|ttf)\??.*$/,
-      loader: "file-loader?name=fonts/[name].[hash:6].[ext]"
-    }]
-  },
-  alias: {
-    'vue$': 'vue/dist/vue.js'
-  },
-  resolve: {
-    alias: {
-      'vue$': 'vue/dist/vue.common.js'
-    }
-  },
-  // devtool: '#eval-source-map',
-  postcss: function() {
-    return [autoprefixer];
-  },
-  plugins: [
-    new ExtractTextPlugin('[name].[chunkhash:6].css'),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"production"'
-    }),
-    new HtmlWebpackPlugin({
-      inject: false,
-      cache: false,
-      minify: minifyHTML,
-      template: './source-src/script.ejs',
-      filename: '../layout/_partial/script.ejs'
-    }),
-    new HtmlWebpackPlugin({
-      inject: false,
-      cache: false,
-      minify: minifyHTML,
-      template: './source-src/css.ejs',
-      filename: '../layout/_partial/css.ejs'
-    })
-  ],
-  watch: true
-}
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
-  module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    }),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new CleanPlugin('builds')
-  ])
-}
+  envConfig(),
+);

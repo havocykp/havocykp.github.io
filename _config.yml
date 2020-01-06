@@ -1,130 +1,271 @@
-# Header
+# Config
+# ========================================================================================
 
-menu:
-  主页: /
-  随笔: /tags/随笔/
+# IMPORTANT: Set the URL of your site.
+# Set to https://<username>.github.io when hosting on GitHub Pages
+# (unless you are using a custom domain).
+url:                   https://domain.tld
 
-# SubNav
-subnav:
-  github: "#"
-  weibo: "#"
-  rss: "#"
-  zhihu: "#"
-  #qq: "#"
-  #weixin: "#"
-  #jianshu: "#"
-  #douban: "#"
-  #segmentfault: "#"
-  #bilibili: "#"
-  #acfun: "#"
-  #mail: "mailto:litten225@qq.com"
-  #facebook: "#"
-  #google: "#"
-  #twitter: "#"
-  #linkedin: "#"
+# IMPORTANT: Set The "base URL" of your site.
+#
+# When hosting your site in a subdirectory of a server, set to /<name of directory>
+# (with leading /, but without the < >)
+# Use the empty string '' otherwise.
+#
+# When using GitHub Pages, set to '' when hosting a user- or organization page,
+# i.e. when the name of the repository looks like <username>.github.io.
+# Otherwise, set to /<name of repository> (with leading /, but without the < >).
+baseurl:               ''
 
-rss: /atom.xml
+# Language of your content in 2-letter code, e.g.: en, de.
+# You may also provide a location, e.g.: en-us, de_AT.
+lang:                  en
 
-# 是否需要修改 root 路径
-# 如果您的网站存放在子目录中，例如 http://yoursite.com/blog，
-# 请将您的 url 设为 http://yoursite.com/blog 并把 root 设为 /blog/。
-root: /
+# The title of your blog. Used in the sidebar and the browser tab.
+title:                 Hydejack
 
-# Content
+# A short description (~150 chars) of the page used for the meta description tag.
+# Can use markdown, but no more than one paragraph (enforced by `>`)
+description:           >
+  A Jekyll theme with JavaScript powers. "Best Theme by a Mile".
+  Combines the best of static sites and modern web apps.
+  Open `_config.yml` to edit this text.
 
-# 文章太长，截断按钮文字
-excerpt_link: more
-# 文章卡片右下角常驻链接，不需要请设置为false
-show_all_link: '展开全文'
-# 数学公式
-mathjax: false
-# 是否在新窗口打开链接
-open_in_new: false
+# A shorter description for the sidebar.
+tagline:               >
+  A Jekyll theme with JavaScript powers.
+  Open `_config.yml` to edit this text.
 
-# 打赏
-# 打赏type设定：0-关闭打赏； 1-文章对应的md文件里有reward:true属性，才有打赏； 2-所有文章均有打赏
-reward_type: 2
-# 打赏wording
-reward_wording: '谢谢你请我吃糖果'
-# 支付宝二维码图片地址，跟你设置头像的方式一样。比如：/assets/img/alipay.jpg
-alipay: 
-# 微信二维码图片地址
-weixin: 
+# A list of keywords for your blog
+keywords:              []
 
-# 目录
-# 目录设定：0-不显示目录； 1-文章对应的md文件里有toc:true属性，才有目录； 2-所有文章均显示目录
-toc: 1
-# 根据自己的习惯来设置，如果你的目录标题习惯有标号，置为true即可隐藏hexo重复的序号；否则置为false
-toc_hide_index: true
-# 目录为空时的提示
-toc_empty_wording: '目录，不存在的…'
+# Used by jekyll-seo-tag...
+logo:                  /assets/icons/icon.png
 
-# 是否有快速回到顶部的按钮
-top: true
+# This should be the same author as first entry in `_data/authors.yml`.
+# Duplication is necessary due to the `jekyll-feed`, `jekyll-seo-tag` plugin.
+author:
+  name:                <firstname> <lastname>
+  email:               <mail@domain.tld>
+  # Used by `jekyll-seo-tag`:
+  # twitter:             <username>
 
-# Miscellaneous
-baidu_analytics: ''
-google_analytics: ''
-favicon: /favicon.png
+# This text will appear in a `<small>` tag in the footer of every page.
+copyright:             © 2017. All rights reserved.
 
-#你的头像url
-avatar:
+# Add links to the footer.
+# Typically you'll want to link to your impress, cookies or privacy policy, etc.
+# legal:
+#   - title:             Impress
+#     href:              /impress/
+#   - title:             Cookies Policy
+#     href:              /cookies-policy/
 
-#是否开启分享
-share_jia: true
+# Format of the permalinks
+permalink:             pretty
 
-#评论：1、多说；2、网易云跟帖；3、畅言；4、Disqus；5、Gitment
-#不需要使用某项，直接设置值为false，或注释掉
-#具体请参考wiki：https://github.com/litten/hexo-theme-yilia/wiki/
+# Pagination configuration (used by the `blog` layout)
+paginate:              5
+paginate_path:         /page-:num/
 
-#1、多说
-duoshuo: false
 
-#2、网易云跟帖
-wangyiyun: false
+# Customizaton
+# ========================================================================================
 
-#3、畅言
-changyan_appid: false
-changyan_conf: false
+# Sidebar image and theme color of the site.
+accent_image:          /assets/img/sidebar-bg.jpg
+accent_color:          '#4fb1ba'
 
-#4、Disqus 在hexo根目录的config里也有disqus_shortname字段，优先使用yilia的
-disqus: false
+# The string encoding which fonts to fetch from Google Fonts.
+# See: <https://qwtel.com/hydejack/docs/configuration/>
+google_fonts:          Roboto+Slab:700|Noto+Sans:400,400i,700,700i
 
-#5、Gitment
-gitment_owner: false      #你的 GitHub ID
-gitment_repo: ''          #存储评论的 repo
-gitment_oauth:
-  client_id: ''           #client ID
-  client_secret: ''       #client secret
+# The text font. Expects a string that is a valid CSS font-family value.
+font:                  Noto Sans, Helvetica, Arial, sans-serif
 
-# 样式定制 - 一般不需要修改，除非有很强的定制欲望…
-style:
-  # 头像上面的背景颜色
-  header: '#4d4d4d'
-  # 右滑板块背景
-  slider: 'linear-gradient(200deg,#a0cfe4,#e8c37e)'
+# The font used for headings. Expects a string that is a valid CSS font-family value.
+font_heading:          Roboto Slab, Helvetica, Arial, sans-serif
 
-# slider的设置
-slider:
-  # 是否默认展开tags板块
-  showTags: false
+# 3rd Party Integrations
+# ----------------------------------------------------------------------------------------
 
-# 智能菜单
-# 如不需要，将该对应项置为false
-# 比如
-#smart_menu:
-#  friends: false
-smart_menu:
-  innerArchive: '所有文章'
-  friends: '友链'
-  aboutme: '关于我'
+# Set your Google Analytics id to receive `pageview` events.
+# To remove Google Anaylics from your page, remove the line below.
+# google_analytics:      UA-XXXXXXXX-X
 
-friends:
-  友情链接1: http://localhost:4000/
-  友情链接2: http://localhost:4000/
-  友情链接3: http://localhost:4000/
-  友情链接4: http://localhost:4000/
-  友情链接5: http://localhost:4000/
-  友情链接6: http://localhost:4000/
+# Setting a disqus shortname will enable the comment section on
+# pages with `comments: true` in the front matter.
+# disqus:                <disqus_shortname>
 
-aboutme: 很惭愧<br><br>只做了一点微小的工作<br>谢谢大家
+# Setting a tinyletter username will enable the newsletter subscription box.
+# tinyletter:            <tinyletter_username>
+
+# Hydejack Settings
+# ----------------------------------------------------------------------------------------
+# These settings are specific to Hydejack.
+
+hydejack:
+  # Configure the order of complementary content on blog posts
+  post_addons:         [about, newsletter, related]
+
+  # Configure the order of complementary content on project pages
+  project_addons:      [about, newsletter, other]
+
+  # If you do not use Google Fonts, set to `true`.
+  no_google_fonts:     false
+
+  # Set to `true` if you don't want to show an icon indicating external links
+  no_mark_external:    false
+
+  # Set to `true` if third party plugins fail to work with dynamically loaded pages
+  no_push_state:       false
+
+  # Set to `true` if you want to disable the drawer
+  no_drawer:           false
+
+  # Set to `true` if you do not want parts of the css inlined in <head/>
+  # This *may* be benefitial when serving the site over HTTP/2.
+  no_inline_css:       false
+
+  # Code blocks and tables "break" the layout by spanning the full available width.
+  # Set this to true if you want them to be the same width as other content.
+  no_break_layout:     false
+
+  # Set to `true` if you do not want to expose your resume and projects
+  # in machine-readable formats.
+  no_structured_data:  false
+
+  # You can set this to `true` if you don't want to set the `theme-color` meta tag,
+  # This only affects the meta tag, not the color specified in the app manifest.
+  no_theme_color:      false
+
+  # Set to `true` when building with the `--lsi` option
+  use_lsi:             false
+
+  # When using Google Analytics, set to `true` to display a cookie notice banner.
+  # When enabled, no user-related data will be stored until the user gives consent.
+  cookies_banner:      false
+
+
+# Collections
+# ========================================================================================
+
+collections:
+  featured_categories:
+    permalink:         /category/:name/
+    output:            true
+
+  featured_tags:
+    permalink:         /tag/:name/
+    output:            true
+
+  projects:
+    permalink:         /projects/:path/
+    output:            true
+
+
+# File inclusion/exclusion
+# ========================================================================================
+
+exclude:
+  - vendor
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - package.json
+  - package-lock.json
+include:
+  - LICENSE.md
+
+
+# Plugins and Plugin Configuration
+# ========================================================================================
+
+plugins:
+  # - jekyll-avatar
+  # - jekyll-default-layout
+  - jekyll-feed
+  # - jekyll-gist
+  # - jekyll-optional-front-matter
+  - jekyll-paginate
+  # - jekyll-readme-index
+  # - jekyll-redirect-from
+  - jekyll-relative-links
+  # - jekyll-remote-theme
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  # - jekyll-titles-from-headings
+
+# Theme
+# ---------------------------------------------------------------------------------------
+
+# theme: jekyll-theme-hydejack
+# remote_theme: qwtel/hydejack@gem
+
+# SEO Tag
+# ---------------------------------------------------------------------------------------
+
+# Where you proof that you own this site (used by jekyll-seo-tag)
+# google_site_verification: <verification-id>
+# -- or --
+# webmaster_verifications:
+#   google:              <verification-id>
+#   bing:                <verification-id>
+#   alexa:               <verification-id>
+#   yandex:              <verification-id>
+
+# Used for Twitter cards
+# twitter:
+#   username:            <shortname>
+
+# Used for Facebook open graph
+# facebook:
+#   app_id:              <id>
+#   publisher:           <id>
+#   admins:              <id>
+
+# Used on index and about sites
+# social:
+#   name:                <firstname> <lastname>
+#   links:
+#     - https://twitter.com/<username>
+#     - https://github.com/<username>
+
+
+# Other Plugins
+# ---------------------------------------------------------------------------------------
+
+optional_front_matter:
+  remove_originals:    true
+
+readme_index:
+  remove_originals:    true
+
+relative_links:
+  collections:         true
+
+titles_from_headings:
+  strip_title:         true
+  collections:         true
+
+kramdown:
+  footnote_backlink:   '&#x21a9;&#xfe0e;'
+  math_engine:         mathjax
+  math_engine_opts:
+    preview:           true
+    preview_as_code:   true
+
+compress_html:
+  comments:            ["<!-- ", " -->"]
+  clippings:           all
+  endings:             all
+  ignore:
+    envs:              [development]
+
+sass:
+  style:               compressed
+
+# If you are upgrading form v5 (or earlier), uncomment the lines below,
+# so that the location of the feed XML stays the same.
+# feed:
+#   path:                atom.xml
