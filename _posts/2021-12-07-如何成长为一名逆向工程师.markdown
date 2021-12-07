@@ -1,0 +1,65 @@
+---
+title: "如何成长为一名逆向工程师"
+layout: post
+date: 2021-12-07 17:02
+image: 
+headerImage: false
+tag:
+- ppt
+- reverse
+- study
+category: blog
+author: NoThxJ
+description: 指导如何成长为一名逆向工程师，具体到每个阶段需要做哪些
+---
+
+## PPT:
+
+![1](D:\havocykp.github.io\assets\images\1.png)
+
+![2](D:\havocykp.github.io\assets\images\2.png)
+
+![3](D:\havocykp.github.io\assets\images\3.png)
+
+![4](D:\havocykp.github.io\assets\images\4.png)
+
+![5](D:\havocykp.github.io\assets\images\5.png)
+
+![6](D:\havocykp.github.io\assets\images\6.png)
+
+![7](D:\havocykp.github.io\assets\images\7.png)
+
+![8](D:\havocykp.github.io\assets\images\8.png)
+
+![9](D:\havocykp.github.io\assets\images\9.png)
+
+![10](D:\havocykp.github.io\assets\images\10.png)
+
+![11](D:\havocykp.github.io\assets\images\11.png)
+
+![12](D:\havocykp.github.io\assets\images\12.png)
+
+![13](D:\havocykp.github.io\assets\images\13.png)
+
+![14](D:\havocykp.github.io\assets\images\14.png)
+
+![15](D:\havocykp.github.io\assets\images\16.png)
+
+![17](D:\havocykp.github.io\assets\images\17.png)
+
+![18](D:\havocykp.github.io\assets\images\18.png)
+
+![19](D:\havocykp.github.io\assets\images\19.png)
+
+![20](D:\havocykp.github.io\assets\images\20.png)
+
+![21](D:\havocykp.github.io\assets\images\21.png)
+
+![22](D:\havocykp.github.io\assets\images\22.png)
+
+![23](D:\havocykp.github.io\assets\images\24.png)
+
+![25](D:\havocykp.github.io\assets\images\25.png)
+
+![26](D:\havocykp.github.io\assets\images\26.png)
+
