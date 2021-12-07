@@ -7,9 +7,10 @@ layout: page
 <h2>About Me</h2>
 
 <p>@NoThxJ @Security Research</p>
+<br>
 
-<p>Dude，he found more than you can  dream of</p>
-<p>some people talk，other people do</p>
+<p>Excellent work:) Good Ressearch and Code.</p>
+
 
 <br>
 
