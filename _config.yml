@@ -37,11 +37,11 @@ permalink: /:title/
 
 # if you don't have any of social below, comment the line
 # 社交标签
-facebook: myfacebook
-twitter: mytwitter
-instagram: myinstagram
-linkedin: mylinkedin
-github: mygithub
+facebook: 
+twitter: https://twitter.com/NoThxJ
+instagram: 
+linkedin: 
+github: https://github.com/havocykp
 email: havocykp@gmail.com
 
 #authors:
@@ -64,6 +64,7 @@ email: havocykp@gmail.com
 width: normal
 
 # if you do/don't need pagination, toggle 'enabled' between true/false below
+# 页码属性
 pagination:
   enabled: false
   sort_reverse: true # display recent posts first
@@ -91,7 +92,7 @@ related: true
 post-advance-links: [blog]
 
 # show author block at the end of a post ?
-show-author: true
+show-author: false
 
 # do you want some animations?
 animation: true
