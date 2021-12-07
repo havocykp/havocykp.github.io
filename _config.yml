@@ -37,11 +37,11 @@ permalink: /:title/
 
 # if you don't have any of social below, comment the line
 # 社交标签
-facebook: 
-twitter: https://twitter.com/NoThxJ
-instagram: 
-linkedin: 
-github: https://github.com/havocykp
+facebook: facebook
+twitter: NoThxJ
+instagram: instagram
+linkedin: linkedin
+github: havocykp
 email: havocykp@gmail.com
 
 #authors:
