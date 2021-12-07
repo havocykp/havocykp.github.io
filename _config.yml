@@ -57,7 +57,7 @@ authors:
 # do you want a larger site? change the option below
 # options: [normal, large] | default: normal
 # normal = 560px / large = 810px
-width: large
+width: normal
 
 # if you do/don't need pagination, toggle 'enabled' between true/false below
 pagination:
@@ -87,7 +87,7 @@ related: true
 post-advance-links: [blog]
 
 # show author block at the end of a post ?
-show-author: true
+show-author: false
 
 # do you want some animations?
 animation: true
@@ -102,16 +102,16 @@ defaults:
       # can be overridden in the front matter for a specific post
       hidden: false
 
-plugins:
-  - jekyll-seo-tag
-  - jekyll-gist
-  - jekyll-feed
-  - jemoji
-  - jekyll-admin
-  - jekyll-paginate-v2
+#plugins:
+#  - jekyll-seo-tag
+#  - jekyll-gist
+#  - jekyll-feed
+#  - jemoji
+#  - jekyll-admin
+#  - jekyll-paginate-v2
 
-jekyll-mentions:
-  base_url: https://github.com
+#jekyll-mentions:
+#  base_url: https://github.com
 
 compress_html:
   ignore:
