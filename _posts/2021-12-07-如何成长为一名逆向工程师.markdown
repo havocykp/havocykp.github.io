@@ -13,8 +13,6 @@ author: NoThxJ
 description: 指导如何成长为一名逆向工程师，具体到每个阶段需要做哪些
 ---
 
-## 
-
 ![1](https://havocykp.github.io/assets/images/1.png)
 
 ![2](https://havocykp.github.io/assets/images/2.png)
