@@ -1,8 +1,8 @@
-# main text of home
+# 面板信息
 name: NoThxJ
 bio: 低调求发展，潜心习安全
 
-# twitter summary info
+# twitter 描述
 description: A blog about technology and stuff related
 
 # if it's an external image, update below for true
@@ -11,7 +11,8 @@ external-image: false
 picture: assets/images/profile.jpg
 
 # your site color theme, false to light theme
-dark-theme: true
+# 背景颜色
+dark-theme: false
 
 # If you want to include your resume, set to true
 # and specify source (external or local).
