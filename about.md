@@ -8,7 +8,8 @@ layout: page
 
 <p>@NoThxJ @Security Research</p>
 
-
+<p>Dude，he found more than you can  dream of</p>
+<p>some people talk，other people do</p>
 
 <br>
 
