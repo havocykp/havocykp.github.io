@@ -11,9 +11,6 @@ layout: page
 
 <p>Excellent work:) Good Ressearch and Code.</p>
 
-
-<br>
-
 <p>Reverse Engineering,  Maleware Analysis,  Vulnerability Research</p>
 
 <br><br>
