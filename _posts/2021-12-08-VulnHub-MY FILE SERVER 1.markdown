@@ -32,11 +32,11 @@ description: VulnHub
 
 nmap 探测存活主机的方法总结：
 
-https://blog.csdn.net/weixin_39624774/article/details/111282245
+<https://blog.csdn.net/weixin_39624774/article/details/111282245>
 
 命令：nmap -sP 192.168.2.0/24 探测整个网段存活主机，根据主机名识别 fileserver
 
-IP为：192.168.2.117
+IP为： 192.168.2.117
 
 ![30](https://havocykp.github.io/assets/images/30.png)
 
@@ -44,7 +44,7 @@ IP为：192.168.2.117
 
 ① 命令：nmap -A 1921.68.2.117 （综合扫描）
 
-```javascript
+```wiki
 kali@kali:~$ nmap -A 192.168.2.117
 Starting Nmap 7.80 ( https://nmap.org ) at 2021-08-29 12:02 EDT
 Nmap scan report for fileserver.lan (192.168.2.117)
@@ -160,7 +160,7 @@ Nmap done: 1 IP address (1 host up) scanned in 58.86 seconds
 
 Nikto工具介绍：
 
-https://zhuanlan.zhihu.com/p/124246499
+<https://zhuanlan.zhihu.com/p/124246499>
 
 ② Nikto 扫描
 
@@ -194,7 +194,7 @@ kali@kali:~$ nikto -h 192.168.2.117
 
 ```
 
-访问：http://192.168.2.117/readme.txt 
+访问：<http://192.168.2.117/readme.txt>
 
 显示内容如下，这个密码作用是？？？
 
@@ -262,7 +262,7 @@ kali@kali:~$ nikto -h 192.168.2.117
 
 解决ftp输入命令显示 500 Illegal PORT command
 
-解决方法链接：https://www.cnblogs.com/linuxws/p/11006293.html
+解决方法链接：<https://www.cnblogs.com/linuxws/p/11006293.html>
 
 第一步：quote pasv
 
