@@ -44,7 +44,7 @@ IP为： 192.168.2.117
 
 ① 命令：nmap -A 1921.68.2.117 （综合扫描）
 
-```shell
+```javascript
 kali@kali:~$ nmap -A 192.168.2.117
 Starting Nmap 7.80 ( https://nmap.org ) at 2021-08-29 12:02 EDT
 Nmap scan report for fileserver.lan (192.168.2.117)
