@@ -34,7 +34,7 @@ nmap 探测存活主机的方法总结：
 
 <https://blog.csdn.net/weixin_39624774/article/details/111282245>
 
-> 命令：nmap -sP 192.168.2.0/24 探测整个网段存活主机，根据主机名识别 fileserver
+命令：nmap -sP 192.168.2.0/24 探测整个网段存活主机，根据主机名识别 fileserver
 
 IP为： 192.168.2.117
 
