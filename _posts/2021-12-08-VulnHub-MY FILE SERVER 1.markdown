@@ -16,11 +16,11 @@ description: VulnHub
 
 <https://www.vulnhub.com/entry/my-file-server-1,432/>
 
-![27](https://havocykp.github.io/assets/images/27.png)
+![1](https://havocykp.github.io/assets/images/img_blog2/1.png)
 
 环境搭建运行（VirtualBox）：
 
-![28](https://havocykp.github.io/assets/images/28.png)
+![2](https://havocykp.github.io/assets/images/img_blog2/2.png)
 
 1. 使用Nmap探测该虚拟机的IP：
 
@@ -28,7 +28,7 @@ description: VulnHub
 
 因为我这里的网卡设置的是桥接到物理网卡，所以和物理机同段；探测时只需要扫描物理机的网段即可识别虚拟机的IP
 
-![29](https://havocykp.github.io/assets/images/29.png)
+![3](https://havocykp.github.io/assets/images/img_blog2/3.png)
 
 nmap 探测存活主机的方法总结：
 
@@ -38,7 +38,7 @@ nmap 探测存活主机的方法总结：
 
 IP为： 192.168.2.117
 
-![30](https://havocykp.github.io/assets/images/30.png)
+![4](https://havocykp.github.io/assets/images/img_blog2/4.png)
 
 2. 信息收集
 
@@ -141,7 +141,7 @@ Nmap done: 1 IP address (1 host up) scanned in 58.86 seconds
 
 查看源码没发现可用信息
 
-![31](https://havocykp.github.io/assets/images/31.png)
+![5](https://havocykp.github.io/assets/images/img_blog2/5.png)
 
 扫描结果中显示，可匿名登录FTP
 
@@ -156,7 +156,7 @@ Nmap done: 1 IP address (1 host up) scanned in 58.86 seconds
 
 密码：guest
 
-![32](https://havocykp.github.io/assets/images/32.png)
+![6](https://havocykp.github.io/assets/images/img_blog2/6.png)
 
 Nikto工具介绍：
 
@@ -198,7 +198,7 @@ kali@kali:~$ nikto -h 192.168.2.117
 
 显示内容如下，这个密码作用是？？？
 
-![33](https://havocykp.github.io/assets/images/33.png)
+![7](https://havocykp.github.io/assets/images/img_blog2/7.png)
 
 ③ 使用smbmap对smb信息枚举（枚举共享盘符）
 
@@ -206,19 +206,19 @@ kali@kali:~$ nikto -h 192.168.2.117
 
 命令: smbmap -H 192.168.2.117
 
-![34](https://havocykp.github.io/assets/images/34.png)
+![8](https://havocykp.github.io/assets/images/img_blog2/8.png)
 
 直接访问smb共享目录：
 
 只有smbdata文件可访问
 
-![35](https://havocykp.github.io/assets/images/35.png)
+![9](https://havocykp.github.io/assets/images/img_blog2/9.png)
 
-![36](https://havocykp.github.io/assets/images/36.png)
+![10](https://havocykp.github.io/assets/images/img_blog2/10.png)
 
 查看该文件属性：可读可写
 
-![37](https://havocykp.github.io/assets/images/37.png)
+![11](https://havocykp.github.io/assets/images/img_blog2/11.png)
 
 使用smbclient连接
 
@@ -226,19 +226,19 @@ kali@kali:~$ nikto -h 192.168.2.117
 
 输入密码：rootroot1 登录成功
 
-![38](https://havocykp.github.io/assets/images/38.png)
+![12](https://havocykp.github.io/assets/images/img_blog2/12.png)
 
 查看目录下的文件
 
 命令：ls
 
-![39](https://havocykp.github.io/assets/images/39.png)
+![13](https://havocykp.github.io/assets/images/img_blog2/13.png)
 
 下载文件看看有没有重要帮助信息
 
 命令：smb: \> get secure
 
-![40](https://havocykp.github.io/assets/images/40.png)
+![14](https://havocykp.github.io/assets/images/img_blog2/14.png)
 
 查看下载的 secure文件
 
@@ -248,17 +248,17 @@ kali@kali:~$ nikto -h 192.168.2.117
 
 密码：chauthtok
 
-![41](https://havocykp.github.io/assets/images/41.png)
+![15](https://havocykp.github.io/assets/images/img_blog2/15.png)
 
 尝试账号/密码ssh登录
 
 登录失败，无法访问，只能用私钥才能访问
 
-![42](https://havocykp.github.io/assets/images/42.png)
+![16](https://havocykp.github.io/assets/images/img_blog2/16.png)
 
 尝试用ftp登录，使用密码：chauthtok 登录失败，使用密码：rootroot1 登录成功
 
-![43](https://havocykp.github.io/assets/images/43.png)
+![17](https://havocykp.github.io/assets/images/img_blog2/17.png)
 
 解决ftp输入命令显示 500 Illegal PORT command
 
@@ -270,21 +270,21 @@ kali@kali:~$ nikto -h 192.168.2.117
 
 查看ssh配置文件，发现用户秘钥文件
 
-![44](https://havocykp.github.io/assets/images/44.png)
+![18](https://havocykp.github.io/assets/images/img_blog2/18.png)
 
 将其下载查看
 
 ftp> get sshd_config
 
-![45](https://havocykp.github.io/assets/images/45.png)
+![19](https://havocykp.github.io/assets/images/img_blog2/19.png)
 
 命令：vim sshd_config
 
-![46](https://havocykp.github.io/assets/images/46.png)
+![20](https://havocykp.github.io/assets/images/img_blog2/20.png)
 
 在 smbuser用户下创建文件，伪造公钥和私钥，创建连接
 
-![47](https://havocykp.github.io/assets/images/47.png)
+![21](https://havocykp.github.io/assets/images/img_blog2/21.png)
 
 生成公钥
 
@@ -292,31 +292,31 @@ ftp> get sshd_config
 
 命令：ssh-Keygen-t rsa
 
-![48](https://havocykp.github.io/assets/images/48.png)
+![22](https://havocykp.github.io/assets/images/img_blog2/22.png)
 
 使用命令将公钥拷贝至 用户根目录
 
-![49](https://havocykp.github.io/assets/images/49.png)
+![23](https://havocykp.github.io/assets/images/img_blog2/23.png)
 
 上传公钥
 
 上传公钥至 .ssh/authorized_keys目录下
 
-![50](https://havocykp.github.io/assets/images/50.png)
+![24](https://havocykp.github.io/assets/images/img_blog2/24.png)
 
 ssh远程登录，直接登录成功，不需要输入密码
 
-![51](https://havocykp.github.io/assets/images/51.png)
+![25](https://havocykp.github.io/assets/images/img_blog2/25.png)
 
 提权获取信息
 
 查看内核版本，利用脏牛（Dirty COW）提权：CVE-2016-5195 脏牛内核提权漏洞
 
-![52](https://havocykp.github.io/assets/images/52.png)
+![26](https://havocykp.github.io/assets/images/img_blog2/26.png)
 
 命令：searchsploit dirty
 
-![53](https://havocykp.github.io/assets/images/53.png)
+![27](https://havocykp.github.io/assets/images/img_blog2/27.png)
 
 搜索具体的文件路径：
 
@@ -326,21 +326,21 @@ ssh远程登录，直接登录成功，不需要输入密码
 
 命令：cp /usr/share/exploitdb/exploits/linux/local/40616.c ./
 
-![54](https://havocykp.github.io/assets/images/54.png)
+![28](https://havocykp.github.io/assets/images/img_blog2/28.png)
 
 将脏牛文件上传到tmp目录下
 
-![55](https://havocykp.github.io/assets/images/55.png)
+![29](https://havocykp.github.io/assets/images/img_blog2/29.png)
 
 在smbuser用户登录下，编译运行脏牛脚本
 
 命令：gcc -pthread 40616.c -o dirty -lcrypt
 
-![56](https://havocykp.github.io/assets/images/56.png)
+![30](https://havocykp.github.io/assets/images/img_blog2/30.png)
 
 查看生成的脚本并赋予权限
 
-![57](https://havocykp.github.io/assets/images/57.png)
+![31](https://havocykp.github.io/assets/images/img_blog2/31.png)
 
 开始执行
 
@@ -348,5 +348,5 @@ ssh远程登录，直接登录成功，不需要输入密码
 
 提权成功
 
-![58](https://havocykp.github.io/assets/images/58.png)
+![32](https://havocykp.github.io/assets/images/img_blog2/32.png)
 
