@@ -1,0 +1,222 @@
+---
+title: "VulnHub-DC2"
+layout: post
+date: 2021-12-10 21:36
+image: 
+headerImage: false
+tag:
+- web
+- vulnhub
+category: blog
+author: NoThxJ
+description: VulnHub
+---
+
+环境下载地址:
+
+<https://www.five86.com/dc-2.html>
+
+环境搭建：
+
+![1](https://havocykp.github.io/assets/images/img_blog4/1.png)
+
+信息收集
+
+nmap 获取其IP地址
+
+命令：nmap -sP 192.168.2.0/24 
+
+通过主机名DC-2 识别IP为192.168.2.233
+
+![2](https://havocykp.github.io/assets/images/img_blog4/2.png)
+
+或者通过MAC地址识别目标IP
+
+提示修改host文件的配置，添加ip地址和域名（访问80端口时，会自动跳转成dc-2，不修改会无法访问）
+
+![3](https://havocykp.github.io/assets/images/img_blog4/3.png)
+
+修改 parrot 的host文件
+
+![4](https://havocykp.github.io/assets/images/img_blog4/4.png)
+
+![5](https://havocykp.github.io/assets/images/img_blog4/5.png)
+
+漏洞利用
+
+获取 flag1
+
+利用nmap对目标主机进行端口扫描
+
+```javascript
+命令：nmap -sV -p- 192.168.2.233
+参数说明：
+    -sV 用来扫描目标主机和端口上运行的软件的版本
+	-p 80 指定80端口
+    -p- 扫描 0-65535全部端口
+```
+
+扫描发现，开放了80和7744端口
+
+![6](https://havocykp.github.io/assets/images/img_blog4/6.png)
+
+访问：<http://192.168.2.233>，获取 *flag1*
+
+![7](https://havocykp.github.io/assets/images/img_blog4/7.png)
+
+访问网页，是一个wordpress模板的博客网站，页面直接获得 flag1
+
+提示使用 cewl密码字典生成工具，并且在登录后可以找到下一个 flag
+
+![8](https://havocykp.github.io/assets/images/img_blog4/8.png)
+
+
+
+获取 flag2
+
+根据 flag1的提示，使用 cewl生成密码保存在当前目录的 pwd.txt 中
+
+```javascript
+命令：
+┌─[root@pendo]─[/home/pendo]
+└──╼ #cewl http://dc-2/ -w pwd.txt
+```
+
+![9](https://havocykp.github.io/assets/images/img_blog4/9.png)
+
+获取用户名（wpscan）
+
+现在，密码有了，还得获取用户名
+
+前面已经知道这是个 WordPress网站，可以用 wpscan扫描来枚举网站中的可用用户名
+
+```javascript
+命令：
+┌─[root@pendo]─[/home/pendo]
+└──╼ #wpscan --url dc-2 -e u
+```
+
+![10](https://havocykp.github.io/assets/images/img_blog4/10.png)
+
+扫描发现存在 admin、jerry、tom用户
+
+![11](https://havocykp.github.io/assets/images/img_blog4/11.png)
+
+新建一个.list文件（dc-2users.list），将扫描到的三个用户名添加到该文件中
+
+![12](https://havocykp.github.io/assets/images/img_blog4/12.png)
+
+知道了用户名，结合cewl工具生成的字典文件进行爆破
+
+```javascript
+命令：
+┌─[root@pendo]─[/home/pendo]
+└──╼ #wpscan --url http://dc-2/ -U dc-2users.list -P pwd.txt 
+```
+
+![13](https://havocykp.github.io/assets/images/img_blog4/13.png)
+
+爆破出两个用户的密码
+
+![14](https://havocykp.github.io/assets/images/img_blog4/14.png)
+
+扫描网站后台
+
+```javascript
+命令：
+┌─[✗]─[root@pendo]─[/home/pendo]
+└──╼ #dirb http://dc-2/
+```
+
+![15](https://havocykp.github.io/assets/images/img_blog4/15.png)
+
+访问：<http://dc-2/wp-admin/>
+
+![16](https://havocykp.github.io/assets/images/img_blog4/16.png)
+
+使用爆破的用户名/密码进行登录，在jerry中发现 flag2；tom用户名登录后没发现
+
+![17](https://havocykp.github.io/assets/images/img_blog4/17.png)
+
+![18](https://havocykp.github.io/assets/images/img_blog4/18.png)
+
+![19](https://havocykp.github.io/assets/images/img_blog4/19.png)
+
+
+
+获取 flag3
+
+结合扫出来的开放服务，尝试ssh登录
+
+经尝试只能使用tom登录
+
+```javascript
+命令：
+┌─[✗]─[root@pendo]─[/home/pendo]
+└──╼ #ssh tom@192.168.2.233 -p 7744
+```
+
+输入命令查看 flag3.txt内容失败，受限shell（限制了可执行的命令）
+
+![20](https://havocykp.github.io/assets/images/img_blog4/20.png)
+
+① 使用 vi 命令查看 flag3.txt内容
+
+![21](https://havocykp.github.io/assets/images/img_blog4/21.png)
+
+② 绕过受限shell（rbash限制绕过）
+
+```javascript
+命令：
+tom@DC-2:~$ BASH_CMDS[a]=/bin/sh;a
+$ /bin/bash
+```
+
+![22](https://havocykp.github.io/assets/images/img_blog4/22.png)
+
+
+
+使用并添加环境变量
+
+命令：tom@DC-2:~$ export PATH=$PATH:/bin/
+
+![23](https://havocykp.github.io/assets/images/img_blog4/23.png)
+
+
+
+获取 flag4
+
+切换到 jerry用户
+
+切换到 jerry目录，查看文件，发现 flag4.txt
+
+通过命令cat 查看内容
+
+![24](https://havocykp.github.io/assets/images/img_blog4/24.png)
+
+
+
+获取 flag5
+
+根据 flag4 提示，还不是最终的flag
+
+提示git，查看sudo配置文件，发现git是root，不用密码可以运行，搜索git提权
+
+![25](https://havocykp.github.io/assets/images/img_blog4/25.png)
+
+
+
+进行提权
+
+```javascript
+命令：
+1. sudo git -p help
+2. !/bin/bash
+```
+
+![26](https://havocykp.github.io/assets/images/img_blog4/26.png)
+
+切换目录，找到最终的 flag
+
+![27](https://havocykp.github.io/assets/images/img_blog4/27.png)
+
