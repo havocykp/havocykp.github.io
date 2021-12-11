@@ -1,0 +1,109 @@
+---
+title: "LeetCode-14. Longest Common Prefix"
+layout: post
+date: 2019-03-24 23:02
+image: 
+headerImage: false
+tag:
+- Algorithm
+- LeetCode
+category: blog
+author: NoThxJ
+description: LeetCode
+---
+
+#### Description
+
+------
+
+Write a function to find the longest common prefix string amongst an array of strings.
+
+If there is no common prefix, return an empty string `""`.
+
+**Example 1:**
+
+```
+Input: ["flower","flow","flight"]
+Output: "fl"
+```
+
+**Example 2:**
+
+```
+Input: ["dog","racecar","car"]
+Output: ""
+Explanation: There is no common prefix among the input strings.
+```
+
+**Note:**
+
+All given inputs are in lowercase letters `a-z`.
+
+#### 思路
+
+求字符串的共同前缀，没有什么特别技巧，无脑查找就行，定义两个变量i和j，其中i是遍历搜索字符串中的字符，j是遍历字符串集中的每个字符串。这里将单词上下排好，则相当于一个各行长度有可能不相等的二维数组，这里遍历顺序和一般的横向逐行遍历不同，而是采用纵向逐列遍历，在遍历的过程中，如果某一行没有了，说明其为最短的单词，因为共同前缀的长度不能长于最短单词，所以此时返回已经找出的共同前缀。每次取出第一个字符串的某一个位置的单词，然后遍历其它所有字符串的对应位置是否相等，如果有不满足的直接返回res，如果都相同，则将当前字符存入结果，继续检查下一个位置的字符
+
+- 解法1
+
+  ```c++
+  class Solution {
+  public:
+      string longestCommonPrefix(vector<string>& strs) {
+          if(strs.empty())
+              return "";
+          string res = "";
+          for(int j = 0; j < strs[0].size(); j++){
+              char c = strs[0][j];
+              for(int i = 1; i < strs.size(); i++){
+                  if(j >= strs[i].size() || strs[i][j] != c){
+                      return res;
+                  }
+              }
+              res.push_back(c);
+          }
+          return res;
+      }
+  };
+  ```
+
+- 解法2
+
+  ```c++
+  // 优化，如果当前某个字符和下一行对应位置的字符不相等，说明不会再有更长的共同前缀了，直接通过substr的方法直接取出共同前缀的子字符串。如果遍历结束前没有返回结果的话，说明第一个单词就是公共前缀，返回为结果即可
+  
+  class Solution {
+  public:
+      string longestCommonPrefix(vector<string>& strs) {
+          if(strs.empty())
+              return "";
+          string res = "";
+          for(int j = 0; j < strs[0].size(); j++){
+              for(int i = 0; i < strs.size() - 1; i++){
+                  if(j >= strs[i].size() || j >= strs[i + 1].size() || strs[i][j] != strs[i + 1][j]){
+                      return strs[i].substr(0, j);
+                  }
+              }
+          }
+          return strs[0];
+      }
+  };
+  ```
+
+- 解法3
+
+  ```c++
+  // 这种方法给输入字符串数组排序，既然是按字母顺序排序，那么有共同字母多的两个字符串会被排到一起，而相同字母越少的字符串会被挤到首尾两端，那么如果有共同前缀，一定会出现在首位两端的字符串中，所以只需要找首尾字符串的共同前缀即可。由于是按字母顺序排列的，而不是按长度，所以首尾字母的长度关系不知道，为了防止溢出错误，只遍历较短的那个长度，找出共同前缀返回即可
+  class Solution {
+  public:
+      string longestCommonPrefix(vector<string>& strs) {
+          if(strs.empty())
+              return "";
+          sort(strs.begin(), strs.end());
+          int i = 0, len = min(strs[0].size(), strs.back().size());
+          while(i < len && strs[0][i] == strs.back()[i])
+              ++i;
+          return strs[0].substr(0, i);
+      }
+  };
+  ```
+

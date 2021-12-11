@@ -1,0 +1,102 @@
+---
+title: "LeetCode-80. Remove Duplicates from Sorted Array II"
+layout: post
+date: 2019-03-24 23:02
+image: 
+headerImage: false
+tag:
+- Algorithm
+- LeetCode
+category: blog
+author: NoThxJ
+description: LeetCode
+---
+
+Given a sorted array *nums*, remove the duplicates [**in-place**](https://en.wikipedia.org/wiki/In-place_algorithm) such that duplicates appeared at most *twice* and return the new length.
+
+Do not allocate extra space for another array, you must do this by **modifying the input array in-place** with O(1) extra memory.
+
+**Example 1:**
+
+```
+Given nums = [1,1,1,2,2,3],
+
+Your function should return length = 5, with the first five elements of nums being 1, 1, 2, 2 and 3 respectively.
+
+It doesn't matter what you leave beyond the returned length.
+```
+
+**Example 2:**
+
+```
+Given nums = [0,0,1,1,1,1,2,3,3],
+
+Your function should return length = 7, with the first seven elements of nums being modified to 0, 0, 1, 1, 2, 3 and 3 respectively.
+
+It doesn't matter what values are set beyond the returned length.
+```
+
+**Clarification:**
+
+Confused why the returned value is an integer but your answer is an array?
+
+Note that the input array is passed in by **reference**, which means modification to the input array will be known to the caller as well.
+
+Internally you can think of this:
+
+```
+// nums is passed in by reference. (i.e., without making a copy)
+int len = removeDuplicates(nums);
+
+// any modification to nums in your function would be known by the caller.
+// using the length returned by your function, it prints the first len elements.
+for (int i = 0; i < len; i++) {
+    print(nums[i]);
+}
+```
+
+#### 思路
+
+这道题是有序数组中去除重复项，这里允许最多重复的次数是两次，那么就需要用一个变量count来记录还允许有几次重复，count初始化为1，如果出现过一次重复，则count递减1，那么下次再出现重复，快指针直接前进一步，如果这时候不是重复的，则count恢复1，由于整个数组是有序的，所以一旦出现不重复的数，则一定比这个数大，此数之后不会再有重复项。
+
+```
+class Solution {
+public:
+    int removeDuplicates(int A[], int n) {
+        if (n <= 2) return n;
+        int pre = 0, cur = 1, count = 1;
+        while (cur < n) {
+            if (A[pre] == A[cur] && count == 0) ++cur;
+            else {
+                if (A[pre] == A[cur]) --count;
+                else count = 1;
+                A[++pre] = A[cur++];
+            }
+        }
+        return pre + 1;
+    }
+};
+```
+
+
+
+用快慢指针来记录遍历的坐标，最开始时两个指针都指向第一个数字，如果两个指针指的数字相同，则快指针i向前走一步，如果不同，则两个指针都向前走一步，这样当快指针i走完整个数组后，慢指针j当前的坐标加1就是数组中不同数字的个数。
+
+```
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if(nums.size() < 3)
+            return nums.size();
+        int first = 2, second = 2;
+        for(; second <nums.size(); second++){
+            if(nums[second] > nums[first - 2]){
+                nums[first] = nums[second];
+                first++;
+            }
+        }
+        return first;
+    }
+};
+```
+

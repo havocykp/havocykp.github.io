@@ -1,0 +1,80 @@
+---
+title: "LeetCode-55. Jump Game"
+layout: post
+date: 2019-03-24 23:02
+image: 
+headerImage: false
+tag:
+- Algorithm
+- LeetCode
+category: blog
+author: NoThxJ
+description: LeetCode
+---
+
+Given an array of non-negative integers, you are initially positioned at the first index of the array.
+
+Each element in the array represents your maximum jump length at that position.
+
+Determine if you are able to reach the last index.
+
+**Example 1:**
+
+```
+Input: [2,3,1,1,4]
+Output: true
+Explanation: Jump 1 step from index 0 to 1, then 3 steps to the last index.
+```
+
+**Example 2:**
+
+```
+Input: [3,2,1,0,4]
+Output: false
+Explanation: You will always arrive at index 3 no matter what. Its maximum
+             jump length is 0, which makes it impossible to reach the last index.
+```
+
+#### 思路
+
+这道题说的是有一个非负整数的数组，每个数字表示在当前位置的基础上最多可以走的步数，求判断能不能到达最后一个位置，开始以为是必须刚好到达最后一个位置，超过了不算，其实是理解题意有误，因为每个位置上的数字表示的是最多可以走的步数而不是像玩大富翁一样摇骰子摇出几就走几步。那么可以用动态规划来解，需要维护一个一维数组dp，其中dp[i]表示到达i位置时剩余的步数，那么难点就是推导状态转移方程。到达当前位置的剩余步数跟什么有关？其实说跟上一个位置的剩余步数和上一个位置的跳力有关，这里的跳力就是数组中每个位置的数字，因为其代表了以当前位置为起点能到达的最远位置。所以当前位置的剩余步数和当前位置的跳力中的较大那个数决定了当前能到的最远距离，而下一个位置的剩余步数就等于当前的这个较大值减去1，因为需要花一个跳力到达下一个位置，所以状态转移方程：dp[i] = max(dp[i - 1], nums[i - 1] - 1)，如果当某一个时刻dp数组的值为负了，说明无法抵达当前位置，则直接返回false，最后判断dp数组最后一位是否为非负数即可知道是否能抵达该位置。
+
+- 解法1
+
+  ```c++
+  class Solution {
+  public:
+      bool canJump(vector<int>& nums) {
+          vector<int> dp(nums.size(), 0);
+          for (int i = 1; i < nums.size(); i++)
+          {
+              dp[i] = max(dp[i - 1], nums[i - 1]) - 1;
+              if (dp[i] < 0) return false;
+          }
+          
+          return dp.back() >= 0;
+      }
+  };
+  ```
+
+
+
+其实这题最好的解法不是DP，而是贪婪算法，因为在这里并不是很关心每一个位置上的剩余步数，只希望知道能否到达末尾，也就是说只对最远能到达的位置感兴趣，所以维护一个变量reach，表示最远能到达的位置，初始化为0.遍历数组中每一个数字，如果当前坐标大于reach或者reach已经抵达最后一个位置则跳出循环，否则就更新reach的值为其和 i + nums[i] 中的较大值，其中 i + nums[i] 表示当前位置能到达的最大位置
+
+```c++
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        int n = nums.size(), reach = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (i > reach || reach >= n - 1)
+                break;
+            reach = max(reach, i + nums[i]);
+        }
+        
+        return reach >= n - 1;
+    }
+};
+```
+

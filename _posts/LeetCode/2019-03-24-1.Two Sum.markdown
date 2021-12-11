@@ -1,0 +1,80 @@
+---
+title: "LeetCode-1.Two Sum"
+layout: post
+date: 2019-03-24 23:02
+image: 
+headerImage: false
+tag:
+- Algorithm
+- LeetCode
+category: blog
+author: NoThxJ
+description: LeetCode
+---
+
+#### Description
+
+Given an array of integers, return **indices** of the two numbers such that they add up to a specific target.
+
+You may assume that each input would have **exactly** one solution, and you may not use the *same* element twice.
+
+**Example:**
+
+```c++
+Given nums = [2, 7, 11, 15], target = 9,
+
+Because nums[0] + nums[1] = 2 + 7 = 9,
+return [0, 1].
+```
+
+#### 思路
+
+这道题给了一个数组，还有一个目标数`target`，让我们找到两个数字，使其和为target，由于暴力搜索的方法是遍历所有的两个数字的组合，然后求和，这样虽然节省了空间，但是时间复杂度高。如果只想用线性的时间复杂度解决，那么就是说只能遍历一个数字，那么另一个数字呢，可以事先将其存储起来，使用一个`HashMap`,来建立数字和坐标位置之间的映射，因为HashMap是常数级的查找效率，这样，在遍历数组的时候，用target减去遍历到的数字，就是另一个需要的数字了，直接在HashMap中查找是否存在即可，注意要判断查找到的数字不是第一个数字，比如target是4，遍历到了一个2，那么另外一个2不能是之前那个2，整个实现步骤为：先遍历一遍数组，建立HashMap映射，然后再遍历一遍，开始查找，找到则记录index
+
+
+
+#### Accept
+
+- 解法1
+
+```c++
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> m;
+        vector<int> res;
+        for(int i = 0; i < nums.size(); i++){
+            m[nums[i]] = i;
+        }
+        for(int i = 0; i < nums.size(); i++){
+            int t = target - nums[i];
+            if(m.count(t) && m[t] != i){
+                res.push_back(i);
+                res.push_back(m[t]);
+                break;
+            }
+        }
+        return res;
+    }
+};
+```
+
+- 解法2
+
+  ```c++
+  // 将两个for循环合并
+  class Solution {
+  public:
+      vector<int> twoSum(vector<int>& nums, int target) {
+          unordered_map<int, int> m;
+          for(int i = 0; i < nums.size(); i++){
+              if(m.count(target - nums[i])){
+                  return {i, m[target - nums[i]]};
+              }
+              m[nums[i]] = i;
+          }
+          return {};
+      }
+  };
+  ```
+
