@@ -212,7 +212,7 @@ Nmap done: 1 IP address (1 host up) scanned in 52.89 seconds
 
 切换到交互模式shell
 
-```python
+```javascript
 命令：python -c 'import pty;pty.spawn("/bin/bash")'
 ```
 
@@ -246,7 +246,7 @@ Nmap done: 1 IP address (1 host up) scanned in 52.89 seconds
 
 如何上传？ 首先在攻击机 41154.sh文件所在目录下开启 python.server，供下载
 
-```python
+```javascript
 命令：python3 -m http.server 9999
 ```
 
