@@ -66,7 +66,7 @@ width: large
 # if you do/don't need pagination, toggle 'enabled' between true/false below
 # 页码属性
 pagination:
-  enabled: true
+  enabled: false
   sort_reverse: true # display recent posts first
   title: ":title" # Changing this will mess up the header display logic
   per_page: 5
