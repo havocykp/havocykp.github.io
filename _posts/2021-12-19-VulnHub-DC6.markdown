@@ -1,7 +1,7 @@
 ---
 title: "VulnHub-DC6"
 layout: post
-date: 2021-12-19 21:11
+date: 2021-12-19 21:34
 image: 
 headerImage: false
 tag:
