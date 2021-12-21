@@ -107,16 +107,16 @@ defaults:
       # can be overridden in the front matter for a specific post
       hidden: false
 
-# plugins:
-#  - jekyll-seo-tag
-#  - jekyll-gist
-#  - jekyll-feed
-#  - jemoji
-#  - jekyll-admin
-#  - jekyll-paginate-v2
+plugins:
+  - jekyll-seo-tag
+  - jekyll-gist
+  - jekyll-feed
+  - jemoji
+  - jekyll-admin
+  - jekyll-paginate-v2
 
-# jekyll-mentions:
-#  base_url: https://github.com
+jekyll-mentions:
+base_url: https://github.com
 
 compress_html:
   ignore:
