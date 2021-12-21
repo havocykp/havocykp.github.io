@@ -1,7 +1,7 @@
 ---
 title: "VulnHub-DC7"
 layout: post
-date: 2021-12-21 19:41
+date: 2021-12-21 20:11
 image: 
 headerImage: false
 tag:
@@ -324,3 +324,4 @@ backups.sh文件大约每15分钟执行一次，耐心等待反弹
 最终在 /root/theflag.txt 找到
 
 ![42](https://havocykp.github.io/assets/images/img_blog9/42.png)
+
