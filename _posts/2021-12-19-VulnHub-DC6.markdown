@@ -14,7 +14,7 @@ description: VulnHub
 
 环境下载地址：
 
-https://www.five86.com/dc-6.html
+<https://www.five86.com/dc-6.html>
 
 环境搭建：
 
