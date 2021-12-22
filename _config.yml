@@ -1,9 +1,9 @@
-# 面板信息
-name: NoThxJ
-bio: 低调求发展，潜心习安全
+# main text of home
+name: John Doe
+bio: A Person who travels the world eating noodles
 
-# twitter 描述
-# description: A blog about technology and stuff related
+# twitter summary info
+description: A blog about technology and stuff related
 
 # if it's an external image, update below for true
 # better with square images
@@ -11,17 +11,15 @@ external-image: false
 picture: assets/images/profile.jpg
 
 # your site color theme, false to light theme
-# 背景颜色：浅色：false   深色：true
 dark-theme: true
 
 # If you want to include your resume, set to true
 # and specify source (external or local).
-# 分类: Resume
 resume: true
 resume-external: true
-resume-url: https://github.com/havocykp
+resume-url: https://google.com/?q=my+resume
 
-url: https://havocykp.github.io
+url: https://sergiokopplin.github.io/indigo
 # your url: https://USERNAME.github.io
 
 permalink: /:title/
@@ -30,41 +28,38 @@ permalink: /:title/
 # analytics-google: 'UA-MYANALYTICS'
 
 # if you don't want comments in your posts, leave categories empty
-# 文章评论
-#disqus:
-#  shortname: github # enter this from your disqus account
-#  categories: [blog, project] # only show disqus for posts that have these categories
+disqus:
+  shortname: github # enter this from your disqus account
+  categories: [blog, project] # only show disqus for posts that have these categories
 
 # if you don't have any of social below, comment the line
-# 社交标签
-facebook: 
-twitter: NoThxJ
-instagram: 
-linkedin: 
-github: havocykp
-email: havocykp@gmail.com
+facebook: myfacebook
+twitter: mytwitter
+instagram: myinstagram
+linkedin: mylinkedin
+github: mygithub
+email: myemail@gmail.com
 
-#authors:
-#  johndoe:
-#    name: NoThxJ
-#    bio: 低调求发展，潜心习安全
-#    external-image: false
-#    picture: assets/images/profile.jpg
-#    twitter: NoThxJ
-#  jamesfoster:
-#    name: James Foster
-#   bio: A Man who develops software with coffee
-#    external-image: false
-#    picture: assets/images/james.jpg
-#   twitter: jamesfoster
+authors:
+  johndoe:
+    name: John Doe
+    bio: A Man who travels the world eating noodles
+    external-image: false
+    picture: assets/images/profile.jpg
+    twitter: johndoe
+  jamesfoster:
+    name: James Foster
+    bio: A Man who develops software with coffee
+    external-image: false
+    picture: assets/images/james.jpg
+    twitter: jamesfoster
 
 # do you want a larger site? change the option below
 # options: [normal, large] | default: normal
 # normal = 560px / large = 810px
-width: large
+width: normal
 
 # if you do/don't need pagination, toggle 'enabled' between true/false below
-# 页码属性
 pagination:
   enabled: false
   sort_reverse: true # display recent posts first
@@ -92,7 +87,7 @@ related: true
 post-advance-links: [blog]
 
 # show author block at the end of a post ?
-show-author: false
+show-author: true
 
 # do you want some animations?
 animation: true
@@ -107,16 +102,16 @@ defaults:
       # can be overridden in the front matter for a specific post
       hidden: false
 
-#plugins:
-#  - jekyll-seo-tag
-#  - jekyll-gist
-#  - jekyll-feed
-#  - jemoji
-#  - jekyll-admin
-#  - jekyll-paginate-v2
+plugins:
+  - jekyll-seo-tag
+  - jekyll-gist
+  - jekyll-feed
+  - jemoji
+  - jekyll-admin
+  - jekyll-paginate-v2
 
-#jekyll-mentions:
-#base_url: https://github.com
+jekyll-mentions:
+  base_url: https://github.com
 
 compress_html:
   ignore:
