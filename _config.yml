@@ -17,7 +17,7 @@ dark-theme: true
 # and specify source (external or local).
 resume: true
 resume-external: true
-resume-url: https://google.com/?q=my+resume
+resume-url: https://github.com/havocykp
 
 url: https://havocykp.github.io
 # your url: https://USERNAME.github.io
@@ -33,12 +33,12 @@ disqus:
   categories: [blog, project] # only show disqus for posts that have these categories
 
 # if you don't have any of social below, comment the line
-facebook: myfacebook
-twitter: mytwitter
-instagram: myinstagram
-linkedin: mylinkedin
-github: mygithub
-email: myemail@gmail.com
+facebook: facebook
+twitter: twitter
+instagram: instagram
+linkedin: linkedin
+github: github
+email: email@gmail.com
 
 authors:
   johndoe:
@@ -46,18 +46,18 @@ authors:
     bio: A Man who travels the world eating noodles
     external-image: false
     picture: assets/images/profile.jpg
-    twitter: johndoe
+    twitter: NoThxJ
   jamesfoster:
-    name: James Foster
-    bio: A Man who develops software with coffee
+    name: NoThxJ
+    bio: A Man who develops software with Security
     external-image: false
     picture: assets/images/james.jpg
-    twitter: jamesfoster
+    twitter: NoThxJ
 
 # do you want a larger site? change the option below
 # options: [normal, large] | default: normal
 # normal = 560px / large = 810px
-width: normal
+width: large
 
 # if you do/don't need pagination, toggle 'enabled' between true/false below
 pagination:
