@@ -1,6 +1,6 @@
 # main text of home
-name: John Doe
-bio: A Person who travels the world eating noodles
+name: NoThxJ
+bio: 低调求发展，潜心习安全
 
 # twitter summary info
 description: A blog about technology and stuff related
@@ -19,7 +19,7 @@ resume: true
 resume-external: true
 resume-url: https://google.com/?q=my+resume
 
-url: https://sergiokopplin.github.io/indigo
+url: https://havocykp.github.io
 # your url: https://USERNAME.github.io
 
 permalink: /:title/
@@ -42,7 +42,7 @@ email: myemail@gmail.com
 
 authors:
   johndoe:
-    name: John Doe
+    name: NoThxJ
     bio: A Man who travels the world eating noodles
     external-image: false
     picture: assets/images/profile.jpg
