@@ -378,4 +378,3 @@ root@dc-9:~# cat theflag.txt
 简单来说就是：知道它的自定义端口后，依次对其进行敲门，然后就可以开启ssh服务从而进行连接了。它的默认配置文件为：/etc/knockd.conf
 
 参考链接：<https://www.cnblogs.com/xiaoxiaoleo/p/8523322.html>（Port-knocking）
-
