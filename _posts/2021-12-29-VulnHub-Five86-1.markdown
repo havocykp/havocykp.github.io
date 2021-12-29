@@ -72,7 +72,7 @@ Nmap done: 1 IP address (1 host up) scanned in 94.01 seconds
 
  
 
-```
+```javascript
 ┌─[✗]─[root@pendo]─[~]
 └──╼ #nmap -sT -sV -A -T5 192.168.101.194 -p-
 Starting Nmap 7.91 ( https://nmap.org ) at 2021-11-14 09:45 CST
