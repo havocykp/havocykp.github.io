@@ -1,5 +1,5 @@
 ---
-title: "渗透测试实战001"
+title: "HVV渗透实战001"
 layout: post
 date: 2022-3-25 11:04
 image: 
@@ -7,10 +7,9 @@ headerImage: false
 tag:
 - web
 - Penetration Testing
-projects:true
-category: project
+category: blog
 author: NoThxJ
-description: 渗透实战
+description: HVV渗透
 ---
 
 **1. 综述**
