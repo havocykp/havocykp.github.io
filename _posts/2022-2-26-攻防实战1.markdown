@@ -7,6 +7,7 @@ headerImage: false
 tag:
 - web
 - Penetration Testing
+projects:true
 category: project
 author: NoThxJ
 description: 渗透实战
