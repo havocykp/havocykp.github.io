@@ -7,7 +7,7 @@ headerImage: false
 tag:
 - web
 - Penetration Test
-category: projects
+category: blog
 author: NoThxJ
 description: HVV渗透
 ---
